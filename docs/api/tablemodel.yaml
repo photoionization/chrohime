@@ -1,0 +1,4 @@
+name: TableModel
+type: refcounted
+inherit: Object
+description: The model driving the `TableView`.

@@ -1,0 +1,89 @@
+name: View
+type: refcounted
+inherit: Object
+description: A View is a rectangle within the View hierarchy.
+
+constructors:
+  - name: Create
+    description: Create a new View.
+
+methods:
+  - name: SetVisible
+    description: Show/Hide the view.
+    args:
+      - name: visible
+        type: bool
+
+  - name: IsVisible
+    description: Return whether the view is visible.
+    returnType: bool
+
+  - name: GetBounds
+    description: Return the bounds of the view in its parent's coordinates.
+    returnType: gfx::Rect
+
+  - name: SetPreferredSize
+    description: Sets or unsets the size that this View will request during layout.
+    args:
+      - name: size
+        type: absl::optional<gfx::Size>
+
+  - name: GetPreferredSize
+    description: Return the size the view would like to be under the current bounds.
+    returnType: gfx::Size
+
+  - name: SetStyle
+    description: &setstyle |
+      Change the styles of the view.
+
+      Note that calling this method does not changes the bounds immediately,
+      the bounds will change when the view hierarchy re-calculates the layout,
+      such as when resizing window or when adding/removing child views. To make
+      the new styles apply immediately you can call `Layout` method.
+    args:
+      - name: name
+        type: std::u16string_view
+      - name: value
+        type: std::u16string_view
+
+  - name: SetNumberStyle
+    description: *setstyle
+    args:
+      - name: name
+        type: std::u16string_view
+      - name: value
+        type: float
+
+  - name: Layout
+    description: Re-calculate the layout in view hierarchy.
+
+  - name: AddChildView
+    description: Append a child `view` to this view.
+    args:
+      - name: view
+        type: View
+
+  - name: AddChildViewAt
+    description: Add a child `view` to this view at `index`.
+    args:
+      - name: view
+        type: View
+      - name: index
+        type: size_t
+
+  - name: RemoveChildView
+    description: Remove a child `view` from this view.
+    args:
+      - name: view
+        type: View
+
+  - name: ChildCount
+    description: Return the count of children in this view.
+    returnType: size_t
+
+  - name: ChildAt
+    description: Return the child View at `index`.
+    args:
+      - name: index
+        type: size_t
+    returnType: View

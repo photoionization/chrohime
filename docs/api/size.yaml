@@ -1,0 +1,12 @@
+name: gfx::Size
+type: geometry
+description: A size has width and height values.
+
+properties:
+  - name: width
+    type: int
+    defaultValue: 0
+  - name: height
+    type: int
+    defaultValue: 0
+

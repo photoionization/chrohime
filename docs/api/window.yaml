@@ -1,0 +1,71 @@
+name: Window
+type: refcounted
+inherit: Object
+description: Top-level window.
+
+constructors:
+  - name: Create
+    description: Create a new window.
+    args:
+      - name: options
+        type: Window::Options
+
+methods:
+  - name: Close
+    description: Close the window.
+
+  - name: Activate
+    description: Show and focus the window.
+
+  - name: SetContentView
+    description: Set the window's content view.
+    args:
+      - name: view
+        type: View
+
+  - name: GetContentView
+    description: Get the window's content view.
+    returnType: View
+
+  - name: SetBounds
+    description: Resize and/or place the window to the specified bounds.
+    args:
+      - name: bounds
+        type: gfx::Rect
+
+  - name: GetBounds
+    description: Return the bounds of the window in screen coordinates.
+    returnType: gfx::Rect
+
+  - name: SetSize
+    description: Resize the window to the specified size.
+    args:
+      - name: size
+        type: gfx::Size
+
+  - name: GetSize
+    description: Return the restored size for the window.
+    returnType: gfx::Size
+
+  - name: CenterTo
+    description: Resize the window to the specified size and center it.
+    args:
+      - name: size
+        type: gfx::Size
+
+  - name: SetTitle
+    description: Set window title.
+    args:
+      - name: title
+        type: std::u16string
+
+  - name: GetTitle
+    description: Return window title.
+    returnType: const std::u16string&
+
+events:
+  - name: onClose
+    description: Emitted when window is closed.
+    args:
+      - name: window
+        type: Window

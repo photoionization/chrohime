@@ -1,0 +1,49 @@
+name: chrohime
+
+on: push
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    continue-on-error: false
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, macos-13]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Use XCode 15
+        if: runner.os == 'macOS'
+        run: |
+          XCODE_APP=$(find /Applications -maxdepth 1 -type d -name "Xcode_15.*" -print -quit)
+          echo 'Using' $XCODE_APP
+          sudo xcode-select --switch $XCODE_APP
+
+      - name: Install Linux Dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt update
+          sudo apt install gperf
+          /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+
+      - name: Setup GOMA
+        shell: bash
+        env:
+          SECRET_FILE_CONTENT: ${{ secrets.GOMA_OAUTH2_CONFIG }}
+        run: |
+          printf "$SECRET_FILE_CONTENT" > ~/.goma_oauth2_config
+          ./build_chromium/goma.js
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap.py
+
+      - name: Build
+        run: |
+          ./build_chromium/gn_gen.py --goma
+          ./scripts/build.py --component

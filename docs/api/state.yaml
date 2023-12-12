@@ -1,0 +1,6 @@
+name: State
+type: class
+description: Store internal data structures.
+
+constructors:
+  - name: Create

@@ -1,0 +1,19 @@
+name: Object
+type: refcounted
+description: Root class of refcounted APIs.
+
+methods:
+  - name: Ref
+    description: Increase reference count by one.
+
+  - name: Unref
+    description: |
+      Decrease reference count by one, when reaching 0 the object will be
+      destructed and its memory will be released.
+
+      Note that the reference count of refcounted objects all start from 1,
+      which means you must call `Unref` for each object created.
+
+  - name: HasOneRef
+    description: Return whether the reference count is exactly one.
+    returnType: bool

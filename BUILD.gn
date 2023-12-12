@@ -1,0 +1,213 @@
+import("//tools/grit/grit_rule.gni")
+
+component("chrohime") {
+  sources = [
+    "api/label.cc",
+    "api/label.h",
+    "api/object.cc",
+    "api/object.h",
+    "api/root_view.cc",
+    "api/root_view.h",
+    "api/scroll_view.cc",
+    "api/scroll_view.h",
+    "api/signal.h",
+    "api/simple_table_model.cc",
+    "api/simple_table_model.h",
+    "api/state.cc",
+    "api/state.h",
+    "api/table_model.cc",
+    "api/table_model.h",
+    "api/table_view.cc",
+    "api/table_view.h",
+    "api/view.cc",
+    "api/view.h",
+    "api/window.cc",
+    "api/window.h",
+    "api/yoga_layout_manager.cc",
+    "api/yoga_layout_manager.h",
+    "api/yoga_util.cc",
+    "api/yoga_util.h",
+  ]
+
+  configs += [ ":chrohime_internal_config" ]
+
+  deps = [
+    ":yoga",
+    "//ui/views",
+  ]
+  public_deps = [
+    "//base",
+    "//ui/base",
+  ]
+}
+
+component("chrohime_with_content_with_lifetime") {
+  # TODO(zcbenz): The views_content_client is for tests, we need our own
+  # content clients to get rid of testonly.
+  testonly = true
+
+  sources = [
+    "api/lifetime.cc",
+    "api/lifetime.h",
+    "api/lifetime_with_content.cc",
+  ]
+
+  configs += [ ":chrohime_internal_config" ]
+
+  public_deps = [ ":chrohime" ]
+  deps = [
+    ":chrohime_resources_pak",
+    "//content",
+    "//content:sandbox_helper_win",
+    "//sandbox",
+    "//ui/views/examples:copy_content_resources",
+    "//ui/views_content_client",
+  ]
+  if (is_mac) {
+    deps += [ "//sandbox/mac:seatbelt" ]
+  }
+}
+
+component("chrohime_no_content_with_lifetime") {
+  # TODO(zcbenz): The base/test:test_support is for tests, we need our own
+  # task environment to get rid of testonly.
+  testonly = true
+
+  sources = [
+    "api/lifetime.cc",
+    "api/lifetime.h",
+    "api/lifetime_no_content.cc",
+  ]
+
+  configs += [ ":chrohime_internal_config" ]
+
+  public_deps = [
+    ":chrohime",
+    "//skia",
+  ]
+  deps = [
+    "//base/test:test_support",
+    "//ui/compositor:test_support",
+    "//ui/gl",
+    "//ui/gl/init",
+    "//ui/views:test_support",
+  ]
+  if (use_aura) {
+    deps += [ "//ui/aura" ]
+  }
+}
+
+config("chrohime_internal_config") {
+  defines = [ "CHROHIME_IMPLEMENTATION" ]
+}
+
+grit("chrohime_resources_grd") {
+  source = "api/chrohime_resources.grd"
+  outputs = [
+    "grit/chrohime_resources.h",
+    "chrohime_resources.pak",
+  ]
+}
+
+copy("chrohime_resources_pak") {
+  sources = [ "$target_gen_dir/chrohime_resources.pak" ]
+  outputs = [ "$root_out_dir/chrohime_resources.pak" ]
+  public_deps = [ ":chrohime_resources_grd" ]
+}
+
+config("yoga_config") {
+  include_dirs = [ "third_party/yoga" ]
+}
+
+source_set("yoga") {
+  public_configs = [ ":yoga_config" ]
+
+  sources = [
+    "third_party/yoga/yoga/YGNodeLayout.h",
+    "third_party/yoga/yoga/YGNodeStyle.cpp",
+    "third_party/yoga/yoga/YGEnums.h",
+    "third_party/yoga/yoga/YGNode.h",
+    "third_party/yoga/yoga/YGMacros.h",
+    "third_party/yoga/yoga/config/Config.h",
+    "third_party/yoga/yoga/config/Config.cpp",
+    "third_party/yoga/yoga/Yoga.h",
+    "third_party/yoga/yoga/enums/Align.h",
+    "third_party/yoga/yoga/enums/Edge.h",
+    "third_party/yoga/yoga/enums/Gutter.h",
+    "third_party/yoga/yoga/enums/Justify.h",
+    "third_party/yoga/yoga/enums/ExperimentalFeature.h",
+    "third_party/yoga/yoga/enums/Unit.h",
+    "third_party/yoga/yoga/enums/FlexDirection.h",
+    "third_party/yoga/yoga/enums/Errata.h",
+    "third_party/yoga/yoga/enums/Direction.h",
+    "third_party/yoga/yoga/enums/MeasureMode.h",
+    "third_party/yoga/yoga/enums/Display.h",
+    "third_party/yoga/yoga/enums/LogLevel.h",
+    "third_party/yoga/yoga/enums/NodeType.h",
+    "third_party/yoga/yoga/enums/YogaEnums.h",
+    "third_party/yoga/yoga/enums/PositionType.h",
+    "third_party/yoga/yoga/enums/Overflow.h",
+    "third_party/yoga/yoga/enums/PrintOptions.h",
+    "third_party/yoga/yoga/enums/Dimension.h",
+    "third_party/yoga/yoga/enums/Wrap.h",
+    "third_party/yoga/yoga/YGPixelGrid.cpp",
+    "third_party/yoga/yoga/style/CompactValue.h",
+    "third_party/yoga/yoga/style/ValueFactories.h",
+    "third_party/yoga/yoga/style/Style.h",
+    "third_party/yoga/yoga/algorithm/Baseline.h",
+    "third_party/yoga/yoga/algorithm/AbsoluteLayout.cpp",
+    "third_party/yoga/yoga/algorithm/FlexLine.h",
+    "third_party/yoga/yoga/algorithm/BoundAxis.h",
+    "third_party/yoga/yoga/algorithm/SizingMode.h",
+    "third_party/yoga/yoga/algorithm/Align.h",
+    "third_party/yoga/yoga/algorithm/ResolveValue.h",
+    "third_party/yoga/yoga/algorithm/CalculateLayout.cpp",
+    "third_party/yoga/yoga/algorithm/Cache.h",
+    "third_party/yoga/yoga/algorithm/FlexDirection.h",
+    "third_party/yoga/yoga/algorithm/PixelGrid.cpp",
+    "third_party/yoga/yoga/algorithm/CalculateLayout.h",
+    "third_party/yoga/yoga/algorithm/Cache.cpp",
+    "third_party/yoga/yoga/algorithm/Baseline.cpp",
+    "third_party/yoga/yoga/algorithm/FlexLine.cpp",
+    "third_party/yoga/yoga/algorithm/PixelGrid.h",
+    "third_party/yoga/yoga/algorithm/AbsoluteLayout.h",
+    "third_party/yoga/yoga/numeric/Comparison.h",
+    "third_party/yoga/yoga/numeric/FloatOptional.h",
+    "third_party/yoga/yoga/bits/BitCast.h",
+    "third_party/yoga/yoga/YGEnums.cpp",
+    "third_party/yoga/yoga/YGValue.cpp",
+    "third_party/yoga/yoga/YGNodeStyle.h",
+    "third_party/yoga/yoga/YGConfig.h",
+    "third_party/yoga/yoga/YGPixelGrid.h",
+    "third_party/yoga/yoga/YGConfig.cpp",
+    "third_party/yoga/yoga/YGNode.cpp",
+    "third_party/yoga/yoga/node/LayoutResults.cpp",
+    "third_party/yoga/yoga/node/LayoutResults.h",
+    "third_party/yoga/yoga/node/Node.cpp",
+    "third_party/yoga/yoga/node/Node.h",
+    "third_party/yoga/yoga/node/CachedMeasurement.h",
+    "third_party/yoga/yoga/YGValue.h",
+    "third_party/yoga/yoga/event/event.h",
+    "third_party/yoga/yoga/event/event.cpp",
+    "third_party/yoga/yoga/YGNodeLayout.cpp",
+    "third_party/yoga/yoga/debug/Log.cpp",
+    "third_party/yoga/yoga/debug/AssertFatal.cpp",
+    "third_party/yoga/yoga/debug/NodeToString.cpp",
+    "third_party/yoga/yoga/debug/AssertFatal.h",
+    "third_party/yoga/yoga/debug/Log.h",
+    "third_party/yoga/yoga/debug/NodeToString.h",
+  ]
+
+  # Required untill https://github.com/facebook/yoga/pull/1511 is merged.
+  configs -= [
+    "//build/config/compiler:no_exceptions",
+  ]
+  configs += [
+    "//build/config/compiler:exceptions",
+  ]
+}
+
+group("test_all") {
+  testonly = true
+  deps = [ "test:chrohime_test" ]
+}

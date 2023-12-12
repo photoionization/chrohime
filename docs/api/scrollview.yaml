@@ -1,0 +1,29 @@
+name: ScrollView
+type: refcounted
+inherit: View
+description: Make any `View` scrollable.
+
+constructors:
+  - name: Create
+    description: Create a new ScrollView.
+
+  - name: CreateWithTable
+    description: |
+      Create a ScrollView that uses the `table` as content view.
+
+      If the `table` has non-empty columns, headers for columns will also be
+      created.
+    args:
+      - name: table
+        type: TableView
+
+methods:
+  - name: SetContentView
+    description: Set the content view.
+    args:
+      - name: view
+        type: View
+
+  - name: GetContentView
+    description: Get the content view.
+    returnType: View

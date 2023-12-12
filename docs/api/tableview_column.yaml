@@ -1,0 +1,38 @@
+name: TableView::Column
+type: struct
+description: Describe a column in `TableView`.
+
+properties:
+  - name: id
+    type: int
+    defaultValue: 0
+    description: A unique identifier for the column.
+
+  - name: title
+    type: std::u16string
+    defaultValue: ""
+    description: The title for the column.
+
+  - name: width
+    type: int
+    defaultValue: -1
+    description: |
+      Set the width field to a positive number and the column will be given
+      that width, in pixels.
+
+  - name: percent
+    type: float
+    defaultValue: 0
+    description: |
+      A percentage of the available width.
+
+      If width is -1, and percent is > 0, the column is given a width of
+      available_width * percent / total_percent.
+
+      If the width == -1 and percent == 0, the column is autosized based on
+      the width of the column header text.
+
+  - name: sortable
+    type: bool
+    defaultValue: false
+    description: Whether the column is sortable.

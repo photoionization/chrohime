@@ -1,0 +1,24 @@
+name: Lifetime
+type: class
+description: Initialize runtime and message loop.
+
+constructors:
+  - name: Create
+    platforms: [ win ]
+
+  - name: Create
+    platforms: [ mac, linux ]
+    args:
+      - name: argc
+        type: int
+      - name: argv
+        type: const char**
+
+methods:
+  - name: RunMain
+    description: Enter message loop.
+    returnType: int
+
+events:
+  - name: onReady
+    description: Emitted when it is ready to create GUI.

@@ -1,0 +1,50 @@
+shared_library("chrohime_shared_c_lib") {
+  testonly = true
+
+  sources = [
+    "chrohime.h",
+    "chrohime_c_impl.cc",
+    "chrohime_c_impl.inc",
+  ]
+  data = [
+    "$target_gen_dir/generated_impls.cc",
+    "$target_gen_dir/generated_impls.h",
+  ]
+  defines = [ "CHROHIME_C_IMPLEMENTATION" ]
+
+  deps = [
+    ":chrohime_generate_c_impls",
+    "//chrohime:chrohime_with_content_with_lifetime",
+  ]
+
+  if (is_apple) {
+    # Default optimization on apple adds "-dead_strip" to ldflags, which would
+    # strip exported symbols.
+    # There is almost no performance penalty since we are only removing
+    # optimization on the c_impl.cc.
+    configs -= [ "//build/config/compiler:default_optimization" ]
+  }
+}
+
+# Generate a public header to be shipped.
+action("chrohime_public_c_header") {
+  deps = [ "//chrohime/docs:apis_json" ]
+  inputs = [ "$root_out_dir/chrohime_apis.json" ]
+  outputs = [ "$root_out_dir/chrohime.h" ]
+  script = "generate_c_impls.py"
+  args = [ "--public-header", "--apis-json" ] + rebase_path(inputs) +
+         [ "--output-dir", rebase_path(root_out_dir)]
+}
+
+# Generate implementations of C APIs.
+action("chrohime_generate_c_impls") {
+  deps = [ "//chrohime/docs:apis_json" ]
+  inputs = [ "$root_out_dir/chrohime_apis_barebone.json" ]
+  outputs = [
+    "$target_gen_dir/generated_impls.cc",
+    "$target_gen_dir/generated_impls.h",
+  ]
+  script = "generate_c_impls.py"
+  args = [ "--apis-json" ] + rebase_path(inputs) +
+         [ "--output-dir", rebase_path(target_gen_dir)]
+}

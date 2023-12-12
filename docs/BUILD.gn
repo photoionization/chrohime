@@ -1,0 +1,28 @@
+action("apis_json") {
+  inputs = [
+    # Basic structures, must come first as they have no forward declarations.
+    "api/rect.yaml",
+    "api/size.yaml",
+    "api/tableview_column.yaml",
+    "api/window_options.yaml",
+    # Foundamental APIs.
+    "api/lifetime.yaml",
+    "api/state.yaml",
+    # Normal APIs.
+    "api/label.yaml",
+    "api/object.yaml",
+    "api/scrollview.yaml",
+    "api/simpletablemodel.yaml",
+    "api/tablemodel.yaml",
+    "api/tableview.yaml",
+    "api/view.yaml",
+    "api/window.yaml",
+  ]
+  outputs = [
+    "$root_out_dir/chrohime_apis.json",
+    "$root_out_dir/chrohime_apis_barebone.json",
+  ]
+
+  script = "parse_apis.py"
+  args = rebase_path(inputs) + [ "--output-dir", rebase_path(root_out_dir) ]
+}

@@ -1,0 +1,30 @@
+name: TableView
+type: refcounted
+inherit: View
+description: Display multiple rows with any number of columns.
+
+constructors:
+  - name: Create
+    description: |
+      Create a new TableView.
+
+      Note that the TableView created this way is mostly used as list view,
+      to create a TableView with headers please use the `CreateWithTable`
+      constructor of `ScrollView` instead.
+
+methods:
+  - name: SetColumns
+    description: Set the columns of the table.
+    args:
+      - name: columns
+        type: std::vector<TableView::Column>
+
+  - name: SetModel
+    description: Set the table model used for displaying.
+    args:
+      - name: model
+        type: TableModel
+
+  - name: GetModel
+    description: Return the table's model.
+    returnType: TableModel

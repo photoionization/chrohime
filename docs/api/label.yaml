@@ -1,0 +1,19 @@
+name: Label
+type: refcounted
+inherit: View
+description: Display text.
+
+constructors:
+  - name: Create
+    description: Create a new empty Label.
+
+methods:
+  - name: SetText
+    description: Set the text to display.
+    args:
+      - name: text
+        type: std::u16string
+
+  - name: GetText
+    description: Return the text displayed.
+    returnType: const std::u16string&

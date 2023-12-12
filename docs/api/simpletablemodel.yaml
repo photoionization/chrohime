@@ -1,0 +1,25 @@
+name: SimpleTableModel
+type: refcounted
+inherit: TableModel
+description: |
+  An implementation of `TableModel` that stores data in memory.
+
+  In this model, each row is an array of strings, and the model ID is the index
+  of the row array.
+
+constructors:
+  - name: Create
+    description: Create an empty SimpleTableModel
+
+methods:
+  - name: AddRow
+    description: Append a new row.
+    args:
+      - name: row
+        type: std::vector<std::u16string>
+
+  - name: RemoveRowAt
+    description: Remove the row at `index`.
+    args:
+      - name: index
+        type: size_t

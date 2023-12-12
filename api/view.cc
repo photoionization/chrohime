@@ -1,0 +1,161 @@
+// Copyright 2023 Microsoft, Inc
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#include "chrohime/api/view.h"
+
+#include "base/ranges/algorithm.h"
+#include "chrohime/api/yoga_layout_manager.h"
+#include "chrohime/api/yoga_util.h"
+#include "chrohime/api/state.h"
+#include "ui/display/screen.h"
+#include "ui/views/view.h"
+#include "ui/views/widget/widget.h"
+#include "yoga/Yoga.h"
+
+namespace hime {
+
+// static
+View* View::FromViews(views::View* view) {
+  return State::GetCurrent()->GetViewFromViewsView(view);
+}
+
+View::View() : View(std::make_unique<views::View>(), LayoutType::kContainer) {}
+
+View::View(std::unique_ptr<views::View> to_take, LayoutType layout_type)
+    : layout_type_(layout_type),
+      yoga_config_(YGConfigNew()),
+      yoga_node_(YGNodeNewWithConfig(yoga_config_)),
+      view_(to_take.get()),
+      ownership_(std::move(to_take)) {
+  view_->AddObserver(this);
+  if (layout_type == LayoutType::kContainer) {
+    view_->SetLayoutManager(std::make_unique<YogaLayoutManager>(this));
+  }
+  State::GetCurrent()->views_map_[view_] = this;
+}
+
+View::~View() {
+  if (view_) {
+    view_->RemoveObserver(this);
+    State::GetCurrent()->views_map_.erase(view_);
+  }
+  YGNodeFree(yoga_node_);
+  YGConfigFree(yoga_config_);
+}
+
+void View::SetVisible(bool visible) {
+  HIME_RETURN_ON_DESTROYED_VIEW(this);
+  view_->SetVisible(visible);
+}
+
+bool View::IsVisible() const {
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, false);
+  return view_->GetVisible();
+}
+
+gfx::Rect View::GetBounds() const {
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, gfx::Rect());
+  return view_->bounds();
+}
+
+void View::SetPreferredSize(absl::optional<gfx::Size> size) {
+  HIME_RETURN_ON_DESTROYED_VIEW(this);
+  LOG(ERROR) << "SetPreferredSize: " << (*size).ToString();
+  view_->SetPreferredSize(std::move(size));
+}
+
+gfx::Size View::GetPreferredSize() const {
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, gfx::Size());
+  return view_->GetPreferredSize();
+}
+
+void View::SetStyle(std::u16string_view name, std::u16string_view value) {
+  SetYogaProperty(yoga_node_, name, value);
+}
+
+void View::SetNumberStyle(std::u16string_view name, float value) {
+  SetYogaProperty(yoga_node_, name, value);
+}
+
+void View::Layout() {
+  HIME_RETURN_ON_DESTROYED_VIEW(this);
+  if (!parent_)
+    return;
+  view_->InvalidateLayout();
+  // When changing the style of a child view, we must re-calculate the layout
+  // from the root node.
+  View* root = parent_;
+  while (!root->IsRootYogaNode() && root->parent_)
+    root = root->parent_;
+  root->view_->Layout();
+}
+
+void View::AddChildView(scoped_refptr<View> view) {
+  AddChildViewAt(std::move(view), ChildCount());
+}
+
+void View::AddChildViewAt(scoped_refptr<View> view, size_t index) {
+  HIME_RETURN_ON_DESTROYED_VIEW(this);
+  HIME_RETURN_ON_DESTROYED_VIEW(view);
+  view->parent_ = this;
+  view_->AddChildViewAt(view->TransferOwnership(), index);
+  YGNodeInsertChild(yoga_node(), view->yoga_node(), index);
+  children_.insert(children_.begin() + index, std::move(view));
+  view_->Layout();
+}
+
+void View::RemoveChildView(View* view) {
+  HIME_RETURN_ON_DESTROYED_VIEW(this);
+  view->parent_ = nullptr;
+  view_->RemoveChildView(view->view());
+  YGNodeRemoveChild(yoga_node(), view->yoga_node());
+  children_.erase(base::ranges::find(children_, view));
+  view_->Layout();
+}
+
+size_t View::ChildCount() const {
+  return children_.size();
+}
+
+View* View::ChildAt(size_t index) const {
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, nullptr);
+  if (index < children_.size())
+    return children_[index].get();
+  else
+    return nullptr;
+}
+
+bool View::IsRootYogaNode() const {
+  return layout_type_ == View::LayoutType::kLeaf ||
+         !YGNodeGetParent(yoga_node_);
+}
+
+std::unique_ptr<views::View> View::TransferOwnership() {
+  DCHECK(ownership_);
+  return std::move(ownership_);
+}
+
+void View::OnViewIsDeleting(views::View* observed_view) {
+  DCHECK(!ownership_);
+  State::GetCurrent()->views_map_.erase(view_);
+  view_ = nullptr;
+}
+
+void View::OnViewVisibilityChanged(views::View* observed_view,
+                                   views::View* starting_view) {
+  YGNodeStyleSetDisplay(yoga_node_,
+                        view_->GetVisible() ? YGDisplayFlex : YGDisplayNone);
+}
+
+void View::OnViewAddedToWidget(views::View* observed_view) {
+  const display::Screen* const screen = display::Screen::GetScreen();
+  DCHECK(screen);
+  YGConfigSetPointScaleFactor(
+      yoga_config_,
+      // TODO(zcbenz): Cache scale factor in window.
+      screen->GetDisplayNearestView(view_->GetWidget()->GetNativeView())
+          .device_scale_factor());
+}
+
+}  // namespace hime
