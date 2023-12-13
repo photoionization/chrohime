@@ -20,4 +20,13 @@ executable("chrohime_c_test") {
   testonly = true
   sources = [ "c_main.c" ]
   deps = [ "//chrohime/c:chrohime_shared_c_lib" ]
+
+  if (!is_component_build) {
+    # Set rpath to search libchrohime from out dir.
+    if (is_linux) {
+      configs += [ "//build/config/gcc:rpath_for_built_shared_libraries" ]
+    } else if (is_mac) {
+      ldflags = [ "-Wcrl,installnametool,-change,./libchrohime_shared_c_lib.dylib,@executable_path/libchrohime_shared_c_lib.dylib" ]
+    }
+  }
 }
