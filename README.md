@@ -27,7 +27,7 @@ Download Chromium source code:
 Build Chrohime:
 
 ```
-./build_chromium/gn_gen.py
+./scripts/gn_gen.py
 ./scripts/build.py
 ```
 

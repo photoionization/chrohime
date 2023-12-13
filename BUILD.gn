@@ -86,10 +86,12 @@ component("chrohime_no_content_with_lifetime") {
     "//skia",
   ]
   deps = [
+    ":chrohime_resources_pak",
     "//base/test:test_support",
     "//ui/compositor:test_support",
     "//ui/gl",
     "//ui/gl/init",
+    "//ui/resources:ui_test_pak",
     "//ui/views:test_support",
   ]
   if (use_aura) {

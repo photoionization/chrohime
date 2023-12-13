@@ -18,6 +18,13 @@ jobs:
         with:
           submodules: recursive
 
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.11'
+
+      - name: Install python dependencies
+        run: python -m pip install pyyaml
+
       - name: Use XCode 15
         if: runner.os == 'macOS'
         run: |
@@ -45,5 +52,5 @@ jobs:
 
       - name: Build
         run: |
-          ./build_chromium/gn_gen.py --goma
-          ./scripts/build.py --component
+          ./scripts/gn_gen.py --goma
+          ./scripts/build.py --component chrohime_c_test

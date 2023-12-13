@@ -4,6 +4,7 @@
 
 #include "chrohime/api/window.h"
 
+#include "base/task/single_thread_task_runner.h"
 #include "chrohime/api/root_view.h"
 #include "chrohime/api/view.h"
 #include "ui/gfx/geometry/rect.h"
@@ -19,11 +20,7 @@ namespace hime {
 // somehow RefCounted can not inherit from WidgetDelegateView.
 class WindowDelegate : public views::WidgetDelegate {
  public:
-  explicit WindowDelegate(Window* window) : window_(window) {
-    RegisterDeleteDelegateCallback(base::BindOnce([](WindowDelegate* self) {
-        self->window_->on_close.Emit(self->window_.get());
-    }, base::Unretained(this)));
-  }
+  explicit WindowDelegate(Window* window) : window_(window) {}
 
   ~WindowDelegate() override = default;
 
@@ -36,12 +33,24 @@ class WindowDelegate : public views::WidgetDelegate {
     return window_->GetTitle();
   }
 
+  void WindowClosing() override {
+    // Destroying the widget will crash now, so delay the on_close event
+    // until next tick.
+    base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(
+        FROM_HERE,
+        base::BindOnce([](base::WeakPtr<WindowDelegate> self) {
+          if (self)
+            self->window_->on_close.Emit(self->window_.get());
+        }, weak_factory_.GetWeakPtr()));
+  }
+
   views::View* GetContentsView() override {
     return window_->root_view_.get();
   }
 
  private:
   raw_ptr<Window> window_;
+  base::WeakPtrFactory<WindowDelegate> weak_factory_{this};
 };
 
 Window::Window(const Options& options)

@@ -6,11 +6,15 @@
 
 #include "chrohime/api/view.h"
 #include "chrohime/api/window.h"
+#include "ui/views/background.h"
 
 namespace hime {
 
 RootView::RootView(Window* window) : window_(window) {
   set_owned_by_client();
+#if !BUILDFLAG(IS_MAC)
+  SetBackground(views::CreateSolidBackground(SK_ColorWHITE));
+#endif
 }
 
 RootView::~RootView() = default;
