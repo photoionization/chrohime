@@ -11,15 +11,17 @@ def main():
   parser = argparse.ArgumentParser(description='Generate GN configs')
   args, unknown_args = parser.parse_known_args()
 
-  # On Linux allocator shim is not working fine for shared libaries, the
-  # dynamic libraries somehow prefers libc's allocator instead of Chromium's
-  # one and results in crashes.
-  # We probably want to fix it eventually, but for now let's just disable
-  # the allocator shim for all.
   gn_args = [
+    # On Linux allocator shim is not working fine for shared libaries, the
+    # dynamic libraries somehow prefers libc's allocator instead of Chromium's
+    # one and results in crashes.
+    # We probably want to fix it eventually, but for now let's just disable
+    # the allocator shim for all.
     'use_allocator_shim=false',
     'use_partition_alloc_as_malloc=false',
     'enable_backup_ref_ptr_support=false',
+    # The C APIs allow passing function pointers.
+    'is_cfi=false',
   ]
 
   gn_gen_args = [ os.path.join(ROOT_DIR, 'build_chromium/gn_gen.py') ]
