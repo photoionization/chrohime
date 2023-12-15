@@ -22,6 +22,9 @@ class Size;
 
 namespace hime {
 
+class Background;
+class Border;
+
 class CHROHIME_EXPORT View : public Object,
                              public views::ViewObserver {
  public:
@@ -31,6 +34,8 @@ class CHROHIME_EXPORT View : public Object,
 
   void SetVisible(bool visible);
   bool IsVisible() const;
+  void SetEnabled(bool enabled);
+  bool IsEnabled() const;
   gfx::Rect GetBounds() const;
   void SetPreferredSize(absl::optional<gfx::Size> size);
   gfx::Size GetPreferredSize() const;
@@ -38,11 +43,17 @@ class CHROHIME_EXPORT View : public Object,
   void SetNumberStyle(std::u16string_view name, float value);
   void Layout();
 
+  void SetBackground(scoped_refptr<Background> background);
+  void SetBorder(scoped_refptr<Border> border);
+
   void AddChildView(scoped_refptr<View> view);
   void AddChildViewAt(scoped_refptr<View> view, size_t index);
   void RemoveChildView(View* view);
   size_t ChildCount() const;
   View* ChildAt(size_t index) const;
+
+  void SetAccessibleName(const std::u16string& name);
+  const std::u16string& GetAccessibleName() const;
 
   // Internal: Return whether this is the root node when calculating layout.
   bool IsRootYogaNode() const;

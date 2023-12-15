@@ -1,0 +1,25 @@
+name: Border
+type: refcounted
+inherit: Object
+description: Border of `View`.
+
+constructors:
+  - name: CreateSolid
+    description: |
+      Create a border that is a simple line of the specified `color` and `thickness`.
+    args:
+      - name: color
+        type: SkColor
+      - name: thickness
+        type: int
+
+  - name: CreateRoundedRect
+    description: |
+      Create a border that is a rounded rectangle of the specified `color` and `thickness`.
+    args:
+      - name: color
+        type: SkColor
+      - name: thickness
+        type: int
+      - name: radius
+        type: float

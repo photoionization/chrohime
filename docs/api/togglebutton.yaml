@@ -1,0 +1,32 @@
+name: ToggleButton
+type: refcounted
+inherit: Button
+description: |
+  A button that has on/off states.
+
+  This is similar to a checkbox but has no text and looks more like a two-state
+  horizontal slider.
+
+  Since ToggleButton does not have any text displayed, an accessible name must
+  be assigned via `SetAccessibleName` method of `View`.
+
+constructors:
+  - name: Create
+    description: Create an ToggleButton.
+
+methods:
+  - name: SetOnOff
+    description: Change the button state.
+    args:
+      - name: isOn
+        type: bool
+
+  - name: SetOnOffAnimated
+    description: Change the button state with animation.
+    args:
+      - name: isOn
+        type: bool
+
+  - name: IsOn
+    description: Return the button state.
+    returnType: bool

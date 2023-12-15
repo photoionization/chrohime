@@ -291,6 +291,8 @@ def get_c_type_name(data):
     type_name = data
   if type_name in [ 'std::u16string', 'std::u16string_view' ]:
     return 'const char16_t*'
+  elif type_name.startswith('Sk'):
+    return f'{get_c_name(type_name)}_t'
   elif type_name[0].isupper():
     return f'chrohime_{get_c_name(type_name)}_t'
   elif type_name.startswith('gfx::'):
@@ -363,10 +365,15 @@ def main():
     with open(os.path.join(args.output_dir, 'chrohime.h'), 'w') as file:
       file.write('#ifndef CHROHIME_H_\n'
                  '#define CHROHIME_H_\n\n')
+      # Merge the headers into one file.
       inc_file = os.path.join(__file__, '..', 'chrohime_c_impl.inc')
       with open(os.path.abspath(inc_file), 'r') as inc:
         file.write(inc.read())
+      skia_header = os.path.join(__file__, '..', 'skia.h')
+      with open(os.path.abspath(skia_header), 'r') as sf:
+        file.write(sf.read())
       file.write('\n')
+      # Start writing the API declarations.
       write_c_header_file(file, data['apis'], public_header=True)
       file.write('\n#endif  // CHROHIME_H_\n')
   else:

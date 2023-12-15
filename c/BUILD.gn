@@ -5,6 +5,7 @@ shared_library("chrohime_shared_c_lib") {
     "chrohime.h",
     "chrohime_c_impl.cc",
     "chrohime_c_impl.inc",
+    "skia.h",
   ]
   data = [
     "$target_gen_dir/generated_impls.cc",

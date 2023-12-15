@@ -7,6 +7,7 @@
 
 #include "chrohime/c/chrohime_c_impl.inc"
 
+#include "chrohime/c/skia.h"
 #if defined(CHROHIME_C_IMPLEMENTATION)
 #include "chrohime/api/chrohime.h"
 #endif

@@ -6,7 +6,39 @@
 
 #include <stdio.h>
 
-chrohime_view_t CreateTableViewExample() {
+chrohime_view_t CreateSection() {
+  chrohime_view_t view = chrohime_view_create();
+  chrohime_background_t background = chrohime_background_create_solid(
+      sk_color_create_rgb(209, 210, 211));
+  chrohime_view_set_background(view, background);
+  chrohime_view_set_number_style(view, u"padding", 5);
+  chrohime_object_unref((chrohime_object_t)background);
+  return view;
+}
+
+void CreateToggleButtonExample(chrohime_view_t view) {
+  chrohime_view_set_style(view, u"flex-direction", u"row");
+  chrohime_view_set_style(view, u"justify-content", u"center");
+
+  chrohime_toggle_button_t button1 = chrohime_toggle_button_create();
+  chrohime_view_set_accessible_name((chrohime_view_t)button1, u"button1");
+  chrohime_view_add_child_view(view, (chrohime_view_t)button1);
+  chrohime_object_unref((chrohime_object_t)button1);
+
+  chrohime_toggle_button_t button2 = chrohime_toggle_button_create();
+  chrohime_toggle_button_set_on_off(button2, true);
+  chrohime_view_set_accessible_name((chrohime_view_t)button2, u"button2");
+  chrohime_view_add_child_view(view, (chrohime_view_t)button2);
+  chrohime_object_unref((chrohime_object_t)button2);
+
+  chrohime_toggle_button_t button3 = chrohime_toggle_button_create();
+  chrohime_view_set_enabled((chrohime_view_t)button3, false);
+  chrohime_view_set_accessible_name((chrohime_view_t)button3, u"button3");
+  chrohime_view_add_child_view(view, (chrohime_view_t)button3);
+  chrohime_object_unref((chrohime_object_t)button3);
+}
+
+void CreateTableViewExample(chrohime_view_t view) {
   chrohime_simple_table_model_t model = chrohime_simple_table_model_create();
   const char16_t* rows[5][4] = {
       { u"Orange", u"Orange", u"South America", u"$5" },
@@ -37,7 +69,11 @@ chrohime_view_t CreateTableViewExample() {
   chrohime_scroll_view_t scroll_view =
       chrohime_scroll_view_create_with_table(table);
   chrohime_object_unref((chrohime_object_t)table);
-  return (chrohime_view_t)scroll_view;
+
+  chrohime_view_set_number_style(view, u"flex", 1);
+  chrohime_view_set_number_style((chrohime_view_t)scroll_view, u"flex", 1);
+  chrohime_view_add_child_view(view, (chrohime_view_t)scroll_view);
+  chrohime_object_unref((chrohime_object_t)scroll_view);
 }
 
 void OnReady(void* data) {
@@ -50,10 +86,15 @@ void OnReady(void* data) {
       window, (chrohime_window_on_close_callback)chrohime_object_unref, NULL);
   chrohime_view_t content_view = chrohime_window_get_content_view(window);
 
-  chrohime_view_t table = CreateTableViewExample();
-  chrohime_view_set_number_style(table, u"flex", 1);
-  chrohime_view_add_child_view(content_view, table);
-  chrohime_object_unref((chrohime_object_t)table);
+  chrohime_view_t toggle_button_example = CreateSection();
+  CreateToggleButtonExample(toggle_button_example);
+  chrohime_view_add_child_view(content_view, toggle_button_example);
+  chrohime_object_unref((chrohime_object_t)toggle_button_example);
+
+  chrohime_view_t table_example = CreateSection();
+  CreateTableViewExample(table_example);
+  chrohime_view_add_child_view(content_view, table_example);
+  chrohime_object_unref((chrohime_object_t)table_example);
 
   chrohime_window_activate(window);
 }

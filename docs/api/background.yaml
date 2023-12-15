@@ -1,0 +1,27 @@
+name: Background
+type: refcounted
+inherit: Object
+description: Background of `View`.
+
+constructors:
+  - name: CreateSolid
+    description: |
+      Create a background that fills the canvas in the specified color.
+    args:
+      - name: color
+        type: SkColor
+
+  - name: CreateRoundedRect
+    description: |
+      Create a background that fills the canvas with rounded corners.
+
+      If using a rounded rect border as well, pass its radius as `radius` and
+      its thickness as `border`. This will inset the background properly so it
+      doesn't bleed through the border.
+    args:
+      - name: color
+        type: SkColor
+      - name: border
+        type: int
+      - name: radius
+        type: float

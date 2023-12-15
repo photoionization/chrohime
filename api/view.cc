@@ -5,15 +5,34 @@
 #include "chrohime/api/view.h"
 
 #include "base/ranges/algorithm.h"
+#include "chrohime/api/background.h"
+#include "chrohime/api/border.h"
 #include "chrohime/api/yoga_layout_manager.h"
 #include "chrohime/api/yoga_util.h"
 #include "chrohime/api/state.h"
 #include "ui/display/screen.h"
+#include "ui/views/background.h"
+#include "ui/views/border.h"
 #include "ui/views/view.h"
 #include "ui/views/widget/widget.h"
 #include "yoga/Yoga.h"
 
 namespace hime {
+
+namespace {
+
+// Convert case to lower and remove non-ASCII characters.
+std::u16string StripStyleName(std::u16string_view name) {
+  std::u16string parsed;
+  parsed.reserve(name.size());
+  for (char c : name) {
+    if (base::IsAsciiAlpha(c))
+      parsed.push_back(base::ToLowerASCII(c));
+  }
+  return parsed;
+}
+
+}  // namespace
 
 // static
 View* View::FromViews(views::View* view) {
@@ -54,6 +73,16 @@ bool View::IsVisible() const {
   return view_->GetVisible();
 }
 
+void View::SetEnabled(bool enabled) {
+  HIME_RETURN_ON_DESTROYED_VIEW(this);
+  view_->SetEnabled(enabled);
+}
+
+bool View::IsEnabled() const {
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, false);
+  return view_->GetEnabled();
+}
+
 gfx::Rect View::GetBounds() const {
   HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, gfx::Rect());
   return view_->bounds();
@@ -71,11 +100,11 @@ gfx::Size View::GetPreferredSize() const {
 }
 
 void View::SetStyle(std::u16string_view name, std::u16string_view value) {
-  SetYogaProperty(yoga_node_, name, value);
+  SetYogaProperty(yoga_node_, StripStyleName(name), value);
 }
 
 void View::SetNumberStyle(std::u16string_view name, float value) {
-  SetYogaProperty(yoga_node_, name, value);
+  SetYogaProperty(yoga_node_, StripStyleName(name), value);
 }
 
 void View::Layout() {
@@ -89,6 +118,16 @@ void View::Layout() {
   while (!root->IsRootYogaNode() && root->parent_)
     root = root->parent_;
   root->view_->Layout();
+}
+
+void View::SetBackground(scoped_refptr<Background> background) {
+  HIME_RETURN_ON_DESTROYED_VIEW(this);
+  view_->SetBackground(background->TransferOwnership());
+}
+
+void View::SetBorder(scoped_refptr<Border> border) {
+  HIME_RETURN_ON_DESTROYED_VIEW(this);
+  view_->SetBorder(border->TransferOwnership());
 }
 
 void View::AddChildView(scoped_refptr<View> view) {
@@ -124,6 +163,16 @@ View* View::ChildAt(size_t index) const {
     return children_[index].get();
   else
     return nullptr;
+}
+
+void View::SetAccessibleName(const std::u16string& name) {
+  HIME_RETURN_ON_DESTROYED_VIEW(this);
+  view_->SetAccessibleName(name);
+}
+
+const std::u16string& View::GetAccessibleName() const {
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, base::EmptyString16());
+  return view_->GetAccessibleName();
 }
 
 bool View::IsRootYogaNode() const {

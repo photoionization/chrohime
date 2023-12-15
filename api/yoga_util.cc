@@ -133,20 +133,16 @@ float PixelValue(std::u16string_view value) {
   if (base::EndsWith(value, u"px", base::CompareCase::SENSITIVE))
     value = value.substr(0, value.length() - 2);
   double out;
-  if (!base::StringToDouble(value, &out)) {
-    LOG(WARNING) << "Invalid pixel value: " << value;
+  if (!base::StringToDouble(value, &out))
     return 0;
-  }
   return out;
 }
 
 // Convert the value to percent value.
 int PercentValue(std::u16string_view value) {
   int integer;
-  if (!base::StringToInt(value.substr(0, value.length() - 1), &integer)) {
-    LOG(WARNING) << "Invalid percent value: " << value;
+  if (!base::StringToInt(value.substr(0, value.length() - 1), &integer))
     return 0;
-  }
   return integer;
 }
 
@@ -312,12 +308,6 @@ bool SetFloatStyle(YGNodeRef node, std::u16string_view name, float value) {
   return true;
 }
 
-bool SetFloatStyle(YGNodeRef node,
-                   std::u16string_view name,
-                   std::u16string_view value) {
-  return SetFloatStyle(node, name, PixelValue(value));
-}
-
 // Set "auto" property for styles.
 bool SetAutoStyle(YGNodeRef node, std::u16string_view name) {
   auto* tup = Find(auto_setters, name);
@@ -403,7 +393,6 @@ void SetYogaProperty(YGNodeRef node,
   } else {
     SetIntStyle(node, name, value) ||
     SetUnitStyle(node, name, value) ||
-    SetFloatStyle(node, name, value) ||
     SetEdgeStyle(node, name, value);
   }
 }

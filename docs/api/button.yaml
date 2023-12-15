@@ -1,0 +1,4 @@
+name: Button
+type: refcounted
+inherit: View
+description: Base class for button types.

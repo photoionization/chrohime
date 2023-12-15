@@ -18,6 +18,16 @@ methods:
     description: Return whether the view is visible.
     returnType: bool
 
+  - name: SetEnabled
+    description: Set whether the view is enabled.
+    args:
+      - name: enabled
+        type: bool
+
+  - name: IsEnabled
+    description: Return whether the view is enabled.
+    returnType: bool
+
   - name: GetBounds
     description: Return the bounds of the view in its parent's coordinates.
     returnType: gfx::Rect
@@ -57,6 +67,27 @@ methods:
   - name: Layout
     description: Re-calculate the layout in view hierarchy.
 
+  - name: SetBackground
+    description: Set the `background` of the view.
+    args:
+      - name: background
+        type: Background
+
+  - name: SetBorder
+    description: |
+      Set the `border` of the view.
+
+      Note that it is also possible to set border via the `SetStyle` API, but
+      it only serves as layout property rather than actually drawin a border,
+      while the `SetBorder` API actually draws the border.
+
+      The two types of borders do not know each other and setting both might
+      cause weird visual effects, this will change in future and please be
+      prepared for it.
+    args:
+      - name: border
+        type: Border
+
   - name: AddChildView
     description: Append a child `view` to this view.
     args:
@@ -87,3 +118,21 @@ methods:
       - name: index
         type: size_t
     returnType: View
+
+  - name: SetAccessibleName
+    description: |
+      Set the accessible name.
+
+      The value of the accessible name is a localized, end-user-consumable
+      string which may be derived from visible information (e.g. the text on a
+      button) or invisible information (e.g. the alternative text describing an
+      icon). In the case of focusable objects, the name will be presented by
+      the screen reader when that object gains focus and is critical to
+      understanding the purpose of that object non-visually.
+    args:
+      - name: name
+        type: std::u16string
+
+  - name: GetAccessibleName
+    description: Get the accessible name.
+    returnType: const std::u16string&

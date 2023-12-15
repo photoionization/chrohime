@@ -2,6 +2,12 @@ import("//tools/grit/grit_rule.gni")
 
 component("chrohime") {
   sources = [
+    "api/background.cc",
+    "api/background.h",
+    "api/border.cc",
+    "api/border.h",
+    "api/button.cc",
+    "api/button.h",
     "api/label.cc",
     "api/label.h",
     "api/object.cc",
@@ -19,6 +25,8 @@ component("chrohime") {
     "api/table_model.h",
     "api/table_view.cc",
     "api/table_view.h",
+    "api/toggle_button.cc",
+    "api/toggle_button.h",
     "api/view.cc",
     "api/view.h",
     "api/window.cc",
