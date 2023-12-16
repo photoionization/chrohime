@@ -26,4 +26,24 @@ const std::u16string& Label::GetText() const {
   return label_->GetText();
 }
 
+void Label::SetMultiLine(bool multi_line) {
+  HIME_RETURN_ON_DESTROYED_VIEW(this);
+  label_->SetMultiLine(multi_line);
+}
+
+bool Label::IsMultiLine() const {
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, false);
+  return label_->GetMultiLine();
+}
+
+bool Label::SetSelectable(bool selectable) {
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, false);
+  return label_->SetSelectable(selectable);
+}
+
+bool Label::IsSelectable() const {
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, false);
+  return label_->GetSelectable();
+}
+
 }  // namespace hime

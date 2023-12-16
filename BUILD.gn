@@ -10,6 +10,7 @@ component("chrohime") {
     "api/button.h",
     "api/checkbox.cc",
     "api/checkbox.h",
+    "api/color_id.h",
     "api/label.cc",
     "api/label.h",
     "api/label_button.cc",

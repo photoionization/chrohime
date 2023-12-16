@@ -17,3 +17,35 @@ methods:
   - name: GetText
     description: Return the text displayed.
     returnType: const std::u16string&
+
+  - name: SetMultiLine
+    description: Set if the label text can wrap on multiple lines.
+    args:
+      - name: multiLine
+        type: bool
+
+  - name: IsMultiLine
+    description: |
+      Get if the label text can wrap on multiple lines.
+
+      Default is false.
+    returnType: bool
+
+  - name: SetSelectable
+    description: |
+      Set whether the label is selectable.
+
+      It will return false on failure. i.e. when selection is not supported but
+      `selectable` is true. For example, obscured labels do not support text
+      selection.
+    args:
+      - name: selectable
+        type: bool
+    returnType: bool
+
+  - name: IsSelectable
+    description: |
+      Return if the label is selectable.
+
+      Default is false.
+    returnType: bool

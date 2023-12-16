@@ -13,12 +13,34 @@ constructors:
       - name: thickness
         type: int
 
+  - name: CreateThemedSolid
+    description: |
+      Same with CreateSolid except it uses the color specified by the views's
+      ColorProvider and the given color identifier.
+    args:
+      - name: colorId
+        type: ColorId
+      - name: thickness
+        type: int
+
   - name: CreateRoundedRect
     description: |
       Create a border that is a rounded rectangle of the specified `color` and `thickness`.
     args:
       - name: color
         type: SkColor
+      - name: thickness
+        type: int
+      - name: radius
+        type: float
+
+  - name: CreateThemedRoundedRect
+    description: |
+      Same with CreateThemedRoundedRect except it uses the color specified by
+      the views's ColorProvider and the given color identifier.
+    args:
+      - name: colorId
+        type: ColorId
       - name: thickness
         type: int
       - name: radius

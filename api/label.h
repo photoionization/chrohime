@@ -19,6 +19,10 @@ class CHROHIME_EXPORT Label : public View {
 
   void SetText(const std::u16string& text);
   const std::u16string& GetText() const;
+  void SetMultiLine(bool multi_line);
+  bool IsMultiLine() const;
+  bool SetSelectable(bool selectable);
+  bool IsSelectable() const;
 
  protected:
   ~Label() override;

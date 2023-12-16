@@ -21,9 +21,22 @@ void OnButtonClick(chrohime_button_t button, void* data) {
   fprintf(stderr, "OnButtonClick\n");
 }
 
+void CreateLabelExample(chrohime_view_t view) {
+  chrohime_label_t label = chrohime_label_create();
+  chrohime_label_set_multi_line(label, true);
+  chrohime_label_set_selectable(label, true);
+  chrohime_label_set_text(label, u"This is a multi-line label...\n"
+                                 u"...which supports text selection.");
+
+  chrohime_view_add_child_view(view, (chrohime_view_t)label);
+  chrohime_object_unref((chrohime_object_t)label);
+}
+
 void CreateMaterialButtonExample(chrohime_view_t view) {
-  chrohime_background_t background = chrohime_background_create_rounded_rect(
-      sk_color_create_rgb(255, 255, 255), 1, 4);
+  // Use the preferred background color of views to make buttons look better.
+  chrohime_background_t background =
+      chrohime_background_create_themed_rounded_rect(
+          kChrohimeColorIdDialogBackground, 1, 4);
   chrohime_view_set_background(view, background);
   chrohime_object_unref((chrohime_object_t)background);
 
@@ -55,14 +68,14 @@ void CreateMaterialButtonExample(chrohime_view_t view) {
 
   chrohime_material_button_t button4 = chrohime_material_button_create();
   chrohime_material_button_set_style(button4,
-                                     CHROHIME_MATERIAL_BUTTON_STYLE_TONAL);
+                                     kChrohimeMaterialButtonStyleTonal);
   chrohime_label_button_set_title((chrohime_label_button_t)button4, u"Tonal");
   chrohime_view_add_child_view(view, (chrohime_view_t)button4);
   chrohime_object_unref((chrohime_object_t)button4);
 
   chrohime_material_button_t button5 = chrohime_material_button_create();
   chrohime_material_button_set_style(button5,
-                                     CHROHIME_MATERIAL_BUTTON_STYLE_TEXT);
+                                     kChrohimeMaterialButtonStyleText);
   chrohime_label_button_set_title((chrohime_label_button_t)button5, u"Text");
   chrohime_view_add_child_view(view, (chrohime_view_t)button5);
   chrohime_object_unref((chrohime_object_t)button5);
@@ -187,6 +200,7 @@ void OnReady(void* data) {
 
   typedef void (*CreateExample)(chrohime_view_t view);
   CreateExample examples[] = {
+      CreateLabelExample,
       CreateMaterialButtonExample,
       CreateCheckboxExample,
       CreateRadioButtonExample,

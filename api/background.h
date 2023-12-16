@@ -5,6 +5,7 @@
 #ifndef CHROHIME_API_BACKGROUND_H_
 #define CHROHIME_API_BACKGROUND_H_
 
+#include "chrohime/api/color_id.h"
 #include "chrohime/api/object.h"
 #include "third_party/skia/include/core/SkColor.h"
 
@@ -17,7 +18,9 @@ namespace hime {
 class CHROHIME_EXPORT Background : public Object {
  public:
   explicit Background(SkColor color);
+  explicit Background(ColorId color_id);
   Background(SkColor color, int border, float radius);
+  Background(ColorId color_id, int border, float radius);
 
   // Internal: Give the ownership of underlying views::Background to caller.
   std::unique_ptr<views::Background> TransferOwnership();

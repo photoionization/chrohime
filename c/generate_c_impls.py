@@ -27,8 +27,8 @@ def write_c_header_file(file, apis, public_header=False):
     file.write('#endif\n')
   file.write('\n')
   for api in apis:
-    if api['type'] == 'enum class':
-      file.write(get_enum_class_declaration(api, public_header=public_header))
+    if api['type'] in [ 'enum', 'enum class' ]:
+      file.write(get_enum_declaration(api, public_header=public_header))
   file.write('#if defined(__cplusplus)\n'
              'extern "C" {\n'
              '#endif\n\n')
@@ -93,11 +93,16 @@ def write_converters(file, api):
                    [ f'const {api_cpp_type}& cpp' ],
                    f'{api_type_name} c;\n' + ''.join(set_properties) + \
                    f'return c;')
-  elif api['type'] == 'enum class':
+  elif api['type'] in [ 'enum', 'enum class' ]:
+    def get_cpp_enum(api, enum):
+      cpp_enum = 'k' + enum['name']
+      if api['type'] == 'enum class':
+        cpp_enum = api['name'] + '::' + cpp_enum
+      return cpp_enum
     # Write a converter from c to cpp.
     return_enum_classes = [
         f'  case {get_enum_name(api, enum)}:\n'
-        f'    return {api["name"]}::k{enum["name"]};\n' for enum in api['enums'] ]
+        f'    return {get_cpp_enum(api, enum)};\n' for enum in api['enums'] ]
     write_function(file, api, True,
                    f'inline {api_cpp_type} ToHime',
                    [ f'{api_type_name} c' ],
@@ -105,7 +110,7 @@ def write_converters(file, api):
                    f'}}\n')
     # Write a converter from cpp to c.
     return_enums = [
-        f'  case {api["name"]}::k{enum["name"]}:\n'
+        f'  case {get_cpp_enum(api, enum)}:\n'
         f'    return {get_enum_name(api, enum)};\n' for enum in api['enums'] ]
     write_function(file, api, True,
                    f'inline {api_type_name} FromHime',
@@ -242,9 +247,10 @@ def get_comment(data):
   return prefix_each_line(data['description'], '// ') + '\n'
 
 def get_enum_name(api, enum):
-  return f'CHROHIME_{get_c_name(api).upper()}_{enum["name"].upper()}'
+  stripped_name = api['name'].replace('::', '')
+  return f'kChrohime{stripped_name}{enum["name"]}'
 
-def get_enum_class_declaration(api, public_header=False):
+def get_enum_declaration(api, public_header=False):
   result = 'typedef enum {\n'
   for enum in api['enums']:
     if public_header:
@@ -330,6 +336,8 @@ def get_c_type_name(data):
     type_name = data
   if type_name in [ 'std::u16string', 'std::u16string_view' ]:
     return 'const char16_t*'
+  elif type_name.startswith('Sk'):
+    return f'{get_c_name(type_name)}_t'
   elif type_name.startswith('Sk'):
     return f'{get_c_name(type_name)}_t'
   elif type_name[0].isupper():

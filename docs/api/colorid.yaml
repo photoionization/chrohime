@@ -1,0 +1,11 @@
+name: ColorId
+type: enum
+description: |
+  ColorId contains identifiers for all input, intermediary, and output colors
+  known to the core UI layer.
+
+enums:
+  - name: DialogBackground
+  - name: DialogForeground
+  - name: TextfieldBackground
+  - name: TextfieldForeground

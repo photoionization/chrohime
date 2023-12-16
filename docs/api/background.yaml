@@ -11,6 +11,14 @@ constructors:
       - name: color
         type: SkColor
 
+  - name: CreateThemedSolid
+    description: |
+      Same with CreateSolid except it uses the color specified by the views's
+      ColorProvider and the given color identifier.
+    args:
+      - name: colorId
+        type: ColorId
+
   - name: CreateRoundedRect
     description: |
       Create a background that fills the canvas with rounded corners.
@@ -21,6 +29,18 @@ constructors:
     args:
       - name: color
         type: SkColor
+      - name: border
+        type: int
+      - name: radius
+        type: float
+
+  - name: CreateThemedRoundedRect
+    description: |
+      Same with CreateThemedSolid except it uses the color specified by the
+      views's ColorProvider and the given color identifier.
+    args:
+      - name: colorId
+        type: ColorId
       - name: border
         type: int
       - name: radius

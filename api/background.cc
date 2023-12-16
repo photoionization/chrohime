@@ -11,8 +11,15 @@ namespace hime {
 Background::Background(SkColor color)
     : Background(views::CreateSolidBackground(color)) {}
 
+Background::Background(ColorId color_id)
+    : Background(views::CreateThemedSolidBackground(color_id)) {}
+
 Background::Background(SkColor color, int border, float radius)
     : Background(views::CreateRoundedRectBackground(color, radius, border)) {}
+
+Background::Background(ColorId color_id, int border, float radius)
+    : Background(views::CreateThemedRoundedRectBackground(
+          color_id, radius, border)) {}
 
 Background::Background(std::unique_ptr<views::Background> to_take)
     : background_(std::move(to_take)) {}
