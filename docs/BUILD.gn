@@ -3,8 +3,6 @@ action("apis_json") {
     # Basic structures, must come first as they have no forward declarations.
     "api/rect.yaml",
     "api/size.yaml",
-    "api/tableview_column.yaml",
-    "api/window_options.yaml",
     # Foundamental APIs.
     "api/lifetime.yaml",
     "api/state.yaml",
@@ -12,14 +10,21 @@ action("apis_json") {
     "api/background.yaml",
     "api/border.yaml",
     "api/button.yaml",
+    "api/checkbox.yaml",
     "api/label.yaml",
+    "api/labelbutton.yaml",
+    "api/materialbutton_style.yaml",
+    "api/materialbutton.yaml",
     "api/object.yaml",
+    "api/radiobutton.yaml",
     "api/scrollview.yaml",
     "api/simpletablemodel.yaml",
     "api/tablemodel.yaml",
+    "api/tableview_column.yaml",
     "api/tableview.yaml",
     "api/togglebutton.yaml",
     "api/view.yaml",
+    "api/window_options.yaml",
     "api/window.yaml",
   ]
   outputs = [

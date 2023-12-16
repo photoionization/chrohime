@@ -1,0 +1,35 @@
+name: LabelButton
+type: refcounted
+inherit: Button
+description: |
+  A button with text and icon.
+
+  The LabelButton does not have any visual style applied and is mostly served
+  as the abstract base class of other buttons. For general buttons you should
+  usually use the `MaterialButton` instead.
+
+constructors:
+  - name: Create
+    description: Create a LabelButton.
+
+methods:
+  - name: SetTitle
+    description: Set the text shown on the button.
+    args:
+      - name: title
+        type: std::u16string
+
+  - name: GetTitle
+    description: Get the text shown on the button.
+    returnType: const std::u16string&
+
+  - name: MakeDefault
+    description: |
+      Make this button the default button, which handles the return key.
+    args:
+      - name: isDefault
+        type: bool
+
+  - name: IsDefault
+    description: Return whether this button is the default button.
+    returnType: bool

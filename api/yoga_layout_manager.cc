@@ -4,6 +4,8 @@
 
 #include "chrohime/api/yoga_layout_manager.h"
 
+#include <limits>
+
 #include "chrohime/api/view.h"
 #include "ui/views/view.h"
 #include "yoga/Yoga.h"
@@ -36,7 +38,14 @@ void YogaLayoutManager::Layout(views::View* view) {
 }
 
 gfx::Size YogaLayoutManager::GetPreferredSize(const views::View*) const {
-  return gfx::Size();
+  // This method is called by views that does not implement the
+  // CalculatePreferredSize method, in chrohime the only case is the container
+  // type of views.
+  DCHECK_EQ(host_->layout_type(), View::LayoutType::kContainer);
+  float nan = std::numeric_limits<float>::quiet_NaN();
+  YGNodeCalculateLayout(host_->yoga_node(), nan, nan, YGDirectionLTR);
+  return gfx::Size(YGNodeLayoutGetWidth(host_->yoga_node()),
+                   YGNodeLayoutGetHeight(host_->yoga_node()));
 }
 
 }  // namespace hime

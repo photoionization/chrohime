@@ -1,0 +1,16 @@
+name: MaterialButton::Style
+type: enum class
+description: Material button styles.
+
+enums:
+  - name: Text
+    description: White background with blue text but no outline.
+
+  - name: Default
+    description: White background with blue text and a solid outline.
+
+  - name: Tonal
+    description: Cyan background with black text.
+
+  - name: Prominent
+    description: Blue background with white text.

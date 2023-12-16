@@ -1,0 +1,13 @@
+name: RadioButton
+type: refcounted
+inherit: Checkbox
+description: A native themed class representing a radio button.
+
+constructors:
+  - name: CreateWithTitleAndGroup
+    description: Create a radio button with `title` and `group` id.
+    args:
+      - name: title
+        type: std::u16string
+      - name: group
+        type: int

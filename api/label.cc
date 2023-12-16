@@ -10,7 +10,9 @@ namespace hime {
 
 Label::Label()
     : View(std::make_unique<views::Label>(), LayoutType::kContainer),
-      label_(static_cast<views::Label*>(view())) {}
+      label_(static_cast<views::Label*>(view())) {
+  UsePreferredSizeForYogaMeasurement();
+}
 
 Label::~Label() = default;
 

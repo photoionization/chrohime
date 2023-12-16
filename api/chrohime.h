@@ -9,6 +9,8 @@
 #include "chrohime/api/border.h"
 #include "chrohime/api/label.h"
 #include "chrohime/api/lifetime.h"
+#include "chrohime/api/material_button.h"
+#include "chrohime/api/radio_button.h"
 #include "chrohime/api/scroll_view.h"
 #include "chrohime/api/simple_table_model.h"
 #include "chrohime/api/state.h"

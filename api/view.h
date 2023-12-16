@@ -54,6 +54,8 @@ class CHROHIME_EXPORT View : public Object,
 
   void SetAccessibleName(const std::u16string& name);
   const std::u16string& GetAccessibleName() const;
+  void SetGroup(int group_id);
+  int GetGroup() const;
 
   // Internal: Return whether this is the root node when calculating layout.
   bool IsRootYogaNode() const;
@@ -74,7 +76,11 @@ class CHROHIME_EXPORT View : public Object,
   View(std::unique_ptr<views::View> to_take, LayoutType layout_type);
   ~View() override;
 
+  // Called by sub-classes which have variable preferred sizes.
+  void UsePreferredSizeForYogaMeasurement();
+
   // views::ViewObserver:
+  void OnViewPreferredSizeChanged(views::View* observed_view) override;
   void OnViewIsDeleting(views::View* observed_view) override;
   void OnViewVisibilityChanged(views::View* observed_view,
                                views::View* starting_view) override;
@@ -84,6 +90,7 @@ class CHROHIME_EXPORT View : public Object,
   LayoutType layout_type_;
   YGConfigRef yoga_config_;
   YGNodeRef yoga_node_;
+  bool mark_dirty_on_preferred_size_change_ = false;
 
   // Relationships with other views.
   raw_ptr<View> parent_ = nullptr;

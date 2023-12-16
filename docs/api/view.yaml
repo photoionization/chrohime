@@ -136,3 +136,17 @@ methods:
   - name: GetAccessibleName
     description: Get the accessible name.
     returnType: const std::u16string&
+
+  - name: SetGroup
+    description: |
+      Set the `group` id of this view.
+
+      Some view subclasses use this id to find other views of the same group.
+      For example radio button uses this information to find other radio
+      buttons.
+    args:
+      - name: group
+        type: int
+
+  - name: GetGroup
+    description: Get the group id of this view.

@@ -14,20 +14,21 @@ def write_c_header_file(file, apis, public_header=False):
         file.write(f'using hime::{api["name"]};\n')
     # Write the typedefs for actual C++ implementations.
     for api in apis:
-      if api['type'] in [ 'struct', 'geometry' ]:
-        continue
-      file.write(f'typedef {api["name"]}* {get_c_type_name(api)};\n')
+      if api['type'] in [ 'refcounted', 'class' ]:
+        file.write(f'typedef {api["name"]}* {get_c_type_name(api)};\n')
     file.write('#else\n')
   # Write fake typedefs for library users.
   file.write('// Declarations for opaque pointers.\n')
   for api in apis:
-    if api['type'] in [ 'struct', 'geometry' ]:
-      continue
-    api_name = get_c_name(api)
-    file.write(f'typedef struct hime_{api_name}_tag* {get_c_type_name(api)};\n')
+    if api['type'] in [ 'refcounted', 'class' ]:
+      api_name = get_c_name(api)
+      file.write(f'typedef struct hime_{api_name}_tag* {get_c_type_name(api)};\n')
   if not public_header:
     file.write('#endif\n')
   file.write('\n')
+  for api in apis:
+    if api['type'] == 'enum class':
+      file.write(get_enum_class_declaration(api, public_header=public_header))
   file.write('#if defined(__cplusplus)\n'
              'extern "C" {\n'
              '#endif\n\n')
@@ -42,42 +43,8 @@ def write_c_impl_file(file, apis):
   # Write converters between structures.
   file.write('namespace {\n\n')
   for api in apis:
-    if not api['type'] in [ 'struct', 'geometry' ]:
-      continue
-    api_type_name = get_c_type_name(api)
-    api_cpp_type = api['name']
-    if api['type'] == 'struct':
-      set_properties = [ 'cpp.{0} = c->{0};\n'.format(get_c_name(prop)) for prop in api['properties'] ]
-      write_function(file, api, True,
-                     f'{api_cpp_type} ToHime',
-                     [ f'{api_type_name}* c' ],
-                     f'if (c->struct_size != sizeof({api_type_name})) {{\n'
-                     f'  assert(false);\n'
-                     f'}}\n'
-                     f'{api_cpp_type} cpp;\n' + ''.join(set_properties) + \
-                     f'return cpp;')
-    elif api['type'] == 'geometry':
-      # Write a converter from c to cpp.
-      args = [ f'c.{get_c_name(prop)}' for prop in api['properties'] ]
-      write_function(file, api, True,
-                     f'inline {api_cpp_type} ToHime',
-                     [ f'{api_type_name} c' ],
-                     f'return {api_cpp_type}({params_join(args)});')
-      # Write a converter from c to absl::optional.
-      write_function(file, api, True,
-                     f'inline absl::optional<{api_cpp_type}> ToHime',
-                     [ f'{api_type_name}* ptr' ],
-                     f'if (!ptr)\n'
-                     f'  return absl::optional<{api_cpp_type}>();\n'
-                     f'return ToHime(*ptr);')
-      # Write a converter from c to absl::optional.
-      # Write a converter from cpp to c.
-      set_properties = [ 'c.{0} = cpp.{0}();\n'.format(get_c_name(prop)) for prop in api['properties'] ]
-      write_function(file, api, True,
-                     f'inline {api_type_name} FromHime',
-                     [ f'const {api_cpp_type}& cpp' ],
-                     f'{api_type_name} c;\n' + ''.join(set_properties) + \
-                     f'return c;')
+    if api['type'] in [ 'struct', 'geometry', 'enum class' ]:
+      write_converters(file, api)
   # Write a helper for converting c struct array to vectors.
   file.write('template<typename T, typename F>\n'
              'std::vector<T> ToHimeVector(F* from, size_t from_size) {\n'
@@ -92,10 +59,64 @@ def write_c_impl_file(file, apis):
   for api in apis:
     write_c_impls(file, apis, api, write_impl=True)
 
+def write_converters(file, api):
+  api_type_name = get_c_type_name(api)
+  api_cpp_type = api['name']
+  if api['type'] == 'struct':
+    set_properties = [ 'cpp.{0} = c->{0};\n'.format(get_c_name(prop)) for prop in api['properties'] ]
+    write_function(file, api, True,
+                   f'{api_cpp_type} ToHime',
+                   [ f'{api_type_name}* c' ],
+                   f'if (c->struct_size != sizeof({api_type_name})) {{\n'
+                   f'  assert(false);\n'
+                   f'}}\n'
+                   f'{api_cpp_type} cpp;\n' + ''.join(set_properties) + \
+                   f'return cpp;')
+  elif api['type'] == 'geometry':
+    # Write a converter from c to cpp.
+    args = [ f'c.{get_c_name(prop)}' for prop in api['properties'] ]
+    write_function(file, api, True,
+                   f'inline {api_cpp_type} ToHime',
+                   [ f'{api_type_name} c' ],
+                   f'return {api_cpp_type}({params_join(args)});')
+    # Write a converter from c to absl::optional.
+    write_function(file, api, True,
+                   f'inline absl::optional<{api_cpp_type}> ToHime',
+                   [ f'{api_type_name}* ptr' ],
+                   f'if (!ptr)\n'
+                   f'  return absl::optional<{api_cpp_type}>();\n'
+                   f'return ToHime(*ptr);')
+    # Write a converter from cpp to c.
+    set_properties = [ 'c.{0} = cpp.{0}();\n'.format(get_c_name(prop)) for prop in api['properties'] ]
+    write_function(file, api, True,
+                   f'inline {api_type_name} FromHime',
+                   [ f'const {api_cpp_type}& cpp' ],
+                   f'{api_type_name} c;\n' + ''.join(set_properties) + \
+                   f'return c;')
+  elif api['type'] == 'enum class':
+    # Write a converter from c to cpp.
+    return_enum_classes = [
+        f'  case {get_enum_name(api, enum)}:\n'
+        f'    return {api["name"]}::k{enum["name"]};\n' for enum in api['enums'] ]
+    write_function(file, api, True,
+                   f'inline {api_cpp_type} ToHime',
+                   [ f'{api_type_name} c' ],
+                   f'switch (c) {{\n' + ''.join(return_enum_classes) + \
+                   f'}}\n')
+    # Write a converter from cpp to c.
+    return_enums = [
+        f'  case {api["name"]}::k{enum["name"]}:\n'
+        f'    return {get_enum_name(api, enum)};\n' for enum in api['enums'] ]
+    write_function(file, api, True,
+                   f'inline {api_type_name} FromHime',
+                   [ f'{api_cpp_type} cpp' ],
+                   f'switch (cpp) {{\n' + ''.join(return_enums) + \
+                   f'}}\n')
+
 def write_c_impls(file, apis, api, write_impl, public_header=False):
   if api['type'] in [ 'struct', 'geometry' ]:
     write_struct_impl(file, apis, api, write_impl, public_header)
-  else:
+  elif api['type'] in [ 'refcounted', 'class' ]:
     write_class_impl(file, apis, api, write_impl, public_header)
 
 def write_struct_impl(file, apis, api, write_impl, public_header):
@@ -192,6 +213,12 @@ def write_class_impl(file, apis, api, write_impl, public_header):
       # Write a event_connect define for simplifying API.
       file.write(f'#define {event_api_prefix}_connect({api_name}, callback, data) \\\n'
                  f'  {event_api_prefix}_connect_closure({api_name}, callback, data, NULL)\n\n')
+    if write_impl:
+      write_function(file, event, write_impl,
+                     f'void {event_api_prefix}_disconnect',
+                     [ f'{api_type_name} {api_name}',
+                       'uint32_t signal_id' ],
+                     f'{api_name}->{event_name}.Disconnect(signal_id);');
 
 def write_function(file, data, write_impl, name, params, impl, export=True):
   defines = get_platform_defines(data)
@@ -214,9 +241,21 @@ def get_comment(data):
     return ''
   return prefix_each_line(data['description'], '// ') + '\n'
 
+def get_enum_name(api, enum):
+  return f'CHROHIME_{get_c_name(api).upper()}_{enum["name"].upper()}'
+
+def get_enum_class_declaration(api, public_header=False):
+  result = 'typedef enum {\n'
+  for enum in api['enums']:
+    if public_header:
+      result += '  ' + get_comment(enum)
+    result += f'  {get_enum_name(api, enum)},\n'
+  result += f'}} {get_c_type_name(api)};\n\n'
+  return result
+
 def get_method_impl(apis, api, method):
   api_call = f'self->{method["name"]}({params_join(get_c_args(apis, api, method))})'
-  if get_type_of_type(apis, method['returnType']) in [ 'struct', 'geometry' ]:
+  if get_type_of_type(apis, method['returnType']) in [ 'struct', 'geometry', 'enum class' ]:
     api_call = f'return FromHime({api_call})'
   elif method['returnType'] != 'void':
     api_call = f'return {api_call}'
@@ -278,7 +317,7 @@ def get_c_args(apis, api, data, include_this=False):
       else:
         # For primitives just convert to vector from arary.
         args.append(f'{arg["type"]}({arg_name}, {arg_name} + {arg_name}_size)')
-    elif arg_type in [ 'struct', 'geometry' ]:
+    elif arg_type in [ 'struct', 'geometry', 'enum class' ]:
       args.append(f'ToHime({arg_name})')
     else:
       args.append(arg_name)
@@ -369,6 +408,7 @@ def main():
       inc_file = os.path.join(__file__, '..', 'chrohime_c_impl.inc')
       with open(os.path.abspath(inc_file), 'r') as inc:
         file.write(inc.read())
+      file.write('\n')
       skia_header = os.path.join(__file__, '..', 'skia.h')
       with open(os.path.abspath(skia_header), 'r') as sf:
         file.write(sf.read())

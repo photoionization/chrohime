@@ -1,0 +1,19 @@
+name: MaterialButton
+type: refcounted
+inherit: LabelButton
+description: A button implementing Material Design.
+
+constructors:
+  - name: Create
+    description: Create a MaterialButton.
+
+methods:
+  - name: SetStyle
+    description: Set the material style.
+    args:
+      - name: style
+        type: MaterialButton::Style
+
+  - name: GetStyle
+    description: Get the material style of the button.
+    returnType: MaterialButton::Style

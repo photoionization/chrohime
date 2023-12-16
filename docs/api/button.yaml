@@ -2,3 +2,10 @@ name: Button
 type: refcounted
 inherit: View
 description: Base class for button types.
+
+events:
+  - name: onClick
+    description: Emitted when button is clicked.
+    args:
+      - name: button
+        type: Button

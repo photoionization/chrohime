@@ -32,6 +32,16 @@ std::u16string StripStyleName(std::u16string_view name) {
   return parsed;
 }
 
+// Return the preferred size in yoga measurement.
+YGSize MeasureView(YGNodeConstRef node,
+                   float width, YGMeasureMode mode,
+                   float height, YGMeasureMode height_mode) {
+  auto* view = static_cast<View*>(YGNodeGetContext(node));
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(view, YGSize(width, height));
+  gfx::Size size = view->view()->GetPreferredSize({width, height});
+  return {static_cast<float>(size.width()), static_cast<float>(size.height())};
+}
+
 }  // namespace
 
 // static
@@ -52,6 +62,7 @@ View::View(std::unique_ptr<views::View> to_take, LayoutType layout_type)
     view_->SetLayoutManager(std::make_unique<YogaLayoutManager>(this));
   }
   State::GetCurrent()->views_map_[view_] = this;
+  YGNodeSetContext(yoga_node_, this);
 }
 
 View::~View() {
@@ -90,7 +101,6 @@ gfx::Rect View::GetBounds() const {
 
 void View::SetPreferredSize(absl::optional<gfx::Size> size) {
   HIME_RETURN_ON_DESTROYED_VIEW(this);
-  LOG(ERROR) << "SetPreferredSize: " << (*size).ToString();
   view_->SetPreferredSize(std::move(size));
 }
 
@@ -175,6 +185,16 @@ const std::u16string& View::GetAccessibleName() const {
   return view_->GetAccessibleName();
 }
 
+void View::SetGroup(int group_id) {
+  HIME_RETURN_ON_DESTROYED_VIEW(this);
+  view_->SetGroup(group_id);
+}
+
+int View::GetGroup() const {
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, 0);
+  return view_->GetGroup();
+}
+
 bool View::IsRootYogaNode() const {
   return layout_type_ == View::LayoutType::kLeaf ||
          !YGNodeGetParent(yoga_node_);
@@ -183,6 +203,17 @@ bool View::IsRootYogaNode() const {
 std::unique_ptr<views::View> View::TransferOwnership() {
   DCHECK(ownership_);
   return std::move(ownership_);
+}
+
+void View::UsePreferredSizeForYogaMeasurement() {
+  DCHECK(!mark_dirty_on_preferred_size_change_);
+  mark_dirty_on_preferred_size_change_ = true;
+  YGNodeSetMeasureFunc(yoga_node_, MeasureView);
+}
+
+void View::OnViewPreferredSizeChanged(views::View* observed_view) {
+  if (mark_dirty_on_preferred_size_change_)
+    YGNodeMarkDirty(yoga_node_);
 }
 
 void View::OnViewIsDeleting(views::View* observed_view) {

@@ -1,0 +1,26 @@
+name: Checkbox
+type: refcounted
+inherit: LabelButton
+description: A native themed class representing a checkbox.
+
+constructors:
+  - name: Create
+    description: Create a Checkbox.
+
+methods:
+  - name: SetChecked
+    description: Set whether the checkbox is `checked`.
+    args:
+      - name: checked
+        type: bool
+
+  - name: IsChecked
+    description: Return whether the checkbox is checked.
+    returnType: bool
+
+events:
+  - name: onChange
+    description: Emitted when the checked state is changed.
+    args:
+      - name: checkbox
+        type: Checkbox
