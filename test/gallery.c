@@ -72,6 +72,107 @@ void CreateSliderExample(chrohime_view_t view) {
   chrohime_object_unref((chrohime_object_t)indeterminate);
 }
 
+void CreateLabelExample(chrohime_view_t view) {
+  chrohime_label_t label = chrohime_label_create();
+  chrohime_label_set_multi_line(label, true);
+  chrohime_label_set_selectable(label, true);
+  chrohime_label_set_text(label, u"This is a multi-line label...\n"
+                                 u"...which supports text selection.");
+
+  chrohime_view_add_child_view(view, (chrohime_view_t)label);
+  chrohime_object_unref((chrohime_object_t)label);
+}
+
+void CreateTextfieldExample(chrohime_view_t view) {
+  chrohime_view_set_style_number(view, u"flex", 1);
+  chrohime_view_set_style_number(view, u"gap", PADDING);
+
+  chrohime_textfield_t text = chrohime_textfield_create();
+  chrohime_view_set_accessible_name((chrohime_view_t)text, u"Textfield");
+  chrohime_view_add_child_view(view, (chrohime_view_t)text);
+  chrohime_object_unref((chrohime_object_t)text);
+
+  chrohime_textfield_t password = chrohime_textfield_create();
+  chrohime_textfield_set_type(password, kChrohimeTextfieldTypePassword);
+  chrohime_textfield_set_placeholder_text(password, u"Password");
+  chrohime_view_add_child_view(view, (chrohime_view_t)password);
+  chrohime_object_unref((chrohime_object_t)password);
+
+  chrohime_textfield_t invalid = chrohime_textfield_create();
+  chrohime_textfield_set_invalid(invalid, true);
+  chrohime_textfield_set_placeholder_text(invalid, u"Invalid Input");
+  chrohime_view_add_child_view(view, (chrohime_view_t)invalid);
+  chrohime_object_unref((chrohime_object_t)invalid);
+
+  chrohime_textfield_t readonly = chrohime_textfield_create();
+  chrohime_textfield_set_readonly(readonly, true);
+  chrohime_textfield_set_placeholder_text(readonly, u"Readonly Textfield");
+  chrohime_view_add_child_view(view, (chrohime_view_t)readonly);
+  chrohime_object_unref((chrohime_object_t)readonly);
+
+  chrohime_textarea_t textarea = chrohime_textarea_create();
+  chrohime_textfield_set_text(
+      (chrohime_textfield_t)textarea,
+      u"In Chromium's views, the textarea stays,\n"
+      u"Where words and dreams dance in endless arrays.\n"
+      u"From UI's embrace, a canvas serene,\n"
+      u"Where thoughts ignite and stories convene.\n"
+      u"Lines unfold, gracefully and refined,\n"
+      u"In the multi-line textarea, tales intertwined.");
+  chrohime_view_set_style_number((chrohime_view_t)textarea, u"flex", 1);
+  chrohime_view_set_accessible_name((chrohime_view_t)textarea, u"Textarea");
+  chrohime_view_add_child_view(view, (chrohime_view_t)textarea);
+  chrohime_object_unref((chrohime_object_t)textarea);
+}
+
+void OnButtonClick(chrohime_button_t button, void* data) {
+  fprintf(stderr, "OnButtonClick\n");
+}
+
+void CreateMaterialButtonExample(chrohime_view_t view) {
+  // Use the preferred background color of views to make buttons look better.
+  chrohime_background_t background =
+      chrohime_background_create_themed_rounded_rect(
+          kChrohimeColorIdDialogBackground, 1, 4);
+  chrohime_view_set_background(view, background);
+  chrohime_object_unref((chrohime_object_t)background);
+
+  chrohime_view_set_style(view, u"flex-direction", u"row");
+  chrohime_view_set_style(view, u"justify-content", u"center");
+  chrohime_view_set_style_number(view, u"gap", PADDING);
+
+  chrohime_material_button_t button1 = chrohime_material_button_create();
+  chrohime_button_on_click_connect(
+      (chrohime_button_t)button1, OnButtonClick, NULL);
+  chrohime_label_button_set_title((chrohime_label_button_t)button1, u"Button");
+  chrohime_view_add_child_view(view, (chrohime_view_t)button1);
+  chrohime_object_unref((chrohime_object_t)button1);
+
+  chrohime_material_button_t button3 = chrohime_material_button_create();
+  chrohime_label_button_set_title(
+      (chrohime_label_button_t)button3, u"Disabled");
+  chrohime_view_set_enabled((chrohime_view_t)button3, false);
+  chrohime_view_add_child_view(view, (chrohime_view_t)button3);
+  chrohime_object_unref((chrohime_object_t)button3);
+
+  chrohime_material_button_t button4 = chrohime_material_button_create();
+  chrohime_material_button_set_style(button4,
+                                     kChrohimeMaterialButtonStyleTonal);
+  chrohime_label_button_set_title((chrohime_label_button_t)button4, u"Tonal");
+  chrohime_view_add_child_view(view, (chrohime_view_t)button4);
+  chrohime_object_unref((chrohime_object_t)button4);
+
+  chrohime_material_button_t button5 = chrohime_material_button_create();
+  chrohime_material_button_set_style(button5,
+                                     kChrohimeMaterialButtonStyleText);
+  chrohime_label_button_set_title((chrohime_label_button_t)button5, u"Text");
+  chrohime_view_add_child_view(view, (chrohime_view_t)button5);
+  chrohime_object_unref((chrohime_object_t)button5);
+
+  chrohime_view_set_style_number(
+      view, u"min-width", chrohime_view_get_preferred_size(view).width);
+}
+
 void CreateCheckboxExample(chrohime_view_t view) {
   chrohime_view_set_style(view, u"flex-direction", u"row");
   chrohime_view_set_style(view, u"justify-content", u"center");
@@ -137,73 +238,6 @@ void CreateToggleButtonExample(chrohime_view_t view) {
   chrohime_object_unref((chrohime_object_t)button3);
 }
 
-void CreateLabelExample(chrohime_view_t view) {
-  chrohime_label_t label = chrohime_label_create();
-  chrohime_label_set_multi_line(label, true);
-  chrohime_label_set_selectable(label, true);
-  chrohime_label_set_text(label, u"This is a multi-line label...\n"
-                                 u"...which supports text selection.");
-
-  chrohime_view_add_child_view(view, (chrohime_view_t)label);
-  chrohime_object_unref((chrohime_object_t)label);
-}
-
-void OnButtonClick(chrohime_button_t button, void* data) {
-  fprintf(stderr, "OnButtonClick\n");
-}
-
-void CreateMaterialButtonExample(chrohime_view_t view) {
-  // Use the preferred background color of views to make buttons look better.
-  chrohime_background_t background =
-      chrohime_background_create_themed_rounded_rect(
-          kChrohimeColorIdDialogBackground, 1, 4);
-  chrohime_view_set_background(view, background);
-  chrohime_object_unref((chrohime_object_t)background);
-
-  chrohime_view_set_style(view, u"flex-direction", u"row");
-  chrohime_view_set_style(view, u"justify-content", u"center");
-  chrohime_view_set_style_number(view, u"gap", PADDING);
-
-  chrohime_material_button_t button1 = chrohime_material_button_create();
-  chrohime_button_on_click_connect(
-      (chrohime_button_t)button1, OnButtonClick, NULL);
-  chrohime_label_button_set_title((chrohime_label_button_t)button1, u"Button");
-  chrohime_view_add_child_view(view, (chrohime_view_t)button1);
-  chrohime_object_unref((chrohime_object_t)button1);
-
-  chrohime_material_button_t button2 = chrohime_material_button_create();
-  chrohime_button_on_click_connect(
-      (chrohime_button_t)button2, OnButtonClick, NULL);
-  chrohime_label_button_make_default((chrohime_label_button_t)button2, true);
-  chrohime_label_button_set_title((chrohime_label_button_t)button2, u"Default");
-  chrohime_view_add_child_view(view, (chrohime_view_t)button2);
-  chrohime_object_unref((chrohime_object_t)button2);
-
-  chrohime_material_button_t button3 = chrohime_material_button_create();
-  chrohime_label_button_set_title(
-      (chrohime_label_button_t)button3, u"Disabled");
-  chrohime_view_set_enabled((chrohime_view_t)button3, false);
-  chrohime_view_add_child_view(view, (chrohime_view_t)button3);
-  chrohime_object_unref((chrohime_object_t)button3);
-
-  chrohime_material_button_t button4 = chrohime_material_button_create();
-  chrohime_material_button_set_style(button4,
-                                     kChrohimeMaterialButtonStyleTonal);
-  chrohime_label_button_set_title((chrohime_label_button_t)button4, u"Tonal");
-  chrohime_view_add_child_view(view, (chrohime_view_t)button4);
-  chrohime_object_unref((chrohime_object_t)button4);
-
-  chrohime_material_button_t button5 = chrohime_material_button_create();
-  chrohime_material_button_set_style(button5,
-                                     kChrohimeMaterialButtonStyleText);
-  chrohime_label_button_set_title((chrohime_label_button_t)button5, u"Text");
-  chrohime_view_add_child_view(view, (chrohime_view_t)button5);
-  chrohime_object_unref((chrohime_object_t)button5);
-
-  chrohime_view_set_style_number(
-      view, u"min-width", chrohime_view_get_preferred_size(view).width);
-}
-
 void CreateTableViewExample(chrohime_view_t view) {
   chrohime_view_set_style_number(view, u"flex", 1);
 
@@ -257,7 +291,7 @@ void OnReady(void* data) {
   chrohime_window_options_init(&options);
   chrohime_window_t window = chrohime_window_create(&options);
   chrohime_window_set_title(window, u"👸🏾");
-  chrohime_window_center_to(window, (chrohime_size_t){900, 400});
+  chrohime_window_center_to(window, (chrohime_size_t){800, 600});
   chrohime_window_on_close_connect(
       window, (chrohime_window_on_close_callback)chrohime_object_unref, NULL);
 
@@ -273,17 +307,18 @@ void OnReady(void* data) {
   CreateExample examples[] = {
       CreateMiscExample,
       CreateSliderExample,
+      CreateLabelExample,
+      CreateTextfieldExample,
+      CreateMaterialButtonExample,
       CreateCheckboxExample,
       CreateRadioButtonExample,
       CreateToggleButtonExample,
-      CreateLabelExample,
-      CreateMaterialButtonExample,
       CreateTableViewExample,
   };
   for (size_t i = 0; i < sizeof(examples) / sizeof(CreateExample); ++i) {
     chrohime_view_t section = CreateSection();
     examples[i](section);
-    chrohime_view_add_child_view(i < 6 ? column1 : column2, section);
+    chrohime_view_add_child_view(i < 4 ? column1 : column2, section);
     chrohime_object_unref((chrohime_object_t)section);
   }
 

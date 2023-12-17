@@ -19,6 +19,7 @@
 #include "chrohime/api/state.h"
 #include "chrohime/api/table_view.h"
 #include "chrohime/api/toggle_button.h"
+#include "chrohime/api/textarea.h"
 #include "chrohime/api/window.h"
 
 #endif  // CHROHIME_API_CHROHIME_H_

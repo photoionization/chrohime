@@ -1,0 +1,16 @@
+name: Textfield::Type
+type: enum class
+description: Input type for Textfield.
+
+enums:
+  - name: Text
+    description: Input caret is in a normal editable node, any input method can be used.
+
+  - name: Password
+    description: |
+      Input caret is in a password box, an input method may be used only if
+      it's suitable for password input.
+
+  - name: Search
+
+  - name: Number

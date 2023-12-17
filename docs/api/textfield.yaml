@@ -1,0 +1,55 @@
+name: Textfield
+type: refcounted
+inherit: View
+description: Single-line text input view.
+
+constructors:
+  - name: Create
+    description: Create a new Textfield.
+
+methods:
+  - name: SetType
+    description: Set the input type.
+    args:
+      - name: type
+        type: Textfield::Type
+
+  - name: SetText
+    description: Set the `text` currently displayed in the Textfield.
+    args:
+      - name: text
+        type: std::u16string
+
+  - name: GetText
+    description: |
+      Get the text for the Textfield.
+
+      Call sites should take care to not reveal the text for a password
+      textfield.
+    returnType: const std::u16string&
+
+  - name: SetPlaceholderText
+    description: Set the `placeholder` text to display when empty.
+    args:
+      - name: placeholder
+        type: std::u16string
+
+  - name: SetReadonly
+    description: Set whether the textfield is `readonly`.
+    args:
+      - name: readonly
+        type: bool
+
+  - name: IsReadonly
+    description: Get whether the textfield is read-only.
+    returnType: bool
+
+  - name: SetInvalid
+    description: Set whether to indicate the textfield has invalid content.
+    args:
+      - name: invalid
+        type: bool
+
+  - name: IsInvalid
+    description: Get whether to indicate the textfield has invalid content.
+    returnType: bool

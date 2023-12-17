@@ -16,9 +16,9 @@ executable("chrohime_test") {
   }
 }
 
-executable("chrohime_c_test") {
+executable("chrohime_gallery") {
   testonly = true
-  sources = [ "c_main.c" ]
+  sources = [ "gallery.c" ]
   deps = [ "//chrohime/c:chrohime_shared_c_lib" ]
 
   if (!is_component_build) {

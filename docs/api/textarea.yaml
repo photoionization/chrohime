@@ -1,0 +1,8 @@
+name: Textarea
+type: refcounted
+inherit: Textfield
+description: Multi-line Textfield.
+
+constructors:
+  - name: Create
+    description: Create a new Textarea.
