@@ -41,7 +41,7 @@ class CHROHIME_EXPORT View : public Object,
   void SetPreferredSize(absl::optional<gfx::Size> size);
   gfx::Size GetPreferredSize() const;
   void SetStyle(std::u16string_view name, std::u16string_view value);
-  void SetNumberStyle(std::u16string_view name, float value);
+  void SetStyleNumber(std::u16string_view name, float value);
   void Layout();
 
   void SetBackground(scoped_refptr<Background> background);

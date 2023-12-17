@@ -114,7 +114,7 @@ void View::SetStyle(std::u16string_view name, std::u16string_view value) {
   SetYogaProperty(yoga_node_, StripStyleName(name), value);
 }
 
-void View::SetNumberStyle(std::u16string_view name, float value) {
+void View::SetStyleNumber(std::u16string_view name, float value) {
   SetYogaProperty(yoga_node_, StripStyleName(name), value);
 }
 
@@ -152,7 +152,7 @@ void View::AddChildViewAt(scoped_refptr<View> view, size_t index) {
   view_->AddChildViewAt(view->TransferOwnership(), index);
   YGNodeInsertChild(yoga_node(), view->yoga_node(), index);
   children_.insert(children_.begin() + index, std::move(view));
-  view_->Layout();
+  Layout();
 }
 
 void View::RemoveChildView(View* view) {
@@ -161,7 +161,7 @@ void View::RemoveChildView(View* view) {
   view_->RemoveChildView(view->view());
   YGNodeRemoveChild(yoga_node(), view->yoga_node());
   children_.erase(base::ranges::find(children_, view));
-  view_->Layout();
+  Layout();
 }
 
 size_t View::ChildCount() const {

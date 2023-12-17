@@ -56,7 +56,7 @@ methods:
       - name: value
         type: std::u16string_view
 
-  - name: SetNumberStyle
+  - name: SetStyleNumber
     description: *setstyle
     args:
       - name: name

@@ -28,7 +28,7 @@ ProgressBar::ProgressBar()
     : View(std::make_unique<views::ProgressBar>(), LayoutType::kLeaf) {
   YGNodeSetMeasureFunc(yoga_node(), MeasureProgressBar);
   // Give ProgressBar a proper default height.
-  SetNumberStyle(u"height", 5);
+  SetStyleNumber(u"height", 5);
 }
 
 ProgressBar::~ProgressBar() = default;
