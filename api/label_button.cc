@@ -13,9 +13,7 @@ LabelButton::LabelButton()
 
 LabelButton::LabelButton(std::unique_ptr<views::LabelButton> to_take)
     : Button(std::move(to_take)),
-      button_(static_cast<views::LabelButton*>(view())) {
-  UsePreferredSizeForYogaMeasurement();
-}
+      button_(static_cast<views::LabelButton*>(view())) {}
 
 LabelButton::~LabelButton() = default;
 

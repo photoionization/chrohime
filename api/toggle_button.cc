@@ -10,12 +10,7 @@ namespace hime {
 
 ToggleButton::ToggleButton()
     : Button(std::make_unique<views::ToggleButton>()),
-      button_(static_cast<views::ToggleButton*>(view())) {
-  // ToggleButton has fixed size.
-  gfx::Size preferred_size = GetPreferredSize();
-  SetNumberStyle(u"width", preferred_size.width());
-  SetNumberStyle(u"height", preferred_size.height());
-}
+      button_(static_cast<views::ToggleButton*>(view())) {}
 
 ToggleButton::~ToggleButton() = default;
 

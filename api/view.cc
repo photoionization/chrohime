@@ -37,7 +37,7 @@ YGSize MeasureView(YGNodeConstRef node,
                    float width, YGMeasureMode mode,
                    float height, YGMeasureMode height_mode) {
   auto* view = static_cast<View*>(YGNodeGetContext(node));
-  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(view, YGSize(width, height));
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(view, YGSize(0, 0));
   gfx::Size size = view->view()->GetPreferredSize({width, height});
   return {static_cast<float>(size.width()), static_cast<float>(size.height())};
 }
@@ -58,11 +58,11 @@ View::View(std::unique_ptr<views::View> to_take, LayoutType layout_type)
       view_(to_take.get()),
       ownership_(std::move(to_take)) {
   view_->AddObserver(this);
+  State::GetCurrent()->views_map_[view_] = this;
+  YGNodeSetContext(yoga_node_, this);
   if (layout_type == LayoutType::kContainer) {
     view_->SetLayoutManager(std::make_unique<YogaLayoutManager>(this));
   }
-  State::GetCurrent()->views_map_[view_] = this;
-  YGNodeSetContext(yoga_node_, this);
 }
 
 View::~View() {

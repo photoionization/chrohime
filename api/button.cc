@@ -13,6 +13,7 @@ Button::Button(std::unique_ptr<views::Button> to_take)
       button_(static_cast<views::Button*>(view())) {
   button_->SetCallback(
       base::BindRepeating(&Button::OnClick, base::Unretained(this)));
+  UsePreferredSizeForYogaMeasurement();
 }
 
 Button::~Button() = default;

@@ -27,6 +27,7 @@ class CHROHIME_EXPORT Label : public View {
  protected:
   ~Label() override;
 
+ private:
   raw_ptr<views::Label> label_;
 };
 

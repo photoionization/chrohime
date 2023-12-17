@@ -12,13 +12,45 @@ chrohime_view_t CreateSection() {
       sk_color_create_argb(50, 0, 0, 0), 1, 4);
   chrohime_view_set_border(view, border);
   chrohime_view_set_number_style(view, u"padding", 5);
-  chrohime_view_set_number_style(view, u"margin", 5);
   chrohime_object_unref((chrohime_object_t)border);
   return view;
 }
 
-void OnButtonClick(chrohime_button_t button, void* data) {
-  fprintf(stderr, "OnButtonClick\n");
+void OnSliderChange(chrohime_slider_t slider, float new_value, float old_value,
+                    void* data) {
+  chrohime_progress_bar_t bar = (chrohime_progress_bar_t)data;
+  chrohime_progress_bar_set_value(bar, new_value);
+}
+
+void CreateSliderExample(chrohime_view_t view) {
+  chrohime_view_set_style(view, u"flex-direction", u"row");
+  chrohime_view_set_style(view, u"justify-content", u"center");
+  chrohime_view_set_style(view, u"align-items", u"center");
+  chrohime_view_set_number_style(view, u"gap", 5);
+
+  chrohime_slider_t slider = chrohime_slider_create();
+  chrohime_slider_set_value(slider, 0.5);
+  chrohime_view_set_number_style((chrohime_view_t)slider, u"flex", 1);
+  chrohime_view_set_accessible_name((chrohime_view_t)slider, u"slider");
+  chrohime_view_add_child_view(view, (chrohime_view_t)slider);
+  chrohime_object_unref((chrohime_object_t)slider);
+
+  chrohime_progress_bar_t bar = chrohime_progress_bar_create();
+  chrohime_progress_bar_set_value(bar, 0.5);
+  chrohime_view_set_number_style((chrohime_view_t)bar, u"flex", 1);
+  chrohime_view_set_accessible_name((chrohime_view_t)bar, u"progress bar");
+  chrohime_view_add_child_view(view, (chrohime_view_t)bar);
+  chrohime_object_unref((chrohime_object_t)bar);
+
+  chrohime_slider_on_change_connect(slider, OnSliderChange, bar);
+
+  chrohime_progress_bar_t indeterminate = chrohime_progress_bar_create();
+  chrohime_progress_bar_set_indeterminate(indeterminate, true);
+  chrohime_view_set_number_style((chrohime_view_t)indeterminate, u"flex", 1);
+  chrohime_view_set_accessible_name(
+      (chrohime_view_t)indeterminate, u"indeterminate");
+  chrohime_view_add_child_view(view, (chrohime_view_t)indeterminate);
+  chrohime_object_unref((chrohime_object_t)indeterminate);
 }
 
 void CreateLabelExample(chrohime_view_t view) {
@@ -30,6 +62,10 @@ void CreateLabelExample(chrohime_view_t view) {
 
   chrohime_view_add_child_view(view, (chrohime_view_t)label);
   chrohime_object_unref((chrohime_object_t)label);
+}
+
+void OnButtonClick(chrohime_button_t button, void* data) {
+  fprintf(stderr, "OnButtonClick\n");
 }
 
 void CreateMaterialButtonExample(chrohime_view_t view) {
@@ -196,10 +232,14 @@ void OnReady(void* data) {
   chrohime_window_center_to(window, (chrohime_size_t){400, 400});
   chrohime_window_on_close_connect(
       window, (chrohime_window_on_close_callback)chrohime_object_unref, NULL);
+
   chrohime_view_t content_view = chrohime_window_get_content_view(window);
+  chrohime_view_set_number_style(content_view, u"padding", 5);
+  chrohime_view_set_number_style(content_view, u"gap", 5);
 
   typedef void (*CreateExample)(chrohime_view_t view);
   CreateExample examples[] = {
+      CreateSliderExample,
       CreateLabelExample,
       CreateMaterialButtonExample,
       CreateCheckboxExample,

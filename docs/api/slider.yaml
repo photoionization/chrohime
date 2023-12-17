@@ -1,0 +1,34 @@
+name: Slider
+type: refcounted
+inherit: View
+description: |
+  A bar representing a continuous range of numerical values.
+
+  Since Slider does not have any text displayed, an accessible name must be
+  assigned via `SetAccessibleName` method of `View`.
+
+constructors:
+  - name: Create
+    description: Create a new Slider.
+
+methods:
+  - name: SetValue
+    description: Set slider's value in interval [0, 1].
+    args:
+      - name: value
+        type: float
+
+  - name: GetValue
+    description: Return slider's value in interval [0, 1].
+    returnType: float
+
+events:
+  - name: onChange
+    description: Emitted when slider's value is changed by user.
+    args:
+      - name: slider
+        type: Slider
+      - name: newValue
+        type: float
+      - name: oldValue
+        type: float

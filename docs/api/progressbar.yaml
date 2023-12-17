@@ -1,0 +1,33 @@
+name: ProgressBar
+type: refcounted
+inherit: View
+description: |
+  Horizontal bar showing progress.
+
+  Since ProgressBar does not have any text displayed, an accessible name must be
+  assigned via `SetAccessibleName` method of `View`.
+
+constructors:
+  - name: Create
+    description: Create a new ProgressBar.
+
+methods:
+  - name: SetValue
+    description: Set progress bar's value in interval [0, 1].
+    args:
+      - name: value
+        type: float
+
+  - name: GetValue
+    description: Return progress bar's value in interval [0, 1].
+    returnType: float
+
+  - name: SetIndeterminate
+    description: Set whether the progress bar is indeterminate.
+    args:
+      - name: indeterminate
+        type: bool
+
+  - name: IsIndeterminate
+    description: Return whether the progress bar is indeterminate.
+    returnType: bool
