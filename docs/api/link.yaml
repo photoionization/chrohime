@@ -3,6 +3,10 @@ type: refcounted
 inherit: Label
 description: A Link is a label subclass that looks like an HTML link.
 
+constructors:
+  - name: Create
+    description: Create a new empty Link.
+
 events:
   - name: onClick
     description: Emitted when link is clicked.

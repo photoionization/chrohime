@@ -4,6 +4,9 @@ inherit: Checkbox
 description: A native themed class representing a radio button.
 
 constructors:
+  - name: Create
+    description: Create a radio button.
+
   - name: CreateWithTitleAndGroup
     description: Create a radio button with `title` and `group` id.
     args:

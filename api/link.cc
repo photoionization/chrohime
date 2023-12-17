@@ -19,6 +19,14 @@ views::Link* Link::GetView() const {
   return static_cast<views::Link*>(view());
 }
 
+void Link::OnViewPreferredSizeChanged(views::View* observed_view) {
+  Label::OnViewPreferredSizeChanged(observed_view);
+  // Link has a fixed maximum width.
+  // Without setting max-width the link will take full width in space and the
+  // empty spaces will also be clickable.
+  SetNumberStyle(u"max-width", GetPreferredSize().width());
+}
+
 void Link::OnClick() {
   on_click.Emit(this);
 }

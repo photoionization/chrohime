@@ -16,6 +16,23 @@ chrohime_view_t CreateSection() {
   return view;
 }
 
+void CreateMiscExample(chrohime_view_t view) {
+  chrohime_view_set_style(view, u"flex-direction", u"row");
+  chrohime_view_set_style(view, u"justify-content", u"center");
+  chrohime_view_set_number_style(view, u"gap", 5);
+
+  chrohime_link_t link = chrohime_link_create();
+  chrohime_label_set_text((chrohime_label_t)link,
+                          u"https://github.com/photoionization/chrohime");
+  chrohime_view_add_child_view(view, (chrohime_view_t)link);
+  chrohime_object_unref((chrohime_object_t)link);
+
+  chrohime_badge_t badge = chrohime_badge_create();
+  chrohime_badge_set_text(badge, u"GitHub Repo");
+  chrohime_view_add_child_view(view, (chrohime_view_t)badge);
+  chrohime_object_unref((chrohime_object_t)badge);
+}
+
 void OnSliderChange(chrohime_slider_t slider, float new_value, float old_value,
                     void* data) {
   chrohime_progress_bar_t bar = (chrohime_progress_bar_t)data;
@@ -239,6 +256,7 @@ void OnReady(void* data) {
 
   typedef void (*CreateExample)(chrohime_view_t view);
   CreateExample examples[] = {
+      CreateMiscExample,
       CreateSliderExample,
       CreateLabelExample,
       CreateMaterialButtonExample,

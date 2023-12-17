@@ -1,0 +1,15 @@
+name: Badge
+type: refcounted
+inherit: View
+description: Display a small piece of infromational text on a square blue background.
+
+constructors:
+  - name: Create
+    description: Create a new empty Badge.
+
+methods:
+  - name: SetText
+    description: Set the text to display.
+    args:
+      - name: text
+        type: std::u16string

@@ -15,7 +15,8 @@ namespace hime {
 
 class CHROHIME_EXPORT RadioButton : public Checkbox {
  public:
-  RadioButton(const std::u16string& title, int group_id);
+  RadioButton(const std::u16string& title = std::u16string(),
+              int group_id = 0);
 
   views::RadioButton* GetView() const;
 

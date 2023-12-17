@@ -9,6 +9,7 @@ action("apis_json") {
     "api/state.yaml",
     # Normal APIs.
     "api/background.yaml",
+    "api/badge.yaml",
     "api/border.yaml",
     "api/button.yaml",
     "api/checkbox.yaml",

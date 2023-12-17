@@ -25,6 +25,9 @@ class CHROHIME_EXPORT Link : public Label {
  protected:
   ~Link() override;
 
+  // views::ViewObserver:
+  void OnViewPreferredSizeChanged(views::View* observed_view) override;
+
  private:
   void OnClick();
 };

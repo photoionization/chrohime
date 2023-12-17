@@ -6,6 +6,7 @@
 #define CHROHIME_API_CHROHIME_H_
 
 #include "chrohime/api/background.h"
+#include "chrohime/api/badge.h"
 #include "chrohime/api/border.h"
 #include "chrohime/api/link.h"
 #include "chrohime/api/lifetime.h"

@@ -4,6 +4,8 @@ component("chrohime") {
   sources = [
     "api/background.cc",
     "api/background.h",
+    "api/badge.cc",
+    "api/badge.h",
     "api/border.cc",
     "api/border.h",
     "api/button.cc",
