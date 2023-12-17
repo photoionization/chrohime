@@ -15,6 +15,8 @@ component("chrohime") {
     "api/label.h",
     "api/label_button.cc",
     "api/label_button.h",
+    "api/link.cc",
+    "api/link.h",
     "api/material_button.cc",
     "api/material_button.h",
     "api/object.cc",

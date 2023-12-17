@@ -26,11 +26,12 @@ class CHROHIME_EXPORT TableView : public View {
   void SetModel(scoped_refptr<TableModel> model);
   TableModel* GetModel() const;
 
+  views::TableView* GetView() const;
+
  protected:
   ~TableView() override;
 
   scoped_refptr<TableModel> model_;
-  raw_ptr<views::TableView> table_;
 };
 
 }  // namespace hime

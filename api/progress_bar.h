@@ -22,11 +22,10 @@ class CHROHIME_EXPORT ProgressBar : public View {
   void SetIndeterminate(bool indeterminate);
   bool IsIndeterminate() const;
 
+  views::ProgressBar* GetView() const;
+
  protected:
   ~ProgressBar() override;
-
- private:
-  raw_ptr<views::ProgressBar> bar_;
 };
 
 }  // namespace hime

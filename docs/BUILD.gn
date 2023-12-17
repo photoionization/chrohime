@@ -14,6 +14,7 @@ action("apis_json") {
     "api/checkbox.yaml",
     "api/label.yaml",
     "api/labelbutton.yaml",
+    "api/link.yaml",
     "api/materialbutton_style.yaml",
     "api/materialbutton.yaml",
     "api/progressbar.yaml",

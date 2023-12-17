@@ -23,11 +23,14 @@ class CHROHIME_EXPORT ScrollView : public View {
   void SetContentView(scoped_refptr<View> view);
   View* GetContentView() const;
 
+  views::ScrollView* GetView() const;
+
  protected:
+  explicit ScrollView(std::unique_ptr<views::ScrollView> to_take);
   ~ScrollView() override;
 
+ private:
   scoped_refptr<View> content_view_;
-  raw_ptr<views::ScrollView> scroll_view_;
 };
 
 }  // namespace hime

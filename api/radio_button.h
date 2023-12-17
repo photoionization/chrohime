@@ -17,11 +17,10 @@ class CHROHIME_EXPORT RadioButton : public Checkbox {
  public:
   RadioButton(const std::u16string& title, int group_id);
 
+  views::RadioButton* GetView() const;
+
  protected:
   ~RadioButton() override;
-
- private:
-  raw_ptr<views::RadioButton> radio_;
 };
 
 }  // namespace hime

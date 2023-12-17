@@ -23,11 +23,10 @@ class CHROHIME_EXPORT MaterialButton : public LabelButton {
   void SetStyle(Style style);
   Style GetStyle() const;
 
+  views::MdTextButton* GetView() const;
+
  protected:
   ~MaterialButton() override;
-
- private:
-  raw_ptr<views::MdTextButton> button_;
 };
 
 }  // namespace hime

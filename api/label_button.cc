@@ -12,29 +12,32 @@ LabelButton::LabelButton()
     : LabelButton(std::make_unique<views::LabelButton>()) {}
 
 LabelButton::LabelButton(std::unique_ptr<views::LabelButton> to_take)
-    : Button(std::move(to_take)),
-      button_(static_cast<views::LabelButton*>(view())) {}
+    : Button(std::move(to_take)) {}
 
 LabelButton::~LabelButton() = default;
 
 void LabelButton::SetTitle(const std::u16string& title) {
   HIME_RETURN_ON_DESTROYED_VIEW(this);
-  button_->SetText(title);
+  GetView()->SetText(title);
 }
 
 const std::u16string& LabelButton::GetTitle() const {
   HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, base::EmptyString16());
-  return button_->GetText();
+  return GetView()->GetText();
 }
 
 void LabelButton::MakeDefault(bool is_default) {
   HIME_RETURN_ON_DESTROYED_VIEW(this);
-  button_->SetIsDefault(is_default);
+  GetView()->SetIsDefault(is_default);
 }
 
 bool LabelButton::IsDefault() const {
   HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, false);
-  return button_->GetIsDefault();
+  return GetView()->GetIsDefault();
+}
+
+views::LabelButton* LabelButton::GetView() const {
+  return static_cast<views::LabelButton*>(view());
 }
 
 }  // namespace hime

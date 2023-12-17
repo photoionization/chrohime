@@ -5,7 +5,6 @@
 #ifndef CHROHIME_API_SLIDER_H_
 #define CHROHIME_API_SLIDER_H_
 
-#include "chrohime/api/signal.h"
 #include "chrohime/api/view.h"
 #include "ui/views/controls/slider.h"
 
@@ -19,6 +18,8 @@ class CHROHIME_EXPORT Slider : public View,
   void SetValue(float value);
   float GetValue() const;
 
+  views::Slider* GetView() const;
+
   // Events.
   Signal<void(Slider*, float new_value, float old_value)> on_change;
 
@@ -30,9 +31,6 @@ class CHROHIME_EXPORT Slider : public View,
                           float value,
                           float old_value,
                           views::SliderChangeReason reason) override;
-
- private:
-  raw_ptr<views::Slider> slider_;
 };
 
 }  // namespace hime

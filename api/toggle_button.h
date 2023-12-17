@@ -21,10 +21,10 @@ class CHROHIME_EXPORT ToggleButton : public Button {
   void SetOnOffAnimated(bool is_on);
   bool IsOn() const;
 
+  views::ToggleButton* GetView() const;
+
  protected:
   ~ToggleButton() override;
-
-  raw_ptr<views::ToggleButton> button_;
 };
 
 }  // namespace hime

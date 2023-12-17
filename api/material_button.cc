@@ -9,19 +9,22 @@
 namespace hime {
 
 MaterialButton::MaterialButton()
-    : LabelButton(std::make_unique<views::MdTextButton>()),
-      button_(static_cast<views::MdTextButton*>(view())) {}
+    : LabelButton(std::make_unique<views::MdTextButton>()) {}
 
 MaterialButton::~MaterialButton() = default;
 
 void MaterialButton::SetStyle(Style style) {
   HIME_RETURN_ON_DESTROYED_VIEW(this);
-  button_->SetStyle(style);
+  GetView()->SetStyle(style);
 }
 
 MaterialButton::Style MaterialButton::GetStyle() const {
   HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, ui::ButtonStyle::kDefault);
-  return button_->GetStyle();
+  return GetView()->GetStyle();
+}
+
+views::MdTextButton* MaterialButton::GetView() const {
+  return static_cast<views::MdTextButton*>(view());
 }
 
 }  // namespace hime

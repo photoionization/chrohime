@@ -25,8 +25,7 @@ YGSize MeasureSlider(YGNodeConstRef node,
 }  // namespace
 
 Slider::Slider()
-    : View(std::make_unique<views::Slider>(this), LayoutType::kLeaf),
-      slider_(static_cast<views::Slider*>(view())) {
+    : View(std::make_unique<views::Slider>(this), LayoutType::kLeaf) {
   YGNodeSetMeasureFunc(yoga_node(), MeasureSlider);
 }
 
@@ -34,12 +33,16 @@ Slider::~Slider() = default;
 
 void Slider::SetValue(float value) {
   HIME_RETURN_ON_DESTROYED_VIEW(this);
-  slider_->SetValue(value);
+  GetView()->SetValue(value);
 }
 
 float Slider::GetValue() const {
   HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, 0);
-  return slider_->GetValue();
+  return GetView()->GetValue();
+}
+
+views::Slider* Slider::GetView() const {
+  return static_cast<views::Slider*>(view());
 }
 
 void Slider::SliderValueChanged(views::Slider* sender,

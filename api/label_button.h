@@ -22,11 +22,11 @@ class CHROHIME_EXPORT LabelButton : public Button {
   void MakeDefault(bool is_default);
   bool IsDefault() const;
 
+  views::LabelButton* GetView() const;
+
  protected:
   explicit LabelButton(std::unique_ptr<views::LabelButton> to_take);
   ~LabelButton() override;
-
-  raw_ptr<views::LabelButton> button_;
 };
 
 }  // namespace hime

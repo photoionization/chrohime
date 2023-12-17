@@ -24,11 +24,11 @@ class CHROHIME_EXPORT Label : public View {
   bool SetSelectable(bool selectable);
   bool IsSelectable() const;
 
- protected:
-  ~Label() override;
+  views::Label* GetView() const;
 
- private:
-  raw_ptr<views::Label> label_;
+ protected:
+  explicit Label(std::unique_ptr<views::Label> to_take);
+  ~Label() override;
 };
 
 }  // namespace hime

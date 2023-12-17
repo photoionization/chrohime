@@ -8,9 +8,10 @@
 
 namespace hime {
 
-Label::Label()
-    : View(std::make_unique<views::Label>(), LayoutType::kContainer),
-      label_(static_cast<views::Label*>(view())) {
+Label::Label() : Label(std::make_unique<views::Label>()) {}
+
+Label::Label(std::unique_ptr<views::Label> to_take)
+    : View(std::move(to_take), LayoutType::kLeaf) {
   UsePreferredSizeForYogaMeasurement();
 }
 
@@ -18,32 +19,36 @@ Label::~Label() = default;
 
 void Label::SetText(const std::u16string& text) {
   HIME_RETURN_ON_DESTROYED_VIEW(this);
-  label_->SetText(text);
+  GetView()->SetText(text);
 }
 
 const std::u16string& Label::GetText() const {
   HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, base::EmptyString16());
-  return label_->GetText();
+  return GetView()->GetText();
 }
 
 void Label::SetMultiLine(bool multi_line) {
   HIME_RETURN_ON_DESTROYED_VIEW(this);
-  label_->SetMultiLine(multi_line);
+  GetView()->SetMultiLine(multi_line);
 }
 
 bool Label::IsMultiLine() const {
   HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, false);
-  return label_->GetMultiLine();
+  return GetView()->GetMultiLine();
 }
 
 bool Label::SetSelectable(bool selectable) {
   HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, false);
-  return label_->SetSelectable(selectable);
+  return GetView()->SetSelectable(selectable);
 }
 
 bool Label::IsSelectable() const {
   HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, false);
-  return label_->GetSelectable();
+  return GetView()->GetSelectable();
+}
+
+views::Label* Label::GetView() const {
+  return static_cast<views::Label*>(view());
 }
 
 }  // namespace hime

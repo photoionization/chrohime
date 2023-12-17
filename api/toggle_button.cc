@@ -9,24 +9,27 @@
 namespace hime {
 
 ToggleButton::ToggleButton()
-    : Button(std::make_unique<views::ToggleButton>()),
-      button_(static_cast<views::ToggleButton*>(view())) {}
+    : Button(std::make_unique<views::ToggleButton>()) {}
 
 ToggleButton::~ToggleButton() = default;
 
 void ToggleButton::SetOnOff(bool is_on) {
   HIME_RETURN_ON_DESTROYED_VIEW(this);
-  button_->SetIsOn(is_on);
+  GetView()->SetIsOn(is_on);
 }
 
 void ToggleButton::SetOnOffAnimated(bool is_on) {
   HIME_RETURN_ON_DESTROYED_VIEW(this);
-  button_->AnimateIsOn(is_on);
+  GetView()->AnimateIsOn(is_on);
 }
 
 bool ToggleButton::IsOn() const {
   HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, false);
-  return button_->GetIsOn();
+  return GetView()->GetIsOn();
+}
+
+views::ToggleButton* ToggleButton::GetView() const {
+  return static_cast<views::ToggleButton*>(view());
 }
 
 }  // namespace hime

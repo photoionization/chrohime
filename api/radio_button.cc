@@ -9,9 +9,12 @@
 namespace hime {
 
 RadioButton::RadioButton(const std::u16string& title, int group_id)
-    : Checkbox(std::make_unique<views::RadioButton>(title, group_id)),
-      radio_(static_cast<views::RadioButton*>(view())) {}
+    : Checkbox(std::make_unique<views::RadioButton>(title, group_id)) {}
 
 RadioButton::~RadioButton() = default;
+
+views::RadioButton* RadioButton::GetView() const {
+  return static_cast<views::RadioButton*>(view());
+}
 
 }  // namespace hime

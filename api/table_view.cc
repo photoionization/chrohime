@@ -10,8 +10,7 @@
 namespace hime {
 
 TableView::TableView()
-    : View(std::make_unique<views::TableView>(), LayoutType::kLeaf),
-      table_(static_cast<views::TableView*>(view())) {}
+    : View(std::make_unique<views::TableView>(), LayoutType::kLeaf) {}
 
 TableView::~TableView() = default;
 
@@ -21,17 +20,21 @@ void TableView::SetColumns(const std::vector<Column>& columns) {
     NOTREACHED() << "SetColumns must be called before SetModel";
     return;
   }
-  table_->SetColumns(columns);
+  GetView()->SetColumns(columns);
 }
 
 void TableView::SetModel(scoped_refptr<TableModel> model) {
   HIME_RETURN_ON_DESTROYED_VIEW(this);
-  table_->SetModel(model->model());
+  GetView()->SetModel(model->model());
   model_ = std::move(model);
 }
 
 TableModel* TableView::GetModel() const {
   return model_.get();
+}
+
+views::TableView* TableView::GetView() const {
+  return static_cast<views::TableView*>(view());
 }
 
 }  // namespace hime

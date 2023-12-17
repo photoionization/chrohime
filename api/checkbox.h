@@ -21,6 +21,8 @@ class CHROHIME_EXPORT Checkbox : public LabelButton {
   void SetChecked(bool checked);
   bool IsChecked() const;
 
+  views::Checkbox* GetView() const;
+
   // Events.
   Signal<void(Checkbox*)> on_change;
 
@@ -32,7 +34,6 @@ class CHROHIME_EXPORT Checkbox : public LabelButton {
 
  private:
   base::CallbackListSubscription subscription_;
-  raw_ptr<views::Checkbox> checkbox_;
 };
 
 }  // namespace hime

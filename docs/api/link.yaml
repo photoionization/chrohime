@@ -1,0 +1,11 @@
+name: Link
+type: refcounted
+inherit: Label
+description: A Link is a label subclass that looks like an HTML link.
+
+events:
+  - name: onClick
+    description: Emitted when link is clicked.
+    args:
+      - name: link
+        type: Link

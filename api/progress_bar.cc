@@ -25,8 +25,7 @@ YGSize MeasureProgressBar(YGNodeConstRef node,
 }  // namespace
 
 ProgressBar::ProgressBar()
-    : View(std::make_unique<views::ProgressBar>(), LayoutType::kLeaf),
-      bar_(static_cast<views::ProgressBar*>(view())) {
+    : View(std::make_unique<views::ProgressBar>(), LayoutType::kLeaf) {
   YGNodeSetMeasureFunc(yoga_node(), MeasureProgressBar);
   // Give ProgressBar a proper default height.
   SetNumberStyle(u"height", 5);
@@ -36,22 +35,26 @@ ProgressBar::~ProgressBar() = default;
 
 void ProgressBar::SetValue(float value) {
   HIME_RETURN_ON_DESTROYED_VIEW(this);
-  bar_->SetValue(static_cast<double>(std::clamp(value, 0.f, 1.f)));
+  GetView()->SetValue(static_cast<double>(std::clamp(value, 0.f, 1.f)));
 }
 
 float ProgressBar::GetValue() const {
   HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, 0);
-  return static_cast<float>(bar_->GetValue());
+  return static_cast<float>(GetView()->GetValue());
 }
 
 void ProgressBar::SetIndeterminate(bool indeterminate) {
   HIME_RETURN_ON_DESTROYED_VIEW(this);
-  bar_->SetValue(-1);
+  GetView()->SetValue(-1);
 }
 
 bool ProgressBar::IsIndeterminate() const {
   HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, false);
-  return bar_->GetValue() < 0;
+  return GetView()->GetValue() < 0;
+}
+
+views::ProgressBar* ProgressBar::GetView() const {
+  return static_cast<views::ProgressBar*>(view());
 }
 
 }  // namespace hime

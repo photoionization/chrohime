@@ -67,8 +67,9 @@ View::View(std::unique_ptr<views::View> to_take, LayoutType layout_type)
 
 View::~View() {
   if (view_) {
-    view_->RemoveObserver(this);
     State::GetCurrent()->views_map_.erase(view_);
+    // Unsubscribe so OnViewIsDeleting will not be called for self-destruction.
+    view_->RemoveObserver(this);
   }
   YGNodeFree(yoga_node_);
   YGConfigFree(yoga_config_);
@@ -217,6 +218,8 @@ void View::OnViewPreferredSizeChanged(views::View* observed_view) {
 }
 
 void View::OnViewIsDeleting(views::View* observed_view) {
+  // This method is called when the ownership has been transferred to other
+  // classes and then gets deleted there.
   DCHECK(!ownership_);
   State::GetCurrent()->views_map_.erase(view_);
   view_ = nullptr;

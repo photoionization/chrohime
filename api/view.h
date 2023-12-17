@@ -9,6 +9,7 @@
 
 #include "base/notreached.h"
 #include "chrohime/api/object.h"
+#include "chrohime/api/signal.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "ui/views/view_observer.h"
 

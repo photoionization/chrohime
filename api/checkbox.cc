@@ -12,9 +12,8 @@ Checkbox::Checkbox()
     : Checkbox(std::make_unique<views::Checkbox>()) {}
 
 Checkbox::Checkbox(std::unique_ptr<views::Checkbox> to_take)
-    : LabelButton(std::move(to_take)),
-      checkbox_(static_cast<views::Checkbox*>(view())) {
-  subscription_ = checkbox_->AddCheckedChangedCallback(
+    : LabelButton(std::move(to_take)) {
+  subscription_ = GetView()->AddCheckedChangedCallback(
       base::BindRepeating(&Checkbox::OnChange, base::Unretained(this)));
 }
 
@@ -22,12 +21,16 @@ Checkbox::~Checkbox() = default;
 
 void Checkbox::SetChecked(bool checked) {
   HIME_RETURN_ON_DESTROYED_VIEW(this);
-  checkbox_->SetChecked(checked);
+  GetView()->SetChecked(checked);
 }
 
 bool Checkbox::IsChecked() const {
   HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, false);
-  return checkbox_->GetChecked();
+  return GetView()->GetChecked();
+}
+
+views::Checkbox* Checkbox::GetView() const {
+  return static_cast<views::Checkbox*>(view());
 }
 
 void Checkbox::OnChange() {

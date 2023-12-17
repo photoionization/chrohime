@@ -7,7 +7,7 @@
 
 #include "chrohime/api/background.h"
 #include "chrohime/api/border.h"
-#include "chrohime/api/label.h"
+#include "chrohime/api/link.h"
 #include "chrohime/api/lifetime.h"
 #include "chrohime/api/material_button.h"
 #include "chrohime/api/progress_bar.h"
