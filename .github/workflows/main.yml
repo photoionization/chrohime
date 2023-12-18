@@ -4,19 +4,25 @@ on: push
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ fromJson('{"linux":"ubuntu-22.04","mac":"macos-13","win":"windows-2022"}')[matrix.targetOs] }}
     continue-on-error: false
 
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-13, windows-2022]
+        targetOs: [linux, mac, win]
+        targetCpu: [x64]
+        config: [Component, Release]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           submodules: recursive
+
+      - name: Maximize Build Space
+        if: matrix.targetOs == 'linux' && matrix.config == 'Release'
+        uses: hirnidrin/free-disk-space@main
 
       - uses: actions/setup-python@v3
         with:
@@ -40,7 +46,7 @@ jobs:
           /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
       - name: Bootstrap
-        run: python3 scripts/bootstrap.py
+        run: python3 scripts/bootstrap.py --target-cpu ${{ matrix.targetCpu }}
 
       - name: Setup GOMA
         shell: bash
@@ -52,5 +58,5 @@ jobs:
 
       - name: Build
         run: |
-          python3 scripts/gn_gen.py --goma
-          python3 scripts/build.py --component chrohime_gallery chrohime_test
+          python3 scripts/gn_gen.py --goma --config ${{ matrix.config }} --target-cpu ${{ matrix.targetCpu }}
+          python3 scripts/build.py --config ${{ matrix.config }} chrohime_gallery chrohime_test

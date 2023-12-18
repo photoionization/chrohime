@@ -9,15 +9,15 @@ from bootstrap import ROOT_DIR, SRC_DIR
 
 def main():
   parser = argparse.ArgumentParser(description='Build Chrohime')
-  parser.add_argument('target', nargs='?', default='chrohime',
+  parser.add_argument('targets', nargs='*', default=[ 'chrohime_gallery' ],
                       help='Target build')
-  parser.add_argument('--component', action='store_true', default=False,
-                      help='Do component build')
+  parser.add_argument('--config', choices=[ 'Component', 'Release', 'Debug' ],
+                      default='Release',
+                      help='Which config to build')
   args, unknown_args = parser.parse_known_args()
 
   build_args = [ os.path.join(ROOT_DIR, 'build_chromium/build.py'),
-                 '-C', 'Component' if args.component else 'Release',
-                 args.target ] + unknown_args
+                 '-C', args.config ] + unknown_args + args.targets
 
   try:
     subprocess.check_call([ sys.executable ] + build_args,
