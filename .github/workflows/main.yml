@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-13]
+        os: [ubuntu-22.04, macos-13, windows-2022]
 
     steps:
       - name: Checkout
@@ -23,7 +23,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install python dependencies
-        run: python -m pip install pyyaml
+        run: python -m pip install pyyaml httplib2
 
       - name: Use XCode 15
         if: runner.os == 'macOS'
@@ -39,18 +39,18 @@ jobs:
           sudo apt install gperf
           /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
+      - name: Bootstrap
+        run: python3 scripts/bootstrap.py
+
       - name: Setup GOMA
         shell: bash
         env:
           SECRET_FILE_CONTENT: ${{ secrets.GOMA_OAUTH2_CONFIG }}
         run: |
           printf "$SECRET_FILE_CONTENT" > ~/.goma_oauth2_config
-          ./build_chromium/goma.js
-
-      - name: Bootstrap
-        run: ./scripts/bootstrap.py
+          node build_chromium/goma.js
 
       - name: Build
         run: |
-          ./scripts/gn_gen.py --goma
-          ./scripts/build.py --component chrohime_gallery
+          python3 scripts/gn_gen.py --goma
+          python3 scripts/build.py --component chrohime_gallery chrohime_test

@@ -1,16 +1,15 @@
 executable("chrohime_test") {
   testonly = true
+  sources = [ "main.cc" ]
 
-  sources = [
-    "main.cc",
-  ]
-
-  deps = [
-    "//build/win:default_exe_manifest",
-    "//chrohime:chrohime_with_content_with_lifetime",
-  ]
+  if (is_mac) {
+    deps = [ "//chrohime:chrohime_with_content_with_lifetime" ]
+  } else {
+    deps = [ "//chrohime:chrohime_no_content_with_lifetime" ]
+  }
 
   if (is_win) {
+    deps += [ "//build/win:default_exe_manifest" ]
     configs += [ "//build/config/win:windowed" ]
     configs -= [ "//build/config/win:console" ]
   }
@@ -20,6 +19,10 @@ executable("chrohime_gallery") {
   testonly = true
   sources = [ "gallery.c" ]
   deps = [ "//chrohime/c:chrohime_shared_c_lib" ]
+
+  if (is_win) {
+    deps += [ "//build/win:default_exe_manifest" ]
+  }
 
   if (!is_component_build) {
     # Set rpath to search libchrohime from out dir.

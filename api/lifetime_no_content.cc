@@ -29,6 +29,7 @@
 #endif
 
 #if BUILDFLAG(IS_WIN)
+#include "base/win/win_util.h"
 #include "ui/base/win/scoped_ole_initializer.h"
 #endif
 
@@ -110,6 +111,10 @@ void Lifetime::Initialize(int argc, const char** argv) {
   ui::ResourceBundle::GetSharedInstance().AddDataPackFromPath(
       resources_pak_path.AppendASCII("chrohime_resources.pak"),
       ui::k100Percent);
+
+#if BUILDFLAG(IS_WIN)
+  base::win::EnableHighDPISupport();
+#endif
 
   gfx::InitializeFonts();
 

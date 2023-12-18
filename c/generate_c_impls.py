@@ -137,7 +137,7 @@ def write_struct_impl(file, apis, api, write_impl, public_header):
   if public_header:
     file.write(get_comment(api))
   # Write the struct declaration.
-  file.write(f'typedef struct CHROHIME_C_EXPORT {{\n')
+  file.write(f'typedef struct {{\n')
   if api['type'] == 'struct':
     file.write(f'  uint32_t struct_size;\n')
   for prop in api['properties']:

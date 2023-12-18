@@ -13,10 +13,16 @@ shared_library("chrohime_shared_c_lib") {
   ]
   defines = [ "CHROHIME_C_IMPLEMENTATION" ]
 
-  deps = [
-    ":chrohime_generate_c_impls",
-    "//chrohime:chrohime_with_content_with_lifetime",
-  ]
+  deps = [ ":chrohime_generate_c_impls" ]
+
+  # views_no_content is not working on macOS for now, also views_with_content
+  # can not work on Windows due to sandbox issue, which requires patch:
+  # https://github.com/chromiumembedded/cef/blob/master/patch/patches/win_sandbox_3210.patch
+  if (is_mac) {
+    deps += [ "//chrohime:chrohime_with_content_with_lifetime" ]
+  } else {
+    deps += [ "//chrohime:chrohime_no_content_with_lifetime" ]
+  }
 
   if (is_apple) {
     # Default optimization on apple adds "-dead_strip" to ldflags, which would

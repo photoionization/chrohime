@@ -14,6 +14,7 @@
 #if BUILDFLAG(IS_WIN)
 #include "base/win/windows_types.h"
 #include "content/public/app/sandbox_helper_win.h"
+#include "sandbox/policy/switches.h"
 #include "sandbox/win/src/sandbox_types.h"
 #endif
 
@@ -51,10 +52,14 @@ void Lifetime::Initialize(int argc, const char** argv) {
   impl_ = new LifetimeImpl;
 
 #if BUILDFLAG(IS_WIN)
+  // Making sandbox work on Windows requires some non-simple work on user's
+  // side, so disable sandbox for now. See CEF's comment on requirements:
+  // https://github.com/chromiumembedded/cef/blob/master/include/cef_sandbox_win.h
+  base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
+  command_line->AppendSwitch(sandbox::policy::switches::kNoSandbox);
+  // The SandboxInterfaceInfo is required by content.
   sandbox::SandboxInterfaceInfo sandbox_info = {nullptr};
   content::InitializeSandboxInfo(&sandbox_info);
-  impl_->content_client.reset(
-      new ui::ViewsContentClient(instance, &sandbox_info));
 #elif BUILDFLAG(IS_MAC)
   base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
   // ViewsContentClient expects a const char** argv and
@@ -69,7 +74,13 @@ void Lifetime::Initialize(int argc, const char** argv) {
     CHECK(seatbelt.server->InitializeSandbox());
 #endif
 
+#if BUILDFLAG(IS_WIN)
+  impl_->content_client.reset(
+      new ui::ViewsContentClient(nullptr, &sandbox_info));
+#else
   impl_->content_client.reset(new ui::ViewsContentClient(argc, argv));
+#endif
+
   impl_->content_client->set_on_resources_loaded_callback(
       base::BindOnce(&OnResourcesLoaded));
   impl_->content_client->set_on_pre_main_message_loop_run_callback(
