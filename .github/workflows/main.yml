@@ -4,7 +4,12 @@ on: push
 
 jobs:
   build:
-    runs-on: ${{ fromJson('{"linux":"ubuntu-22.04","mac":"macos-13","win":"windows-2022"}')[matrix.targetOs] }}
+    runs-on: >-
+      ${{
+        (matrix.targetOs == 'linux' && matrix.config == 'Release') &&
+          'ubuntu-latest-m' ||
+          (fromJson('{"linux":"ubuntu-22.04","mac":"macos-13","win":"windows-2022"}')[matrix.targetOs])
+      }}
     continue-on-error: false
 
     strategy:
@@ -19,10 +24,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: recursive
-
-      - name: Maximize Build Space
-        if: matrix.targetOs == 'linux' && matrix.config == 'Release'
-        uses: hirnidrin/free-disk-space@main
 
       - uses: actions/setup-python@v3
         with:
