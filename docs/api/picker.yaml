@@ -1,0 +1,46 @@
+name: Picker
+type: refcounted
+inherit: View
+description: Choose a single item from a list of items.
+
+constructors:
+  - name: Create
+    description: Create a new Picker.
+
+methods:
+  - name: SetModel
+    description: Set the combobox model used for displaying.
+    args:
+      - name: model
+        type: ComboboxModel
+
+  - name: GetModel
+    description: Return the picker's model.
+    returnType: ComboboxModel
+
+  - name: SelectItemAt
+    description: |
+      Select the item at `index`.
+
+      Pass a negative number to deselect the item.
+    args:
+      - name: index
+        type: int
+
+  - name: GetSelectedItem
+    description: Return the text of selected item.
+    returnType: const std::u16string&
+
+  - name: GetSelectedItemIndex
+    description: |
+      Return the index of selected item.
+
+      When nothing is selected, -1 will be returned.
+    returnType: int
+
+events:
+  - name: onChange
+    description: Emitted when the content has changed.
+    args:
+      - name: picker
+        type: Picker

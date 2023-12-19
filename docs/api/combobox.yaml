@@ -1,0 +1,42 @@
+name: Combobox
+type: refcounted
+inherit: View
+description: Choose a single item from a list of items or type a custom value.
+
+constructors:
+  - name: Create
+    description: Create a new Combobox.
+
+methods:
+  - name: SetModel
+    description: Set the combobox model used for displaying.
+    args:
+      - name: model
+        type: ComboboxModel
+
+  - name: GetModel
+    description: Return the combobox's model.
+    returnType: ComboboxModel
+
+  - name: SetText
+    description: Set the `text` currently displayed in the Combobox.
+    args:
+      - name: text
+        type: std::u16string
+
+  - name: GetText
+    description: Get the text for the Combobox.
+    returnType: const std::u16string&
+
+  - name: SetPlaceholderText
+    description: Set the `placeholder` text to display when empty.
+    args:
+      - name: placeholder
+        type: std::u16string
+
+events:
+  - name: onChange
+    description: Emitted when the content has changed.
+    args:
+      - name: picker
+        type: Combobox

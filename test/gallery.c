@@ -83,6 +83,43 @@ void CreateLabelExample(chrohime_view_t view) {
   chrohime_object_unref((chrohime_object_t)label);
 }
 
+void OnPickerChange(chrohime_picker_t picker, void* data) {
+  chrohime_combobox_set_text(
+      (chrohime_combobox_t)data, chrohime_picker_get_selected_item(picker));
+}
+
+void CreateComboboxExample(chrohime_view_t view) {
+  chrohime_view_set_style_number(view, u"gap", PADDING);
+
+  chrohime_simple_combobox_model_t model1 =
+      chrohime_simple_combobox_model_create();
+  chrohime_simple_combobox_model_t model2 =
+      chrohime_simple_combobox_model_create();
+  const char16_t* list[] = {
+      u"Kurohime", u"Obasute", u"Matsumoto", u"Omachi", u"Azumino", u"Nagano",
+  };
+  for (size_t i = 0; i < sizeof(list) / sizeof(const char16_t*); ++i) {
+    chrohime_simple_combobox_model_add_item(model1, list[i]);
+    chrohime_simple_combobox_model_add_item(model2, list[i]);
+  }
+
+  chrohime_picker_t picker = chrohime_picker_create();
+  chrohime_picker_set_model(picker, (chrohime_combobox_model_t)model1);
+  chrohime_object_unref((chrohime_object_t)model1);
+  chrohime_view_add_child_view(view, (chrohime_view_t)picker);
+  chrohime_view_set_accessible_name((chrohime_view_t)picker, u"Picker");
+  chrohime_object_unref((chrohime_object_t)picker);
+
+  chrohime_combobox_t combobox = chrohime_combobox_create();
+  chrohime_combobox_set_model(combobox, (chrohime_combobox_model_t)model2);
+  chrohime_object_unref((chrohime_object_t)model2);
+  chrohime_view_add_child_view(view, (chrohime_view_t)combobox);
+  chrohime_view_set_accessible_name((chrohime_view_t)combobox, u"Combobox");
+  chrohime_object_unref((chrohime_object_t)combobox);
+
+  chrohime_picker_on_change_connect(picker, OnPickerChange, combobox);
+}
+
 void CreateTextfieldExample(chrohime_view_t view) {
   chrohime_view_set_style_number(view, u"flex", 1);
   chrohime_view_set_style_number(view, u"gap", PADDING);
@@ -119,10 +156,15 @@ void CreateTextfieldExample(chrohime_view_t view) {
       u"Where thoughts ignite and stories convene.\n"
       u"Lines unfold, gracefully and refined,\n"
       u"In the multi-line textarea, tales intertwined.");
-  chrohime_view_set_style_number((chrohime_view_t)textarea, u"flex", 1);
   chrohime_view_set_accessible_name((chrohime_view_t)textarea, u"Textarea");
-  chrohime_view_add_child_view(view, (chrohime_view_t)textarea);
+
+  chrohime_scroll_view_t scroll_view = chrohime_scroll_view_create();
+  chrohime_view_set_style_number((chrohime_view_t)scroll_view, u"flex", 1);
+  chrohime_scroll_view_set_content_view(scroll_view, (chrohime_view_t)textarea);
   chrohime_object_unref((chrohime_object_t)textarea);
+
+  chrohime_view_add_child_view(view, (chrohime_view_t)scroll_view);
+  chrohime_object_unref((chrohime_object_t)scroll_view);
 }
 
 void OnButtonClick(chrohime_button_t button, void* data) {
@@ -308,6 +350,7 @@ void OnReady(void* data) {
       CreateMiscExample,
       CreateSliderExample,
       CreateLabelExample,
+      CreateComboboxExample,
       CreateTextfieldExample,
       CreateMaterialButtonExample,
       CreateCheckboxExample,
@@ -318,7 +361,7 @@ void OnReady(void* data) {
   for (size_t i = 0; i < sizeof(examples) / sizeof(CreateExample); ++i) {
     chrohime_view_t section = CreateSection();
     examples[i](section);
-    chrohime_view_add_child_view(i < 4 ? column1 : column2, section);
+    chrohime_view_add_child_view(i < 5 ? column1 : column2, section);
     chrohime_object_unref((chrohime_object_t)section);
   }
 

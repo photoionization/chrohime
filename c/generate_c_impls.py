@@ -186,10 +186,22 @@ def write_class_impl(file, apis, api, write_impl, public_header):
       file.write(get_comment(method))
     return_type = get_c_return_type(apis, method['returnType'])
     method_name = get_c_name(method)
-    write_function(file, method, write_impl,
-                   f'{return_type} {api_prefix}_{method_name}',
-                   get_c_params(apis, api, method, include_this=True),
-                   get_method_impl(apis, api, method))
+    params = get_c_params(apis, api, method, include_this=True)
+    if method['returnType'] == 'std::u16string':
+      write_function(file, method, write_impl,
+                     f'size_t {api_prefix}_{method_name}_size',
+                     params,
+                     f'return {get_method_impl(apis, api, method)}.size();')
+      write_function(file, method, write_impl,
+                     f'{return_type} {api_prefix}_{method_name}',
+                     params + [ 'char16_t* out', 'size_t size' ],
+                     f'{method["returnType"]} result = {get_method_impl(apis, api, method)};\n'
+                     f'std::copy_n(result.begin(), std::min(result.size(), size), out);')
+    else:
+      write_function(file, method, write_impl,
+                     f'{return_type} {api_prefix}_{method_name}',
+                     params,
+                     get_method_impl(apis, api, method))
   # Write events.
   for event in api['events']:
     if public_header:
@@ -223,12 +235,11 @@ def write_class_impl(file, apis, api, write_impl, public_header):
       # Write a event_connect define for simplifying API.
       file.write(f'#define {event_api_prefix}_connect({api_name}, callback, data) \\\n'
                  f'  {event_api_prefix}_connect_closure({api_name}, callback, data, NULL)\n\n')
-    if write_impl:
-      write_function(file, event, write_impl,
-                     f'void {event_api_prefix}_disconnect',
-                     [ f'{api_type_name} {api_name}',
-                       'uint32_t signal_id' ],
-                     f'{api_name}->{event_name}.Disconnect(signal_id);');
+    write_function(file, event, write_impl,
+                   f'void {event_api_prefix}_disconnect',
+                   [ f'{api_type_name} {api_name}',
+                     'uint32_t signal_id' ],
+                   f'{api_name}->{event_name}.Disconnect(signal_id);');
 
 def write_function(file, data, write_impl, name, params, impl, export=True):
   defines = get_platform_defines(data)
@@ -267,12 +278,15 @@ def get_enum_declaration(api, public_header=False):
 def get_method_impl(apis, api, method):
   api_call = f'self->{method["name"]}({params_join(get_c_args(apis, api, method))})'
   if get_type_of_type(apis, method['returnType']) in [ 'struct', 'geometry', 'enum', 'enum class' ]:
-    api_call = f'return FromHime({api_call})'
-  elif method['returnType'] != 'void':
-    api_call = f'return {api_call}'
+    api_call = f'FromHime({api_call})'
+  if method['returnType'] == 'std::u16string':
+    return api_call
   if method['returnType'] == 'const std::u16string&':
     api_call = f'{api_call}.c_str()'
-  return api_call + ';'
+  if method['returnType'] != 'void':
+    return f'return {api_call};'
+  else:
+    return f'{api_call};'
 
 def get_type_of_type(apis, type_name):
   if type_name.startswith('std::vector<'):
@@ -360,7 +374,7 @@ def get_c_return_type(apis, type_name):
   if type_name == 'const std::u16string&':
     return 'const char16_t*'
   elif type_name == 'std::u16string':
-    raise ValueError('Returning std::u16string is not implemented.')
+    return 'void'
   else:
     return get_c_type_name(type_name)
 

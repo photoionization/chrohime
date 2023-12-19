@@ -1,0 +1,21 @@
+name: SimpleComboboxModel
+type: refcounted
+inherit: ComboboxModel
+description: An implementation of `ComboboxModel` that stores data in memory.
+
+constructors:
+  - name: Create
+    description: Create an empty SimpleComboboxModel
+
+methods:
+  - name: AddItem
+    description: Append a new item.
+    args:
+      - name: item
+        type: std::u16string
+
+  - name: RemoveItemAt
+    description: Remove the item at `index`.
+    args:
+      - name: index
+        type: size_t

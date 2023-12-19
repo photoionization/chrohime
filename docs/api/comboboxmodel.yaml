@@ -1,0 +1,16 @@
+name: ComboboxModel
+type: refcounted
+inherit: Object
+description: The model driving the `Combobox` and `Picker`.
+
+methods:
+  - name: GetItemCount
+    description: Return the number of items.
+    returnType: size_t
+
+  - name: GetItemText
+    description: Return the text of item at `index`.
+    args:
+      - name: index
+        type: size_t
+    returnType: std::u16string

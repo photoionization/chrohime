@@ -33,7 +33,7 @@ def main():
       sys.executable,
       os.path.join(ROOT_DIR, 'build_chromium', 'bootstrap.py'),
       '--revision', CHROMIUM_VERSION,
-      '--src-dir', SRC_DIR ])
+      '--src-dir', SRC_DIR ] + sys.argv[1:])
 
   if not os.path.exists(os.path.join(SRC_DIR, 'chrohime')):
     os.symlink(os.getcwd(), os.path.join(SRC_DIR, 'chrohime'),

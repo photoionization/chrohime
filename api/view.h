@@ -71,6 +71,7 @@ class CHROHIME_EXPORT View : public Object,
 
   // Note that the returned pointer might be null, and caller must check before
   // using to avoid crashes.
+  // TODO(zcbenz): Make this a protected member.
   views::View* view() const { return view_.get(); }
 
  protected:
