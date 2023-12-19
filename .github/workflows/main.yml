@@ -18,6 +18,8 @@ jobs:
         targetOs: [linux, mac, win]
         targetCpu: [x64]
         config: [Component, Release]
+        exclude:
+          - config: ${{ startsWith(github.ref, 'refs/tags/') && 'Component' || 'Release' }}
 
     steps:
       - name: Checkout
