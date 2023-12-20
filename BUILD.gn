@@ -46,6 +46,8 @@ component("chrohime") {
     "api/slider.h",
     "api/state.cc",
     "api/state.h",
+    "api/tab_view.cc",
+    "api/tab_view.h",
     "api/table_model.cc",
     "api/table_model.h",
     "api/table_view.cc",

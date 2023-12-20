@@ -94,7 +94,7 @@ class CHROHIME_EXPORT View : public Object,
   YGNodeRef yoga_node_;
   bool mark_dirty_on_preferred_size_change_ = false;
 
-  // Relationships with other views.
+  // Relationships with other views used for layout.
   raw_ptr<View> parent_ = nullptr;
   std::vector<scoped_refptr<View>> children_;
 

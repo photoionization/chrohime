@@ -28,6 +28,7 @@ action("apis_json") {
     "api/simplecomboboxmodel.yaml",
     "api/simpletablemodel.yaml",
     "api/slider.yaml",
+    "api/tabview.yaml",
     "api/tablemodel.yaml",
     "api/tableview_column.yaml",
     "api/tableview.yaml",

@@ -20,6 +20,7 @@
 #include "chrohime/api/simple_table_model.h"
 #include "chrohime/api/slider.h"
 #include "chrohime/api/state.h"
+#include "chrohime/api/tab_view.h"
 #include "chrohime/api/table_view.h"
 #include "chrohime/api/toggle_button.h"
 #include "chrohime/api/textarea.h"

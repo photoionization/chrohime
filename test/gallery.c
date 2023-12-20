@@ -280,9 +280,7 @@ void CreateToggleButtonExample(chrohime_view_t view) {
   chrohime_object_unref((chrohime_object_t)button3);
 }
 
-void CreateTableViewExample(chrohime_view_t view) {
-  chrohime_view_set_style_number(view, u"flex", 1);
-
+chrohime_view_t CreateTableViewPage() {
   chrohime_simple_table_model_t model = chrohime_simple_table_model_create();
   const char16_t* rows[5][4] = {
       { u"Orange", u"Orange", u"South America", u"$5" },
@@ -313,10 +311,25 @@ void CreateTableViewExample(chrohime_view_t view) {
   chrohime_scroll_view_t scroll_view =
       chrohime_scroll_view_create_with_table(table);
   chrohime_object_unref((chrohime_object_t)table);
+  return (chrohime_view_t)scroll_view;
+}
 
-  chrohime_view_set_style_number((chrohime_view_t)scroll_view, u"flex", 1);
-  chrohime_view_add_child_view(view, (chrohime_view_t)scroll_view);
-  chrohime_object_unref((chrohime_object_t)scroll_view);
+void CreateTabViewExample(chrohime_view_t view) {
+  chrohime_view_set_style_number(view, u"flex", 1);
+
+  chrohime_tab_view_t tab = chrohime_tab_view_create();
+  chrohime_view_t page1 = CreateTableViewPage();
+  chrohime_tab_view_add_page(tab, u"TableView", page1);
+  chrohime_object_unref((chrohime_object_t)page1);
+
+  chrohime_label_t page2 = chrohime_label_create();
+  chrohime_label_set_text(page2, u"Hello World");
+  chrohime_tab_view_add_page(tab, u"Label", (chrohime_view_t)page2);
+  chrohime_object_unref((chrohime_object_t)page2);
+
+  chrohime_view_set_style_number((chrohime_view_t)tab, u"flex", 1);
+  chrohime_view_add_child_view(view, (chrohime_view_t)tab);
+  chrohime_object_unref((chrohime_object_t)tab);
 }
 
 chrohime_view_t CreateColumn(chrohime_view_t content_view) {
@@ -356,7 +369,7 @@ void OnReady(void* data) {
       CreateCheckboxExample,
       CreateRadioButtonExample,
       CreateToggleButtonExample,
-      CreateTableViewExample,
+      CreateTabViewExample,
   };
   for (size_t i = 0; i < sizeof(examples) / sizeof(CreateExample); ++i) {
     chrohime_view_t section = CreateSection();

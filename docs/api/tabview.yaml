@@ -1,0 +1,52 @@
+name: TabView
+type: refcounted
+inherit: View
+description: Multi-page view with tabs.
+
+constructors:
+  - name: Create
+    description: Create a new TabView.
+
+methods:
+  - name: AddPage
+    description: Add `view` as a new page with `title`.
+    args:
+      - name: title
+        type: std::u16string
+      - name: view
+        type: View
+
+  - name: AddPageAt
+    description: Add `view` as a new page with `title` at `index`.
+    args:
+      - name: title
+        type: std::u16string
+      - name: view
+        type: View
+      - name: index
+        type: size_t
+
+  - name: PageCount
+    description: Return the count of pages in this view.
+    returnType: size_t
+
+  - name: PageAt
+    description: Return the view of page at `index`.
+    args:
+      - name: index
+        type: size_t
+    returnType: View
+
+  - name: SelectPageAt
+    description: Select the page at `index`.
+    args:
+      - name: index
+        type: size_t
+
+  - name: GetSelectedPageIndex
+    description: Return the index of selected page.
+    returnType: size_t
+
+  - name: GetSelectedPage
+    description: Return the view of selected page.
+    returnType: View
