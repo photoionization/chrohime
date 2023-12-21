@@ -1,0 +1,22 @@
+name: WebView
+type: refcounted
+inherit: View
+content: true
+description: Chromium WebContents view.
+
+constructors:
+  - name: Create
+    description: Create a new WebView.
+
+methods:
+  - name: LoadInitialUrl
+    description: |
+      Loads the initial URL to display in the attached WebContents.
+
+      Creates the WebContents if none is attached yet. Note that this is
+      intended as a convenience for loading the initial URL, and so URLs are
+      navigated with PAGE_TRANSITION_AUTO_TOPLEVEL, so this is not intended as
+      a general purpose navigation method - use WebContents' API directly.
+    args:
+      - name: url
+        type: GURL

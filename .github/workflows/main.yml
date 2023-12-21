@@ -62,4 +62,4 @@ jobs:
       - name: Build
         run: |
           python3 scripts/gn_gen.py --goma --config ${{ matrix.config }} --target-cpu ${{ matrix.targetCpu }}
-          python3 scripts/build.py --config ${{ matrix.config }} chrohime_gallery chrohime_test
+          python3 scripts/build.py --config ${{ matrix.config }} chrohime_gallery chrohime_dylib chrohime_with_content_dylib

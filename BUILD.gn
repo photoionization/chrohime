@@ -1,6 +1,6 @@
 import("//tools/grit/grit_rule.gni")
 
-component("chrohime") {
+component("chrohime_no_content") {
   sources = [
     "api/background.cc",
     "api/background.h",
@@ -80,31 +80,23 @@ component("chrohime") {
   ]
 }
 
-component("chrohime_with_content_with_lifetime") {
-  # TODO(zcbenz): The views_content_client is for tests, we need our own
-  # content clients to get rid of testonly.
-  testonly = true
-
+source_set("chrohime_lifetime") {
   sources = [
     "api/lifetime.cc",
     "api/lifetime.h",
-    "api/lifetime_with_content.cc",
-  ]
-
-  configs += [ ":chrohime_internal_config" ]
-
-  public_deps = [ ":chrohime" ]
-  deps = [
-    ":chrohime_resources_pak",
-    "//content",
-    "//content:sandbox_helper_win",
-    "//sandbox",
-    "//ui/views/examples:copy_content_resources",
-    "//ui/views_content_client",
   ]
   if (is_mac) {
-    deps += [ "//sandbox/mac:seatbelt" ]
+    sources += [
+      "api/lifetime/chrohime_app_delegate.h",
+      "api/lifetime/chrohime_app_delegate.mm",
+      "api/lifetime/lifetime_mac.mm",
+    ]
+    frameworks = [
+      "AppKit.framework",
+    ]
   }
+  configs += [ ":chrohime_internal_config" ]
+  deps = [ ":chrohime_no_content" ]
 }
 
 component("chrohime_no_content_with_lifetime") {
@@ -113,19 +105,17 @@ component("chrohime_no_content_with_lifetime") {
   testonly = true
 
   sources = [
-    "api/lifetime.cc",
-    "api/lifetime.h",
-    "api/lifetime_no_content.cc",
+    "api/lifetime/lifetime_no_content.cc",
   ]
 
   configs += [ ":chrohime_internal_config" ]
 
   public_deps = [
-    ":chrohime",
+    ":chrohime_lifetime",
+    ":chrohime_no_content",
     "//skia",
   ]
   deps = [
-    ":chrohime_resources_pak",
     "//base/test:test_support",
     "//ui/compositor:test_support",
     "//ui/gl",
@@ -138,22 +128,37 @@ component("chrohime_no_content_with_lifetime") {
   }
 }
 
+component("chrohime_with_content_with_lifetime") {
+  # TODO(zcbenz): The views_content_client is for tests, we need our own
+  # content clients to get rid of testonly.
+  testonly = true
+
+  sources = [
+    "api/lifetime/lifetime_with_content.cc",
+    "api/web_view.cc",
+    "api/web_view.h",
+  ]
+
+  configs += [ ":chrohime_internal_config" ]
+
+  public_deps = [
+    ":chrohime_lifetime",
+    ":chrohime_no_content",
+    "//url",
+  ]
+  deps = [
+    "//chrohime/content",
+    "//content:sandbox_helper_win",
+    "//sandbox",
+    "//ui/views/controls/webview",
+  ]
+  if (is_mac) {
+    deps += [ "//sandbox/mac:seatbelt" ]
+  }
+}
+
 config("chrohime_internal_config") {
   defines = [ "CHROHIME_IMPLEMENTATION" ]
-}
-
-grit("chrohime_resources_grd") {
-  source = "api/chrohime_resources.grd"
-  outputs = [
-    "grit/chrohime_resources.h",
-    "chrohime_resources.pak",
-  ]
-}
-
-copy("chrohime_resources_pak") {
-  sources = [ "$target_gen_dir/chrohime_resources.pak" ]
-  outputs = [ "$root_out_dir/chrohime_resources.pak" ]
-  public_deps = [ ":chrohime_resources_grd" ]
 }
 
 config("yoga_config") {

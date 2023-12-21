@@ -7,12 +7,11 @@
 #include "base/command_line.h"
 #include "base/files/file_path.h"
 #include "base/functional/bind.h"
-#include "base/path_service.h"
-#include "ui/base/resource/resource_bundle.h"
-#include "ui/views_content_client/views_content_client.h"
+#include "chrohime/api/state.h"
+#include "chrohime/content/chrohime_content_main_delegate.h"
+#include "content/public/app/content_main.h"
 
 #if BUILDFLAG(IS_WIN)
-#include "base/win/windows_types.h"
 #include "content/public/app/sandbox_helper_win.h"
 #include "sandbox/policy/switches.h"
 #include "sandbox/win/src/sandbox_types.h"
@@ -24,24 +23,39 @@
 
 namespace hime {
 
-namespace {
-
-void OnResourcesLoaded() {
-  base::FilePath resources_pak_path;
-  CHECK(base::PathService::Get(base::DIR_ASSETS, &resources_pak_path));
-  ui::ResourceBundle::GetSharedInstance().AddDataPackFromPath(
-      resources_pak_path.AppendASCII("chrohime_resources.pak"),
-      ui::k100Percent);
-}
-
-}  // namespace
-
 struct LifetimeImpl {
-  std::unique_ptr<ui::ViewsContentClient> content_client;
+#if BUILDFLAG(IS_WIN)
+  sandbox::SandboxInterfaceInfo sandbox_info{nullptr};
+#else
+  int argc = 0;
+  raw_ptr<const char*> argv = nullptr;
+#endif
 };
 
 int Lifetime::RunMain() {
-  return impl_->content_client->RunMain();
+  ChrohimeContentMainDelegate delegate(this);
+  content::ContentMainParams params(&delegate);
+#if BUILDFLAG(IS_WIN)
+  params.sandbox_info = &impl_->sandbox_info;
+#else
+  params.argc = impl_->argc;
+  params.argv = impl_->argv;
+#endif
+  return content::ContentMain(std::move(params));
+}
+
+void Lifetime::OnPreBrowserMain() {
+#if BUILDFLAG(IS_MAC)
+  InitializeAppDelegate();
+#endif
+}
+
+void Lifetime::OnPreMainMessageLoopRun(
+    content::BrowserContext* browser_context) {
+  State::GetCurrent()->browser_context_ = browser_context;
+#if !BUILDFLAG(IS_MAC)
+  on_ready.Emit();
+#endif
 }
 
 #if BUILDFLAG(IS_WIN)
@@ -58,14 +72,9 @@ void Lifetime::Initialize(int argc, const char** argv) {
   base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
   command_line->AppendSwitch(sandbox::policy::switches::kNoSandbox);
   // The SandboxInterfaceInfo is required by content.
-  sandbox::SandboxInterfaceInfo sandbox_info = {nullptr};
-  content::InitializeSandboxInfo(&sandbox_info);
+  content::InitializeSandboxInfo(&impl_->sandbox_info);
 #elif BUILDFLAG(IS_MAC)
   base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
-  // ViewsContentClient expects a const char** argv and
-  // CreateFromArgumentsResult expects a regular char** argv. Given this is a
-  // test program, a refactor from either end didn't seem worth it. As a result,
-  // use a const_cast instead.
   sandbox::SeatbeltExecServer::CreateFromArgumentsResult seatbelt =
       sandbox::SeatbeltExecServer::CreateFromArguments(
           command_line->GetProgram().value().c_str(), argc,
@@ -74,20 +83,10 @@ void Lifetime::Initialize(int argc, const char** argv) {
     CHECK(seatbelt.server->InitializeSandbox());
 #endif
 
-#if BUILDFLAG(IS_WIN)
-  impl_->content_client.reset(
-      new ui::ViewsContentClient(nullptr, &sandbox_info));
-#else
-  impl_->content_client.reset(new ui::ViewsContentClient(argc, argv));
+#if !BUILDFLAG(IS_WIN)
+  impl_->argc = argc;
+  impl_->argv = argv;
 #endif
-
-  impl_->content_client->set_on_resources_loaded_callback(
-      base::BindOnce(&OnResourcesLoaded));
-  impl_->content_client->set_on_pre_main_message_loop_run_callback(
-      base::BindOnce([](base::WeakPtr<Lifetime> self,
-                        content::BrowserContext*, gfx::NativeWindow) {
-        self->on_ready.Emit();
-      }, GetWeakPtr()));
 }
 
 void Lifetime::Destroy() {

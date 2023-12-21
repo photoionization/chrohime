@@ -1,0 +1,37 @@
+import("//build/config/ui.gni")
+
+component("content") {
+  # TODO(zcbenz): content/shell is a testonly dependency.
+  testonly = true
+
+  sources = [
+    "chrohime_content_browser_client.cc",
+    "chrohime_content_browser_client.h",
+    "chrohime_content_client.h",
+    "chrohime_content_main_delegate.cc",
+    "chrohime_content_main_delegate.h",
+    "chrohime_content_main_main_parts.cc",
+    "chrohime_content_main_main_parts.h",
+  ]
+
+  if (is_apple) {
+    sources += [
+    "chrohime_content_main_delegate_mac.mm",
+    ]
+  }
+
+  configs += [ "//chrohime:chrohime_internal_config" ]
+
+  deps = [
+    "//content",
+    "//content/shell:content_shell_lib",
+    "//content/shell:resources",
+  ]
+
+  if (use_aura) {
+    deps += [
+      "//ui/aura",
+      "//ui/wm",
+    ]
+  }
+}

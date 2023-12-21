@@ -1,28 +1,20 @@
-shared_library("chrohime_shared_c_lib") {
+chrohime_dylib_files = [
+  "chrohime.h",
+  "chrohime_c_impl.cc",
+  "chrohime_c_impl.inc",
+  "skia.h",
+]
+
+# A shared library exposing chrohime C APIs, used for building independent apps.
+shared_library("chrohime_dylib") {
   testonly = true
-
-  sources = [
-    "chrohime.h",
-    "chrohime_c_impl.cc",
-    "chrohime_c_impl.inc",
-    "skia.h",
+  output_name = "libchrohime"
+  sources = chrohime_dylib_files
+  configs += [ ":chrohime_dylib_internal_config" ]
+  deps = [
+    ":chrohime_generate_c_impls",
+    "//chrohime:chrohime_no_content_with_lifetime",
   ]
-  data = [
-    "$target_gen_dir/generated_impls.cc",
-    "$target_gen_dir/generated_impls.h",
-  ]
-  defines = [ "CHROHIME_C_IMPLEMENTATION" ]
-
-  deps = [ ":chrohime_generate_c_impls" ]
-
-  # views_no_content is not working on macOS for now, also views_with_content
-  # can not work on Windows due to sandbox issue, which requires patch:
-  # https://github.com/chromiumembedded/cef/blob/master/patch/patches/win_sandbox_3210.patch
-  if (is_mac) {
-    deps += [ "//chrohime:chrohime_with_content_with_lifetime" ]
-  } else {
-    deps += [ "//chrohime:chrohime_no_content_with_lifetime" ]
-  }
 
   if (is_apple) {
     # Default optimization on apple adds "-dead_strip" to ldflags, which would
@@ -31,6 +23,32 @@ shared_library("chrohime_shared_c_lib") {
     # optimization on the c_impl.cc.
     configs -= [ "//build/config/compiler:default_optimization" ]
   }
+}
+
+# Same with chrohime_dylib but also includes content APIs.
+shared_library("chrohime_with_content_dylib") {
+  testonly = true
+  output_name = "libchrohime_with_content"
+  sources = chrohime_dylib_files
+  configs += [ ":chrohime_dylib_internal_config" ]
+  deps = [
+    ":chrohime_generate_c_impls",
+    "//chrohime:chrohime_with_content_with_lifetime",
+  ]
+
+  if (is_apple) {
+    configs -= [ "//build/config/compiler:default_optimization" ]
+  }
+
+  public_configs = [ ":chrohime_with_content_dylib_config" ]
+}
+
+config("chrohime_dylib_internal_config") {
+  defines = [ "CHROHIME_C_IMPLEMENTATION" ]
+}
+
+config("chrohime_with_content_dylib_config") {
+  defines = [ "CHROHIME_WITH_CONTENT" ]
 }
 
 # Generate a public header to be shipped.

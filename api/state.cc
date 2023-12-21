@@ -37,4 +37,12 @@ View* State::GetViewFromViewsView(views::View* view) const {
   return it->second;
 }
 
+content::BrowserContext* State::GetBrowserContext() const {
+  CHECK(browser_context_) <<
+      "There is an API requesting to get browser context which is not "
+      "available, it is likely you are using content API with a no-content "
+      "binary of chrohime";
+  return browser_context_;
+}
+
 }  // namespace hime

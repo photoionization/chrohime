@@ -11,17 +11,20 @@
 #include "base/test/task_environment.h"
 #include "base/test/test_timeouts.h"
 #include "mojo/core/embedder/embedder.h"
+#include "ui/accessibility/platform/ax_platform_for_test.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/base/ui_base_paths.h"
 #include "ui/compositor/test/test_context_factories.h"
+#include "ui/display/screen.h"
 #include "ui/gfx/font_util.h"
 #include "ui/gl/gl_utils.h"
 #include "ui/gl/init/gl_factory.h"
 #include "ui/views/test/desktop_test_views_delegate.h"
 
 #if BUILDFLAG(ENABLE_DESKTOP_AURA)
-#include "ui/display/screen.h"
+#include "ui/aura/env.h"
 #include "ui/views/widget/desktop_aura/desktop_screen.h"
+#include "ui/wm/core/wm_state.h"
 #endif
 
 #if BUILDFLAG(IS_OZONE)
@@ -33,11 +36,6 @@
 #include "ui/base/win/scoped_ole_initializer.h"
 #endif
 
-#if defined(USE_AURA)
-#include "ui/aura/env.h"
-#include "ui/wm/core/wm_state.h"
-#endif
-
 namespace hime {
 
 struct LifetimeImpl {
@@ -45,15 +43,17 @@ struct LifetimeImpl {
 #if BUILDFLAG(IS_WIN)
   ui::ScopedOleInitializer ole_initializer;
 #endif
+  ui::AXPlatformForTest ax_platform;
   views::DesktopTestViewsDelegate views_delegate;
   std::unique_ptr<base::test::ScopedDisableRunLoopTimeout> disable_timeout;
   std::unique_ptr<base::test::TaskEnvironment> task_environment;
   std::unique_ptr<ui::TestContextFactories> context_factories;
-#if defined(USE_AURA)
-  std::unique_ptr<aura::Env> aura_env;
-  std::unique_ptr<wm::WMState> wm_state;
+#if BUILDFLAG(IS_MAC)
+  display::ScopedNativeScreen desktop_screen_;
 #endif
 #if BUILDFLAG(ENABLE_DESKTOP_AURA)
+  std::unique_ptr<aura::Env> aura_env;
+  std::unique_ptr<wm::WMState> wm_state;
   std::unique_ptr<display::Screen> desktop_screen;
 #endif
   std::unique_ptr<base::RunLoop> run_loop;
@@ -62,6 +62,12 @@ struct LifetimeImpl {
 int Lifetime::RunMain() {
   impl_->run_loop->Run();
   return 0;
+}
+
+void Lifetime::OnPreBrowserMain() {
+}
+
+void Lifetime::OnPreMainMessageLoopRun(content::BrowserContext*) {
 }
 
 #if BUILDFLAG(IS_WIN)
@@ -106,25 +112,22 @@ void Lifetime::Initialize(int argc, const char** argv) {
   CHECK(base::PathService::Get(ui::UI_TEST_PAK, &ui_test_pak_path));
   ui::ResourceBundle::InitSharedInstanceWithPakPath(ui_test_pak_path);
 
-  base::FilePath resources_pak_path;
-  CHECK(base::PathService::Get(base::DIR_ASSETS, &resources_pak_path));
-  ui::ResourceBundle::GetSharedInstance().AddDataPackFromPath(
-      resources_pak_path.AppendASCII("chrohime_resources.pak"),
-      ui::k100Percent);
-
 #if BUILDFLAG(IS_WIN)
   base::win::EnableHighDPISupport();
 #endif
 
   gfx::InitializeFonts();
 
-#if defined(USE_AURA)
+#if BUILDFLAG(IS_MAC)
+  impl_->views_delegate.set_context_factory(
+      impl_->context_factories->GetContextFactory());
+#endif
+
+#if BUILDFLAG(ENABLE_DESKTOP_AURA)
   impl_->aura_env = aura::Env::CreateInstance();
   impl_->aura_env->set_context_factory(
       impl_->context_factories->GetContextFactory());
   impl_->wm_state.reset(new wm::WMState);
-#endif
-#if BUILDFLAG(ENABLE_DESKTOP_AURA)
   impl_->desktop_screen = views::CreateDesktopScreen();
 #endif
 
@@ -132,11 +135,15 @@ void Lifetime::Initialize(int argc, const char** argv) {
   impl_->run_loop.reset(
       new base::RunLoop(base::RunLoop::Type::kNestableTasksAllowed));
 
+#if BUILDFLAG(IS_MAC)
+  InitializeAppDelegate();
+#else
   base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(
       FROM_HERE, base::BindOnce([](base::WeakPtr<Lifetime> self) {
         if (self)
           self->on_ready.Emit();
       }, GetWeakPtr()));
+#endif
 }
 
 void Lifetime::Destroy() {

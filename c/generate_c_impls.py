@@ -11,11 +11,19 @@ def write_c_header_file(file, apis, public_header=False):
                '#if defined(CHROHIME_C_IMPLEMENTATION)\n')
     for api in apis:
       if api['type'] in [ 'refcounted', 'class', 'enum' ]:
+        if is_content_api(api):
+          file.write('#if defined(CHROHIME_WITH_CONTENT)\n')
         file.write(f'using hime::{api["name"]};\n')
+        if is_content_api(api):
+          file.write('#endif\n')
     # Write the typedefs for actual C++ implementations.
     for api in apis:
       if api['type'] in [ 'refcounted', 'class' ]:
+        if is_content_api(api):
+          file.write('#if defined(CHROHIME_WITH_CONTENT)\n')
         file.write(f'typedef {api["name"]}* {get_c_type_name(api)};\n')
+        if is_content_api(api):
+          file.write('#endif\n')
     file.write('#else\n')
   # Write fake typedefs for library users.
   file.write('// Declarations for opaque pointers.\n')
@@ -127,7 +135,11 @@ def write_c_impls(file, apis, api, write_impl, public_header=False):
   if api['type'] in [ 'struct', 'geometry' ]:
     write_struct_impl(file, apis, api, write_impl, public_header)
   elif api['type'] in [ 'refcounted', 'class' ]:
+    if is_content_api(api):
+      file.write('#if defined(CHROHIME_WITH_CONTENT)\n\n')
     write_class_impl(file, apis, api, write_impl, public_header)
+    if is_content_api(api):
+      file.write('#endif  // defined(CHROHIME_WITH_CONTENT)\n\n')
 
 def write_struct_impl(file, apis, api, write_impl, public_header):
   if write_impl:
@@ -257,6 +269,9 @@ def write_function(file, data, write_impl, name, params, impl, export=True):
     file.write('#endif\n')
   file.write('\n')
 
+def is_content_api(api):
+  return 'content' in api and api['content']
+
 def get_comment(data):
   if not 'description' in data:
     return ''
@@ -344,6 +359,8 @@ def get_c_args(apis, api, data, include_this=False):
         args.append(f'{arg["type"]}({arg_name}, {arg_name} + {arg_name}_size)')
     elif arg_type in [ 'struct', 'geometry', 'enum', 'enum class' ]:
       args.append(f'ToHime({arg_name})')
+    elif arg['type'] in [ 'GURL' ]:
+      args.append(f'{arg["type"]}({arg_name})')
     else:
       args.append(arg_name)
   return args
@@ -353,7 +370,7 @@ def get_c_type_name(data):
     type_name = data['name']
   else:
     type_name = data
-  if type_name in [ 'std::u16string', 'std::u16string_view' ]:
+  if type_name in [ 'std::u16string', 'std::u16string_view', 'GURL' ]:
     return 'const char16_t*'
   elif type_name.startswith('Sk'):
     return f'{get_c_name(type_name)}_t'

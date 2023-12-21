@@ -37,6 +37,7 @@ action("apis_json") {
     "api/textfield_type.yaml",
     "api/textfield.yaml",
     "api/view.yaml",
+    "api/webview.yaml",
     "api/window_options.yaml",
     "api/window.yaml",
   ]

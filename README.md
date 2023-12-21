@@ -34,6 +34,7 @@ Build Chrohime:
 ## Source code structure
 
 * `/api` - Wrappers of the `ui/views` classes.
+* `/content` - Implementations of content delegates.
 * `/c` - C APIs of the `/api` wrappers.
 * `/docs` - Descriptions of APIs used for code generation.
 * `/test` - Tests of the C APIs and C++ wrappers.

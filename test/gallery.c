@@ -280,6 +280,15 @@ void CreateToggleButtonExample(chrohime_view_t view) {
   chrohime_object_unref((chrohime_object_t)button3);
 }
 
+#if defined(CHROHIME_WITH_CONTENT)
+chrohime_view_t CreateWebViewPage() {
+  chrohime_web_view_t webview = chrohime_web_view_create();
+  chrohime_web_view_load_initial_url(
+      webview, u"https://github.com/photoionization/chrohime");
+  return (chrohime_view_t)webview;
+}
+#endif
+
 chrohime_view_t CreateTableViewPage() {
   chrohime_simple_table_model_t model = chrohime_simple_table_model_create();
   const char16_t* rows[5][4] = {
@@ -326,6 +335,12 @@ void CreateTabViewExample(chrohime_view_t view) {
   chrohime_label_set_text(page2, u"Hello World");
   chrohime_tab_view_add_page(tab, u"Label", (chrohime_view_t)page2);
   chrohime_object_unref((chrohime_object_t)page2);
+
+#if defined(CHROHIME_WITH_CONTENT)
+  chrohime_view_t page3 = CreateWebViewPage();
+  chrohime_tab_view_add_page_at(tab, u"WebView", page3, 0);
+  chrohime_object_unref((chrohime_object_t)page3);
+#endif
 
   chrohime_view_set_style_number((chrohime_view_t)tab, u"flex", 1);
   chrohime_view_add_child_view(view, (chrohime_view_t)tab);

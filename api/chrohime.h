@@ -26,4 +26,8 @@
 #include "chrohime/api/textarea.h"
 #include "chrohime/api/window.h"
 
+#if defined(CHROHIME_WITH_CONTENT)
+#include "chrohime/api/web_view.h"
+#endif
+
 #endif  // CHROHIME_API_CHROHIME_H_
