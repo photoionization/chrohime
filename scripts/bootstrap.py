@@ -7,7 +7,7 @@ import sys
 CHROMIUM_VERSION = '122.0.6182.0'
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC_DIR = os.path.join(ROOT_DIR, 'build_chromium', 'src')
+SRC_DIR = os.path.join(ROOT_DIR, 'chromium')
 
 # Append scripts/src_import.gni file to src/BUILD.gn.
 def append_to_build_gn():
@@ -31,7 +31,7 @@ def append_to_build_gn():
 def main():
   subprocess.check_call([
       sys.executable,
-      os.path.join(ROOT_DIR, 'build_chromium', 'bootstrap.py'),
+      os.path.join(ROOT_DIR, 'scripts/build_chromium/bootstrap.py'),
       '--revision', CHROMIUM_VERSION,
       '--src-dir', SRC_DIR ] + sys.argv[1:])
 

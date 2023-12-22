@@ -12,16 +12,16 @@ def main():
   parser.add_argument('targets', nargs='*', default=[ 'chrohime_gallery' ],
                       help='Target build')
   parser.add_argument('--config', choices=[ 'Component', 'Release', 'Debug' ],
-                      default='Release',
+                      default='Component',
                       help='Which config to build')
   args, unknown_args = parser.parse_known_args()
 
-  build_args = [ os.path.join(ROOT_DIR, 'build_chromium/build.py'),
-                 '-C', args.config ] + unknown_args + args.targets
+  build_args = [ os.path.join(ROOT_DIR, 'scripts/build_chromium/build.py'),
+                 '--src-dir', SRC_DIR,
+                 '-C', os.path.join('out', args.config) ] + unknown_args + args.targets
 
   try:
-    subprocess.check_call([ sys.executable ] + build_args,
-                          cwd=os.path.join(SRC_DIR, 'out'))
+    subprocess.check_call([ sys.executable ] + build_args)
   except KeyboardInterrupt:
     sys.exit(1)
   except subprocess.CalledProcessError as e:

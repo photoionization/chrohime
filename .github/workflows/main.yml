@@ -16,7 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         targetOs: [linux, mac, win]
-        targetCpu: [x64]
+        targetCpu: [x64, arm64]
         config: [Component, Release]
         exclude:
           - config: ${{ startsWith(github.ref, 'refs/tags/') && 'Component' || 'Release' }}
@@ -57,7 +57,7 @@ jobs:
           SECRET_FILE_CONTENT: ${{ secrets.GOMA_OAUTH2_CONFIG }}
         run: |
           printf "$SECRET_FILE_CONTENT" > ~/.goma_oauth2_config
-          node build_chromium/goma.js
+          node scripts/build_chromium/goma.js
 
       - name: Build
         run: |

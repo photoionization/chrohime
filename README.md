@@ -28,17 +28,17 @@ Build Chrohime:
 
 ```
 ./scripts/gn_gen.py
-./scripts/build.py
+./scripts/build.py --config Release
 ```
 
 ## Source code structure
 
 * `/api` - Wrappers of the `ui/views` classes.
 * `/content` - Implementations of content delegates.
+* `/chromium` - Downloaded Chromium source code.
 * `/c` - C APIs of the `/api` wrappers.
 * `/docs` - Descriptions of APIs used for code generation.
 * `/test` - Tests of the C APIs and C++ wrappers.
-* `/build_chromium` - Tools for buillding Chromium.
 * `/scripts` - Scripts for building Chrohime.
 
 ## License
