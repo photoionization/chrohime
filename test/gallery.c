@@ -157,14 +157,9 @@ void CreateTextfieldExample(chrohime_view_t view) {
       u"Lines unfold, gracefully and refined,\n"
       u"In the multi-line textarea, tales intertwined.");
   chrohime_view_set_accessible_name((chrohime_view_t)textarea, u"Textarea");
-
-  chrohime_scroll_view_t scroll_view = chrohime_scroll_view_create();
-  chrohime_view_set_style_number((chrohime_view_t)scroll_view, u"flex", 1);
-  chrohime_scroll_view_set_content_view(scroll_view, (chrohime_view_t)textarea);
+  chrohime_view_set_style_number((chrohime_view_t)textarea, u"flex", 1);
+  chrohime_view_add_child_view(view, (chrohime_view_t)textarea);
   chrohime_object_unref((chrohime_object_t)textarea);
-
-  chrohime_view_add_child_view(view, (chrohime_view_t)scroll_view);
-  chrohime_object_unref((chrohime_object_t)scroll_view);
 }
 
 void OnButtonClick(chrohime_button_t button, void* data) {
