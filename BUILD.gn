@@ -198,18 +198,18 @@ source_set("yoga") {
     "third_party/yoga/yoga/enums/Wrap.h",
     "third_party/yoga/yoga/YGPixelGrid.cpp",
     "third_party/yoga/yoga/style/CompactValue.h",
-    "third_party/yoga/yoga/style/ValueFactories.h",
     "third_party/yoga/yoga/style/Style.h",
+    "third_party/yoga/yoga/style/StyleLength.h",
     "third_party/yoga/yoga/algorithm/Baseline.h",
     "third_party/yoga/yoga/algorithm/AbsoluteLayout.cpp",
     "third_party/yoga/yoga/algorithm/FlexLine.h",
     "third_party/yoga/yoga/algorithm/BoundAxis.h",
     "third_party/yoga/yoga/algorithm/SizingMode.h",
     "third_party/yoga/yoga/algorithm/Align.h",
-    "third_party/yoga/yoga/algorithm/ResolveValue.h",
     "third_party/yoga/yoga/algorithm/CalculateLayout.cpp",
     "third_party/yoga/yoga/algorithm/Cache.h",
     "third_party/yoga/yoga/algorithm/FlexDirection.h",
+    "third_party/yoga/yoga/algorithm/TrailingPosition.h",
     "third_party/yoga/yoga/algorithm/PixelGrid.cpp",
     "third_party/yoga/yoga/algorithm/CalculateLayout.h",
     "third_party/yoga/yoga/algorithm/Cache.cpp",
@@ -219,7 +219,6 @@ source_set("yoga") {
     "third_party/yoga/yoga/algorithm/AbsoluteLayout.h",
     "third_party/yoga/yoga/numeric/Comparison.h",
     "third_party/yoga/yoga/numeric/FloatOptional.h",
-    "third_party/yoga/yoga/bits/BitCast.h",
     "third_party/yoga/yoga/YGEnums.cpp",
     "third_party/yoga/yoga/YGValue.cpp",
     "third_party/yoga/yoga/YGNodeStyle.h",
@@ -242,14 +241,6 @@ source_set("yoga") {
     "third_party/yoga/yoga/debug/AssertFatal.h",
     "third_party/yoga/yoga/debug/Log.h",
     "third_party/yoga/yoga/debug/NodeToString.h",
-  ]
-
-  # Required untill https://github.com/facebook/yoga/pull/1511 is merged.
-  configs -= [
-    "//build/config/compiler:no_exceptions",
-  ]
-  configs += [
-    "//build/config/compiler:exceptions",
   ]
 }
 
