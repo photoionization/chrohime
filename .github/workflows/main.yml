@@ -57,7 +57,7 @@ jobs:
           SECRET_FILE_CONTENT: ${{ secrets.GOMA_OAUTH2_CONFIG }}
         run: |
           printf "$SECRET_FILE_CONTENT" > ~/.goma_oauth2_config
-          node scripts/build_chromium/goma.js
+          node third_party/build_chromium/goma.js
 
       - name: Build
         run: |

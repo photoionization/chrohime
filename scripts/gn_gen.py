@@ -5,7 +5,7 @@ import os
 import subprocess
 import sys
 
-from bootstrap import ROOT_DIR, SRC_DIR
+from bootstrap import ROOT_DIR, SRC_DIR, BUILD_CHROMIUM_DIR
 
 def main():
   parser = argparse.ArgumentParser(description='Generate GN configs')
@@ -24,7 +24,7 @@ def main():
     'is_cfi=false',
   ]
 
-  gn_gen_args = [ os.path.join(ROOT_DIR, 'scripts/build_chromium/gn_gen.py'),
+  gn_gen_args = [ os.path.join(BUILD_CHROMIUM_DIR, 'gn_gen.py'),
                   '--src-dir', SRC_DIR ]
   for arg in gn_args:
     gn_gen_args += [ '--arg', arg ]

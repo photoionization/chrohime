@@ -1,5 +1,5 @@
 [submodule "build_chromium"]
-	path = scripts/build_chromium
+	path = third_party/build_chromium
 	url = https://github.com/photoionization/build_chromium
 [submodule "third_party/yoga"]
 	path = third_party/yoga

@@ -5,7 +5,7 @@ import os
 import subprocess
 import sys
 
-from bootstrap import ROOT_DIR, SRC_DIR
+from bootstrap import ROOT_DIR, SRC_DIR, BUILD_CHROMIUM_DIR
 
 def main():
   parser = argparse.ArgumentParser(description='Build Chrohime')
@@ -16,7 +16,7 @@ def main():
                       help='Which config to build')
   args, unknown_args = parser.parse_known_args()
 
-  build_args = [ os.path.join(ROOT_DIR, 'scripts/build_chromium/build.py'),
+  build_args = [ os.path.join(BUILD_CHROMIUM_DIR, 'build.py'),
                  '--src-dir', SRC_DIR,
                  '-C', os.path.join('out', args.config) ] + unknown_args + args.targets
 
