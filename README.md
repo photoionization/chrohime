@@ -36,8 +36,8 @@ Build Chrohime:
 * `/api` - Wrappers of the `ui/views` classes.
 * `/content` - Implementations of content delegates.
 * `/chromium` - Downloaded Chromium source code.
-* `/c` - C APIs of the `/api` wrappers.
-* `/docs` - Descriptions of APIs used for code generation.
+* `/docs` - Descriptions of APIs used for code and documentation generation.
+* `/dylib` - C APIs of the `/api` wrappers.
 * `/test` - Tests of the C APIs and C++ wrappers.
 * `/scripts` - Scripts for building Chrohime.
 

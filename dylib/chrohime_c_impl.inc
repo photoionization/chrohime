@@ -25,4 +25,4 @@ typedef uint16_t char16_t;
 #endif
 #endif  // !defined(WIN32)
 
-typedef void (*chrohime_free_callback)(void* data);
+typedef void (*hime_free_callback)(void* data);

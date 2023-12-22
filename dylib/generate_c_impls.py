@@ -165,13 +165,13 @@ def write_struct_impl(file, apis, api, write_impl, public_header):
     prop_name = get_c_name(prop)
     default_value = get_c_value(prop['defaultValue'])
     set_properties.append(f'({api_name})->{prop_name} = {default_value}')
-  file.write(f'#define chrohime_{api_name}_init({api_name}) \\\n')
+  file.write(f'#define hime_{api_name}_init({api_name}) \\\n')
   file.write(prefix_each_line('; \\\n'.join(set_properties), '  '))
   file.write('\n\n')
 
 def write_class_impl(file, apis, api, write_impl, public_header):
   api_name = get_c_name(api)
-  api_prefix = f'chrohime_{api_name}'
+  api_prefix = f'hime_{api_name}'
   api_type_name = f'{api_prefix}_t'
   # Write class_create constructor methods.
   for constructor in api['constructors']:
@@ -229,14 +229,14 @@ def write_class_impl(file, apis, api, write_impl, public_header):
     callback_params = [
         f'{event_callback_type} callback',
         f'void* data',
-        f'chrohime_free_callback free' ] + get_c_params(apis, api, event)
+        f'hime_free_callback free' ] + get_c_params(apis, api, event)
     callback_args = get_c_args(apis, api, event) + [ 'data' ]
     write_function(file, event, write_impl,
                    f'int32_t {event_api_prefix}_connect_closure',
                    [ f'{api_type_name} {api_name}',
                      f'{event_callback_type} callback',
                      'void* data',
-                     'chrohime_free_callback free' ],
+                     'hime_free_callback free' ],
                    f'return {api_name}->{event_name}.Connect(base::BindRepeating(\n'
                    f'    []({params_join(callback_params)}) {{\n'
                    f'        callback({params_join(callback_args)});\n'
@@ -377,9 +377,9 @@ def get_c_type_name(data):
   elif type_name.startswith('Sk'):
     return f'{get_c_name(type_name)}_t'
   elif type_name[0].isupper():
-    return f'chrohime_{get_c_name(type_name)}_t'
+    return f'hime_{get_c_name(type_name)}_t'
   elif type_name.startswith('gfx::'):
-    return f'chrohime_{get_c_name(type_name[5:])}_t'
+    return f'hime_{get_c_name(type_name[5:])}_t'
   elif type_name.startswith('std::vector<'):
     return get_c_type_name(type_name[12:-1]) + '*'
   elif type_name.startswith('absl::optional<'):
