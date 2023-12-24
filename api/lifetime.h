@@ -9,13 +9,13 @@
 
 #include "base/memory/weak_ptr.h"
 #include "chrohime/api/signal.h"
-#include "chrohime/content/chrohime_content_client.h"
+#include "chrohime/content/content_lifetime_delegate.h"
 
 namespace hime {
 
 struct LifetimeImpl;
 
-class CHROHIME_EXPORT Lifetime : public ChrohimeContentClient {
+class CHROHIME_EXPORT Lifetime : public ContentLifetimeDelegate {
  public:
   static Lifetime* GetCurrent();
 
@@ -34,7 +34,7 @@ class CHROHIME_EXPORT Lifetime : public ChrohimeContentClient {
   base::WeakPtr<Lifetime> GetWeakPtr() { return weak_factory_.GetWeakPtr(); }
 
  protected:
-  // ChrohimeContentClient:
+  // ContentLifetimeDelegate:
   void OnPreBrowserMain() override;
   void OnPreMainMessageLoopRun(
       content::BrowserContext* browser_context) override;

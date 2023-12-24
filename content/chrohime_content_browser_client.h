@@ -10,12 +10,12 @@
 
 namespace hime {
 
-class ChrohimeContentClient;
+class ContentLifetimeDelegate;
 
 class CHROHIME_EXPORT ChrohimeContentBrowserClient
     : public content::ContentBrowserClient {
  public:
-  explicit ChrohimeContentBrowserClient(ChrohimeContentClient* content_client);
+  explicit ChrohimeContentBrowserClient(ContentLifetimeDelegate* delegate);
   ~ChrohimeContentBrowserClient() override;
 
   // content::ContentBrowserClient:
@@ -23,7 +23,7 @@ class CHROHIME_EXPORT ChrohimeContentBrowserClient
       bool is_integration_test) override;
 
  private:
-  raw_ptr<ChrohimeContentClient> content_client_;
+  raw_ptr<ContentLifetimeDelegate> delegate_;
 };
 
 }  // namespace hime

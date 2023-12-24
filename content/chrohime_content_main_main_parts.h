@@ -28,14 +28,14 @@ class WMState;
 
 namespace hime {
 
-class ChrohimeContentClient;
+class ContentLifetimeDelegate;
 
-class CHROHIME_EXPORT ChrohimeContentClientMainParts
+class CHROHIME_EXPORT ContentLifetimeDelegateMainParts
     : public content::BrowserMainParts {
  public:
-  explicit ChrohimeContentClientMainParts(
-      ChrohimeContentClient* content_client);
-  ~ChrohimeContentClientMainParts() override;
+  explicit ContentLifetimeDelegateMainParts(
+      ContentLifetimeDelegate* delegate);
+  ~ContentLifetimeDelegateMainParts() override;
 
   // content::BrowserMainParts:
   void ToolkitInitialized() override;
@@ -45,7 +45,7 @@ class CHROHIME_EXPORT ChrohimeContentClientMainParts
   void PostMainMessageLoopRun() override;
 
  private:
-  raw_ptr<ChrohimeContentClient> content_client_;
+  raw_ptr<ContentLifetimeDelegate> delegate_;
 #if BUILDFLAG(IS_MAC)
   display::ScopedNativeScreen desktop_screen_;
 #endif

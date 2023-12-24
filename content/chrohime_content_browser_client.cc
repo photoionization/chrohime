@@ -9,14 +9,14 @@
 namespace hime {
 
 ChrohimeContentBrowserClient::ChrohimeContentBrowserClient(
-    ChrohimeContentClient* content_client) : content_client_(content_client) {}
+    ContentLifetimeDelegate* delegate) : delegate_(delegate) {}
 
 ChrohimeContentBrowserClient::~ChrohimeContentBrowserClient() = default;
 
 std::unique_ptr<content::BrowserMainParts>
 ChrohimeContentBrowserClient::CreateBrowserMainParts(bool is_integration_test) {
-  return std::make_unique<ChrohimeContentClientMainParts>(
-      content_client_.get());
+  return std::make_unique<ContentLifetimeDelegateMainParts>(
+      delegate_.get());
 }
 
 }  // namespace hime

@@ -5,7 +5,7 @@
 #include "chrohime/content/chrohime_content_main_main_parts.h"
 
 #include "base/run_loop.h"
-#include "chrohime/content/chrohime_content_client.h"
+#include "chrohime/content/content_lifetime_delegate.h"
 #include "content/public/common/result_codes.h"
 #include "content/shell/browser/shell_browser_context.h"
 #include "ui/base/ime/init/input_method_initializer.h"
@@ -28,12 +28,12 @@
 
 namespace hime {
 
-ChrohimeContentClientMainParts::ChrohimeContentClientMainParts(
-    ChrohimeContentClient* content_client) : content_client_(content_client) {}
+ContentLifetimeDelegateMainParts::ContentLifetimeDelegateMainParts(
+    ContentLifetimeDelegate* delegate) : delegate_(delegate) {}
 
-ChrohimeContentClientMainParts::~ChrohimeContentClientMainParts() = default;
+ContentLifetimeDelegateMainParts::~ContentLifetimeDelegateMainParts() = default;
 
-void ChrohimeContentClientMainParts::ToolkitInitialized() {
+void ContentLifetimeDelegateMainParts::ToolkitInitialized() {
 #if BUILDFLAG(ENABLE_DESKTOP_AURA)
   wm_state_ = std::make_unique<wm::WMState>();
 #endif
@@ -42,7 +42,7 @@ void ChrohimeContentClientMainParts::ToolkitInitialized() {
 #endif
 }
 
-int ChrohimeContentClientMainParts::PreMainMessageLoopRun() {
+int ContentLifetimeDelegateMainParts::PreMainMessageLoopRun() {
   ui::InitializeInputMethodForTesting();
 #if BUILDFLAG(ENABLE_DESKTOP_AURA)
   screen_ = views::CreateDesktopScreen();
@@ -53,16 +53,16 @@ int ChrohimeContentClientMainParts::PreMainMessageLoopRun() {
   views_delegate_->set_context_factory(content::GetContextFactory());
 #endif
   browser_context_ = std::make_unique<content::ShellBrowserContext>(false);
-  content_client_->OnPreMainMessageLoopRun(browser_context_.get());
+  delegate_->OnPreMainMessageLoopRun(browser_context_.get());
   return content::RESULT_CODE_NORMAL_EXIT;
 }
 
-void ChrohimeContentClientMainParts::WillRunMainMessageLoop(
+void ContentLifetimeDelegateMainParts::WillRunMainMessageLoop(
     std::unique_ptr<base::RunLoop>& run_loop) {
   run_loop = std::move(run_loop_);
 }
 
-void ChrohimeContentClientMainParts::PostMainMessageLoopRun() {
+void ContentLifetimeDelegateMainParts::PostMainMessageLoopRun() {
   browser_context_.reset();
   views_delegate_.reset();
 #if BUILDFLAG(ENABLE_DESKTOP_AURA)

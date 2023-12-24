@@ -5,20 +5,23 @@
 #ifndef CHROHIME_CONTENT_CHROHIME_CONTENT_CLIENT_H_
 #define CHROHIME_CONTENT_CHROHIME_CONTENT_CLIENT_H_
 
-namespace content {
-class BrowserContext;
-}
+#include "chrohime/chrohime_export.h"
+#include "content/public/common/content_client.h"
 
 namespace hime {
 
-// This header is also used by non-content code so it should only include
-// virtual methods without implementations to avoid making //chrohime/content
-// a dependency.
-class ChrohimeContentClient {
+class ChrohimeContentClient : public content::ContentClient {
  public:
-  virtual void OnPreBrowserMain() = 0;
-  virtual void OnPreMainMessageLoopRun(
-      content::BrowserContext* browser_context) = 0;
+  ChrohimeContentClient();
+  ~ChrohimeContentClient() override;
+
+  std::u16string GetLocalizedString(int message_id) override;
+  base::StringPiece GetDataResource(
+      int resource_id,
+      ui::ResourceScaleFactor scale_factor) override;
+  base::RefCountedMemory* GetDataResourceBytes(int resource_id) override;
+  std::string GetDataResourceString(int resource_id) override;
+  gfx::Image& GetNativeImageNamed(int resource_id) override;
 };
 
 }  // namespace hime

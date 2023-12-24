@@ -5,7 +5,7 @@
 #include "chrohime/content/chrohime_content_main_delegate.h"
 
 #include "base/logging.h"
-#include "chrohime/content/chrohime_content_client.h"
+#include "chrohime/content/content_lifetime_delegate.h"
 #include "content/shell/browser/shell_application_mac.h"
 
 namespace hime {
@@ -19,7 +19,7 @@ absl::optional<int> ChrohimeContentMainDelegate::PreBrowserMain() {
   // first, though.
   CHECK_EQ(NSApp, nil);
   [ShellCrApplication sharedApplication];
-  content_client_->OnPreBrowserMain();
+  delegate_->OnPreBrowserMain();
   return absl::nullopt;
 }
 

@@ -5,19 +5,18 @@
 #ifndef CHROHIME_CONTENT_CHROHIME_CONTENT_MAIN_DELEGATE_H_
 #define CHROHIME_CONTENT_CHROHIME_CONTENT_MAIN_DELEGATE_H_
 
-#include "chrohime/chrohime_export.h"
+#include "chrohime/content/chrohime_content_client.h"
 #include "content/public/app/content_main_delegate.h"
-#include "content/shell/common/shell_content_client.h"
 
 namespace hime {
 
 class ChrohimeContentBrowserClient;
-class ChrohimeContentClient;
+class ContentLifetimeDelegate;
 
 class CHROHIME_EXPORT ChrohimeContentMainDelegate
     : public content::ContentMainDelegate {
  public:
-  explicit ChrohimeContentMainDelegate(ChrohimeContentClient* content_client);
+  explicit ChrohimeContentMainDelegate(ContentLifetimeDelegate* delegate);
   ~ChrohimeContentMainDelegate() override;
 
   // content::ContentMainDelegate:
@@ -30,9 +29,9 @@ class CHROHIME_EXPORT ChrohimeContentMainDelegate
   content::ContentBrowserClient* CreateContentBrowserClient() override;
 
  private:
-  raw_ptr<ChrohimeContentClient> content_client_;
+  raw_ptr<ContentLifetimeDelegate> delegate_;
   std::unique_ptr<ChrohimeContentBrowserClient> browser_client_;
-  content::ShellContentClient shell_content_client_;
+  ChrohimeContentClient content_client_;
 };
 
 }  // namespace hime

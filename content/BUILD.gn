@@ -7,11 +7,13 @@ component("content") {
   sources = [
     "chrohime_content_browser_client.cc",
     "chrohime_content_browser_client.h",
+    "chrohime_content_client.cc",
     "chrohime_content_client.h",
     "chrohime_content_main_delegate.cc",
     "chrohime_content_main_delegate.h",
     "chrohime_content_main_main_parts.cc",
     "chrohime_content_main_main_parts.h",
+    "content_lifetime_delegate.h",
   ]
 
   if (is_apple) {

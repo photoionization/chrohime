@@ -14,7 +14,7 @@
 namespace hime {
 
 ChrohimeContentMainDelegate::ChrohimeContentMainDelegate(
-    ChrohimeContentClient* content_client) : content_client_(content_client) {}
+    ContentLifetimeDelegate* delegate) : delegate_(delegate) {}
 
 ChrohimeContentMainDelegate::~ChrohimeContentMainDelegate() = default;
 
@@ -36,13 +36,13 @@ void ChrohimeContentMainDelegate::PreSandboxStartup() {
 }
 
 content::ContentClient* ChrohimeContentMainDelegate::CreateContentClient() {
-  return &shell_content_client_;
+  return &content_client_;
 }
 
 content::ContentBrowserClient*
 ChrohimeContentMainDelegate::CreateContentBrowserClient() {
   browser_client_ = std::make_unique<ChrohimeContentBrowserClient>(
-      content_client_.get());
+      delegate_.get());
   return browser_client_.get();
 }
 
