@@ -117,12 +117,15 @@ component("chrohime_no_content_with_lifetime") {
   ]
   deps = [
     "//base/test:test_support",
+    "//content/shell:resources",
     "//ui/compositor:test_support",
     "//ui/gl",
     "//ui/gl/init",
-    "//ui/resources:ui_test_pak",
     "//ui/views:test_support",
   ]
+  if (is_linux) {
+    deps += [ "//ui/linux:linux_ui_factory" ]
+  }
   if (use_aura) {
     deps += [ "//ui/aura" ]
   }

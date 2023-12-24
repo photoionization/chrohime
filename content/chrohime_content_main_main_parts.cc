@@ -11,14 +11,19 @@
 #include "ui/base/ime/init/input_method_initializer.h"
 #include "ui/views/test/desktop_test_views_delegate.h"
 
-#if BUILDFLAG(IS_MAC)
-#include "content/public/browser/context_factory.h"
-#endif
-
 #if BUILDFLAG(ENABLE_DESKTOP_AURA)
 #include "ui/display/screen.h"
 #include "ui/views/widget/desktop_aura/desktop_screen.h"
 #include "ui/wm/core/wm_state.h"
+#endif
+
+#if BUILDFLAG(IS_LINUX)
+#include "ui/linux/linux_ui.h"
+#include "ui/linux/linux_ui_factory.h"
+#endif
+
+#if BUILDFLAG(IS_MAC)
+#include "content/public/browser/context_factory.h"
 #endif
 
 namespace hime {
@@ -28,11 +33,14 @@ ChrohimeContentClientMainParts::ChrohimeContentClientMainParts(
 
 ChrohimeContentClientMainParts::~ChrohimeContentClientMainParts() = default;
 
-#if BUILDFLAG(ENABLE_DESKTOP_AURA)
 void ChrohimeContentClientMainParts::ToolkitInitialized() {
+#if BUILDFLAG(ENABLE_DESKTOP_AURA)
   wm_state_ = std::make_unique<wm::WMState>();
-}
 #endif
+#if BUILDFLAG(IS_LINUX)
+  ui::LinuxUi::SetInstance(ui::GetDefaultLinuxUi());
+#endif
+}
 
 int ChrohimeContentClientMainParts::PreMainMessageLoopRun() {
   ui::InitializeInputMethodForTesting();
@@ -59,6 +67,9 @@ void ChrohimeContentClientMainParts::PostMainMessageLoopRun() {
   views_delegate_.reset();
 #if BUILDFLAG(ENABLE_DESKTOP_AURA)
   screen_.reset();
+#endif
+#if BUILDFLAG(IS_LINUX)
+  ui::LinuxUi::SetInstance(nullptr);
 #endif
 }
 

@@ -13,7 +13,6 @@
 #include "mojo/core/embedder/embedder.h"
 #include "ui/accessibility/platform/ax_platform_for_test.h"
 #include "ui/base/resource/resource_bundle.h"
-#include "ui/base/ui_base_paths.h"
 #include "ui/compositor/test/test_context_factories.h"
 #include "ui/display/screen.h"
 #include "ui/gfx/font_util.h"
@@ -29,6 +28,11 @@
 
 #if BUILDFLAG(IS_OZONE)
 #include "ui/ozone/public/ozone_platform.h"
+#endif
+
+#if BUILDFLAG(IS_LINUX)
+#include "ui/linux/linux_ui.h"
+#include "ui/linux/linux_ui_factory.h"
 #endif
 
 #if BUILDFLAG(IS_WIN)
@@ -88,17 +92,21 @@ void Lifetime::Initialize(int argc, const char** argv) {
 
   mojo::core::Init();
 
+  // Viz depends on the task environment to correctly tear down.
+  impl_->task_environment.reset(new base::test::TaskEnvironment(
+      base::test::TaskEnvironment::MainThreadType::UI));
+
 #if BUILDFLAG(IS_OZONE)
   ui::OzonePlatform::InitParams params;
   params.single_process = true;
+  ui::OzonePlatform::InitializeForUI(params);
+  ui::OzonePlatform::GetInstance()->PostCreateMainMessageLoop(
+      base::BindOnce([] { LOG(FATAL) << "Failed to shutdown."; }),
+      base::SingleThreadTaskRunner::GetCurrentDefault());
   ui::OzonePlatform::InitializeForGPU(params);
 #endif
 
   gl::init::InitializeGLOneOff(/*gpu_preference=*/gl::GpuPreference::kDefault);
-
-  // Viz depends on the task environment to correctly tear down.
-  impl_->task_environment.reset(new base::test::TaskEnvironment(
-      base::test::TaskEnvironment::MainThreadType::UI));
 
   // The ContextFactory must exist before any Compositors are created.
   impl_->context_factories.reset(new ui::TestContextFactories(
@@ -106,14 +114,15 @@ void Lifetime::Initialize(int argc, const char** argv) {
 
   base::i18n::InitializeICU();
 
-  ui::RegisterPathProvider();
-
-  base::FilePath ui_test_pak_path;
-  CHECK(base::PathService::Get(ui::UI_TEST_PAK, &ui_test_pak_path));
-  ui::ResourceBundle::InitSharedInstanceWithPakPath(ui_test_pak_path);
+  base::FilePath resources_pak_path;
+  base::PathService::Get(base::DIR_ASSETS, &resources_pak_path);
+  ui::ResourceBundle::InitSharedInstanceWithPakPath(
+      resources_pak_path.AppendASCII("content_shell.pak"));
 
 #if BUILDFLAG(IS_WIN)
   base::win::EnableHighDPISupport();
+#elif BUILDFLAG(IS_LINUX)
+  ui::LinuxUi::SetInstance(ui::GetDefaultLinuxUi());
 #endif
 
   gfx::InitializeFonts();

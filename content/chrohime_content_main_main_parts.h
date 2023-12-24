@@ -38,9 +38,7 @@ class CHROHIME_EXPORT ChrohimeContentClientMainParts
   ~ChrohimeContentClientMainParts() override;
 
   // content::BrowserMainParts:
-#if BUILDFLAG(ENABLE_DESKTOP_AURA)
   void ToolkitInitialized() override;
-#endif
   int PreMainMessageLoopRun() override;
   void WillRunMainMessageLoop(
       std::unique_ptr<base::RunLoop>& run_loop) override;
