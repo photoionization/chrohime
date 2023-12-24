@@ -51,8 +51,10 @@ void Lifetime::OnPreBrowserMain() {
 }
 
 void Lifetime::OnPreMainMessageLoopRun(
-    content::BrowserContext* browser_context) {
+    content::BrowserContext* browser_context,
+    base::RepeatingClosure quit_closure) {
   State::GetCurrent()->browser_context_ = browser_context;
+  quit_closure_ = std::move(quit_closure);
 #if !BUILDFLAG(IS_MAC)
   on_ready.Emit();
 #endif

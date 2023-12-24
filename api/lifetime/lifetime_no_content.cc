@@ -71,7 +71,9 @@ int Lifetime::RunMain() {
 void Lifetime::OnPreBrowserMain() {
 }
 
-void Lifetime::OnPreMainMessageLoopRun(content::BrowserContext*) {
+void Lifetime::OnPreMainMessageLoopRun(
+    content::BrowserContext* browser_context,
+    base::RepeatingClosure quit_closure) {
 }
 
 #if BUILDFLAG(IS_WIN)
@@ -143,6 +145,7 @@ void Lifetime::Initialize(int argc, const char** argv) {
   impl_->disable_timeout.reset(new base::test::ScopedDisableRunLoopTimeout);
   impl_->run_loop.reset(
       new base::RunLoop(base::RunLoop::Type::kNestableTasksAllowed));
+  quit_closure_ = impl_->run_loop->QuitClosure();
 
 #if BUILDFLAG(IS_MAC)
   InitializeAppDelegate();

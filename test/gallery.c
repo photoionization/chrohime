@@ -342,6 +342,11 @@ hime_view_t CreateColumn(hime_view_t content_view) {
   return view;
 }
 
+void OnWindowClose(hime_window_t window, void* data) {
+  hime_object_unref((hime_object_t)window);
+  hime_lifetime_quit(hime_lifetime_get_current());
+}
+
 void OnReady(void* data) {
   hime_window_options_t options;
   hime_window_options_init(&options);
@@ -349,7 +354,7 @@ void OnReady(void* data) {
   hime_window_set_title(window, u"👸🏾");
   hime_window_center_to(window, (hime_size_t){800, 600});
   hime_window_on_close_connect(
-      window, (hime_window_on_close_callback)hime_object_unref, NULL);
+      window, (hime_window_on_close_callback)OnWindowClose, NULL);
 
   hime_view_t content_view = hime_window_get_content_view(window);
   hime_view_set_style(content_view, u"flex-direction", u"row");

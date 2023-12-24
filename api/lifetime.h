@@ -27,6 +27,7 @@ class CHROHIME_EXPORT Lifetime : public ContentLifetimeDelegate {
   virtual ~Lifetime();
 
   int RunMain();
+  void Quit();
 
   // Events.
   Signal<void()> on_ready;
@@ -37,7 +38,8 @@ class CHROHIME_EXPORT Lifetime : public ContentLifetimeDelegate {
   // ContentLifetimeDelegate:
   void OnPreBrowserMain() override;
   void OnPreMainMessageLoopRun(
-      content::BrowserContext* browser_context) override;
+      content::BrowserContext* browser_context,
+      base::RepeatingClosure quit_closure) override;
 
  private:
 #if BUILDFLAG(IS_WIN)
@@ -51,6 +53,7 @@ class CHROHIME_EXPORT Lifetime : public ContentLifetimeDelegate {
   void Destroy();
 
   raw_ptr<LifetimeImpl> impl_;
+  base::RepeatingClosure quit_closure_;
   base::WeakPtrFactory<Lifetime> weak_factory_{this};
 };
 

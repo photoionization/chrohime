@@ -192,6 +192,15 @@ def write_class_impl(file, apis, api, write_impl, public_header):
                    f'void {api_prefix}_destroy',
                    [ f'{api_type_name} {api_name}' ],
                    f'delete {api_name};')
+  # Write class methods.
+  for method in api['class_methods']:
+    if public_header:
+      file.write(get_comment(method))
+    return_type = get_c_return_type(apis, method['returnType'])
+    write_function(file, method, write_impl,
+                   f'{return_type} {api_prefix}_{get_c_name(method)}',
+                   get_c_params(apis, api, method),
+                   f'return {api["name"]}::{get_function_call(apis, api, method)};')
   # Write normal methods.
   for method in api['methods']:
     if public_header:
@@ -203,11 +212,11 @@ def write_class_impl(file, apis, api, write_impl, public_header):
       write_function(file, method, write_impl,
                      f'size_t {api_prefix}_{method_name}_size',
                      params,
-                     f'return {get_method_impl(apis, api, method)}.size();')
+                     f'return {get_function_call(apis, api, method, include_this=True)}.size();')
       write_function(file, method, write_impl,
                      f'{return_type} {api_prefix}_{method_name}',
                      params + [ 'char16_t* out', 'size_t size' ],
-                     f'{method["returnType"]} result = {get_method_impl(apis, api, method)};\n'
+                     f'{method["returnType"]} result = {get_function_call(apis, api, method, include_this=True)};\n'
                      f'std::copy_n(result.begin(), std::min(result.size(), size), out);')
     else:
       write_function(file, method, write_impl,
@@ -290,18 +299,22 @@ def get_enum_declaration(api, public_header=False):
   result += f'}} {get_c_type_name(api)};\n\n'
   return result
 
+def get_function_call(apis, api, func, include_this=False):
+  call = f'{func["name"]}({params_join(get_c_args(apis, api, func))})'
+  if include_this:
+    call = f'self->{call}'
+  if get_type_of_type(apis, func['returnType']) in [ 'struct', 'geometry', 'enum', 'enum class' ]:
+    call = f'FromHime({call})'
+  if func['returnType'] == 'const std::u16string&':
+    return f'{call}.c_str()'
+  return call
+
 def get_method_impl(apis, api, method):
-  api_call = f'self->{method["name"]}({params_join(get_c_args(apis, api, method))})'
-  if get_type_of_type(apis, method['returnType']) in [ 'struct', 'geometry', 'enum', 'enum class' ]:
-    api_call = f'FromHime({api_call})'
-  if method['returnType'] == 'std::u16string':
-    return api_call
-  if method['returnType'] == 'const std::u16string&':
-    api_call = f'{api_call}.c_str()'
+  function_call = get_function_call(apis, api, method, include_this=True)
   if method['returnType'] != 'void':
-    return f'return {api_call};'
+    return f'return {function_call};'
   else:
-    return f'{api_call};'
+    return f'{function_call};'
 
 def get_type_of_type(apis, type_name):
   if type_name.startswith('std::vector<'):

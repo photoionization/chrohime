@@ -5,6 +5,8 @@
 #ifndef CHROHIME_CONTENT_CONTENT_LIFETIME_DELEGATE_H_
 #define CHROHIME_CONTENT_CONTENT_LIFETIME_DELEGATE_H_
 
+#include "base/functional/callback.h"
+
 namespace content {
 class BrowserContext;
 }
@@ -18,7 +20,8 @@ class ContentLifetimeDelegate {
  public:
   virtual void OnPreBrowserMain() = 0;
   virtual void OnPreMainMessageLoopRun(
-      content::BrowserContext* browser_context) = 0;
+      content::BrowserContext* browser_context,
+      base::RepeatingClosure quit_closure) = 0;
 };
 
 }  // namespace hime

@@ -45,4 +45,8 @@ Lifetime::~Lifetime() {
   Destroy();
 }
 
+void Lifetime::Quit() {
+  quit_closure_.Run();
+}
+
 }  // namespace hime

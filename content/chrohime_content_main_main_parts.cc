@@ -53,7 +53,8 @@ int ContentLifetimeDelegateMainParts::PreMainMessageLoopRun() {
   views_delegate_->set_context_factory(content::GetContextFactory());
 #endif
   browser_context_ = std::make_unique<content::ShellBrowserContext>(false);
-  delegate_->OnPreMainMessageLoopRun(browser_context_.get());
+  delegate_->OnPreMainMessageLoopRun(browser_context_.get(),
+                                     run_loop_->QuitClosure());
   return content::RESULT_CODE_NORMAL_EXIT;
 }
 

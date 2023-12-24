@@ -2,11 +2,18 @@ name: Lifetime
 type: class
 description: Initialize runtime and message loop.
 
+class_methods:
+  - name: GetCurrent
+    description: Return the Lifetime instance in current thread.
+    returnType: Lifetime
+
 constructors:
   - name: Create
+    description: Create a Lifetime instance for current thread.
     platforms: [ win ]
 
   - name: Create
+    description: Create a Lifetime instance for current thread.
     platforms: [ mac, linux ]
     args:
       - name: argc
@@ -18,6 +25,9 @@ methods:
   - name: RunMain
     description: Enter message loop.
     returnType: int
+
+  - name: Quit
+    description: Quit message loop.
 
 events:
   - name: onReady
