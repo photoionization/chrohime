@@ -1,4 +1,5 @@
 import("//build/config/ui.gni")
+import("//tools/grit/repack.gni")
 
 component("content") {
   # TODO(zcbenz): content/shell is a testonly dependency.
@@ -25,9 +26,9 @@ component("content") {
   configs += [ "//chrohime:chrohime_internal_config" ]
 
   deps = [
+    ":pak",
     "//content",
     "//content/shell:content_shell_lib",
-    "//content/shell:resources",
   ]
 
   if (use_aura) {
@@ -36,4 +37,17 @@ component("content") {
       "//ui/wm",
     ]
   }
+}
+
+repack("pak") {
+  # TODO(zcbenz): content/shell is a testonly dependency.
+  testonly = true
+
+  output = "$root_out_dir/chrohime_with_content.pak"
+  sources = [
+    "$root_out_dir/content_shell.pak",
+  ]
+  deps = [
+    "//content/shell:pak",
+  ]
 }

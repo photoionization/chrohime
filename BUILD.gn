@@ -1,4 +1,5 @@
 import("//tools/grit/grit_rule.gni")
+import("//tools/grit/repack.gni")
 
 component("chrohime_no_content") {
   sources = [
@@ -116,8 +117,8 @@ component("chrohime_no_content_with_lifetime") {
     "//skia",
   ]
   deps = [
+    ":chrohime_pak",
     "//base/test:test_support",
-    "//content/shell:resources",
     "//ui/compositor:test_support",
     "//ui/gl",
     "//ui/gl/init",
@@ -164,8 +165,19 @@ config("chrohime_internal_config") {
   defines = [ "CHROHIME_IMPLEMENTATION" ]
 }
 
-config("yoga_config") {
-  include_dirs = [ "third_party/yoga" ]
+repack("chrohime_pak") {
+  output = "$root_out_dir/chrohime.pak"
+  sources = [
+    "$root_gen_dir/ui/resources/ui_resources_100_percent.pak",
+    "$root_gen_dir/ui/strings/ax_strings_en-US.pak",
+    "$root_gen_dir/ui/strings/ui_strings_en-US.pak",
+    "$root_gen_dir/ui/views/resources/views_resources_100_percent.pak",
+  ]
+  deps = [
+    "//ui/resources",
+    "//ui/strings",
+    "//ui/views/resources",
+  ]
 }
 
 source_set("yoga") {
@@ -245,6 +257,10 @@ source_set("yoga") {
     "third_party/yoga/yoga/debug/Log.h",
     "third_party/yoga/yoga/debug/NodeToString.h",
   ]
+}
+
+config("yoga_config") {
+  include_dirs = [ "third_party/yoga" ]
 }
 
 group("test_all") {

@@ -32,7 +32,7 @@ void ChrohimeContentMainDelegate::PreSandboxStartup() {
   base::FilePath resources_pak_path;
   base::PathService::Get(base::DIR_ASSETS, &resources_pak_path);
   ui::ResourceBundle::InitSharedInstanceWithPakPath(
-      resources_pak_path.AppendASCII("content_shell.pak"));
+      resources_pak_path.AppendASCII("chrohime_with_content.pak"));
 }
 
 content::ContentClient* ChrohimeContentMainDelegate::CreateContentClient() {

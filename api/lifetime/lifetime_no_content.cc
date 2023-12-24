@@ -117,7 +117,7 @@ void Lifetime::Initialize(int argc, const char** argv) {
   base::FilePath resources_pak_path;
   base::PathService::Get(base::DIR_ASSETS, &resources_pak_path);
   ui::ResourceBundle::InitSharedInstanceWithPakPath(
-      resources_pak_path.AppendASCII("content_shell.pak"));
+      resources_pak_path.AppendASCII("chrohime.pak"));
 
 #if BUILDFLAG(IS_WIN)
   base::win::EnableHighDPISupport();
