@@ -91,6 +91,8 @@ source_set("chrohime_lifetime") {
       "api/lifetime/chrohime_app_delegate.h",
       "api/lifetime/chrohime_app_delegate.mm",
       "api/lifetime/lifetime_mac.mm",
+      "api/lifetime/main_menu_builder.h",
+      "api/lifetime/main_menu_builder.mm",
     ]
     frameworks = [
       "AppKit.framework",

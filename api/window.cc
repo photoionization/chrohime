@@ -29,6 +29,22 @@ class WindowDelegate : public views::WidgetDelegate {
     return true;
   }
 
+  bool CanFullscreen() const override {
+    return true;
+  }
+
+  bool CanMaximize() const override {
+    return true;
+  }
+
+  bool CanMinimize() const override {
+    return true;
+  }
+
+  bool CanActivate() const override {
+    return true;
+  }
+
   std::u16string GetWindowTitle() const override {
     return window_->GetTitle();
   }

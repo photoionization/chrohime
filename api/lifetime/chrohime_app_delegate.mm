@@ -4,7 +4,9 @@
 
 #include "chrohime/api/lifetime/chrohime_app_delegate.h"
 
+#include "base/strings/sys_string_conversions.h"
 #include "chrohime/api/lifetime.h"
+#include "chrohime/api/lifetime/main_menu_builder.h"
 
 @implementation ChrohimeAppDelegate
 
@@ -28,19 +30,8 @@
   [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
 
   // Create a basic mainMenu object using the executable filename.
-  NSMenu* mainMenu = [[NSMenu alloc] initWithTitle:@""];
-  NSMenuItem* appMenuItem = [mainMenu addItemWithTitle:@""
-                                                action:nullptr
-                                         keyEquivalent:@""];
-  NSMenu* appMenu = [[NSMenu alloc] initWithTitle:@""];
   NSString* appName = NSProcessInfo.processInfo.processName;
-  NSString* quitTitle = [@"Quit " stringByAppendingString:appName];
-  [appMenu addItemWithTitle:quitTitle
-                     action:@selector(terminate:)
-              keyEquivalent:@"q"];
-  [appMenuItem setSubmenu:appMenu];
-
-  [NSApp setMainMenu:mainMenu];
+  hime::BuildMainMenu(NSApp, self, base::SysNSStringToUTF16(appName));
 
   shell_->on_ready.Emit();
 }

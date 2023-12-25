@@ -193,14 +193,14 @@ void CreateMaterialButtonExample(hime_view_t view) {
   hime_object_unref((hime_object_t)button3);
 
   hime_material_button_t button4 = hime_material_button_create();
-  hime_material_button_set_style(button4, kChrohimeMaterialButtonStyleTonal);
-  hime_label_button_set_title((hime_label_button_t)button4, u"Tonal");
+  hime_material_button_set_style(button4, kChrohimeMaterialButtonStyleText);
+  hime_label_button_set_title((hime_label_button_t)button4, u"Text");
   hime_view_add_child_view(view, (hime_view_t)button4);
   hime_object_unref((hime_object_t)button4);
 
   hime_material_button_t button5 = hime_material_button_create();
-  hime_material_button_set_style(button5, kChrohimeMaterialButtonStyleText);
-  hime_label_button_set_title((hime_label_button_t)button5, u"Text");
+  hime_material_button_set_style(button5, kChrohimeMaterialButtonStyleTonal);
+  hime_label_button_set_title((hime_label_button_t)button5, u"Tonal");
   hime_view_add_child_view(view, (hime_view_t)button5);
   hime_object_unref((hime_object_t)button5);
 
