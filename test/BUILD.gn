@@ -1,3 +1,4 @@
+# This will be the target for running C++ tests, currently a stub.
 executable("chrohime_test") {
   testonly = true
   sources = [ "main.cc" ]
@@ -10,11 +11,13 @@ executable("chrohime_test") {
   }
 }
 
+# Gallery of usable views.
 executable("chrohime_gallery") {
   testonly = true
   sources = [ "gallery.c" ]
-  deps = [ "//chrohime/dylib:chrohime_with_content_dylib" ]
+  include_dirs = [ "../dylib" ]
 
+  deps = [ "//chrohime/dylib:chrohime_with_content_dylib" ]
   if (is_win) {
     deps += [ "//build/win:default_exe_manifest" ]
   }
@@ -24,7 +27,7 @@ executable("chrohime_gallery") {
     if (is_linux) {
       configs += [ "//build/config/gcc:rpath_for_built_shared_libraries" ]
     } else if (is_mac) {
-      ldflags = [ "-Wcrl,installnametool,-change,./libchrohime_shared_c_lib.dylib,@executable_path/libchrohime_shared_c_lib.dylib" ]
+      ldflags = [ "-Wcrl,installnametool,-change,./libchrohime_with_content.dylib,@executable_path/libchrohime_with_content.dylib" ]
     }
   }
 }

@@ -2,11 +2,13 @@
 
 typedef uint32_t sk_color_t;
 
-inline sk_color_t sk_color_create_argb(
-    unsigned a, unsigned r, unsigned g, unsigned b) {
+static inline
+sk_color_t
+sk_color_create_argb(unsigned a, unsigned r, unsigned g, unsigned b) {
   return (a << 24) | (r << 16) | (g << 8) | (b << 0);
 }
 
-inline sk_color_t sk_color_create_rgb(unsigned r, unsigned g, unsigned b) {
+static inline
+sk_color_t sk_color_create_rgb(unsigned r, unsigned g, unsigned b) {
   return sk_color_create_argb(0xFF, r, g, b);
 }

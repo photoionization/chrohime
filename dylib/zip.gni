@@ -1,0 +1,57 @@
+# Copyright 2014 The Chromium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/python.gni")
+
+# This is modified from build/config/zip.gni with additional feature to ignore
+# the ".stripped" suffix when adding a file.
+
+# Creates a zip archive of the inputs.
+#
+# output (required)
+#     Path to output zip.
+# inputs (required)
+#     List of input files to zip.
+# base_dir (optional)
+#     If provided, the archive paths will be relative to this directory.
+#     Applies only to |inputs|.
+# ignore_stripped_suffix (optional)
+#     Ignore the .stripped suffix when adding a file.
+#
+# deps, public_deps, data, data_deps, testonly, visibility
+#     Normal meaning.
+template("zip") {
+  action_with_pydeps(target_name) {
+    forward_variables_from(invoker,
+                           [
+                             "data",
+                             "data_deps",
+                             "deps",
+                             "public_deps",
+                             "testonly",
+                             "visibility",
+                           ])
+    script = "zip.py"
+    inputs = invoker.inputs
+    outputs = [ invoker.output ]
+
+    args = [
+      "--output",
+      rebase_path(invoker.output, root_build_dir),
+    ]
+
+    if (defined(invoker.ignore_stripped_suffix) && invoker.ignore_stripped_suffix) {
+      args += [ "--ignore-stripped-suffix" ]
+    }
+
+    _rebased_inputs = rebase_path(invoker.inputs, root_build_dir)
+    args += [ "--input-files=$_rebased_inputs" ]
+    if (defined(invoker.base_dir)) {
+      args += [
+        "--input-files-base-dir",
+        rebase_path(invoker.base_dir, root_build_dir),
+      ]
+    }
+  }
+}

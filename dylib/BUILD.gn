@@ -1,64 +1,72 @@
-chrohime_dylib_files = [
-  "chrohime.h",
-  "chrohime_c_impl.cc",
-  "chrohime_c_impl.inc",
-  "skia.h",
-]
+import("//third_party/angle/gni/angle.gni")
+import("//tools/v8_context_snapshot/v8_context_snapshot.gni")
+import("//ui/gl/features.gni")
+if (is_linux) {
+  import("//build/linux/strip_binary.gni")
+  import("//ui/qt/qt.gni")
+}
+import("zip.gni")
 
-# A shared library exposing chrohime C APIs, used for building independent apps.
-shared_library("chrohime_dylib") {
-  testonly = true
-  output_name = "libchrohime"
-  sources = chrohime_dylib_files
-  configs += [ ":chrohime_dylib_internal_config" ]
-  deps = [
-    ":chrohime_generate_c_impls",
-    "//chrohime:chrohime_no_content_with_lifetime",
-  ]
+declare_args() {
+  # The version of chrohime library.
+  # In the official distribution, it is set via gn args in GitHub Actions.
+  chrohime_version = "v0.0.1"
+}
 
-  if (is_apple) {
-    # Default optimization on apple adds "-dead_strip" to ldflags, which would
-    # strip exported symbols.
-    # There is almost no performance penalty since we are only removing
-    # optimization on the c_impl.cc.
-    configs -= [ "//build/config/compiler:default_optimization" ]
+# Define how a chrohime dylib is built.
+template("chrohime_shared_library") {
+  shared_library(target_name) {
+    forward_variables_from(invoker, [ "public_configs", "testonly" ])
+
+    output_name = invoker.libname
+
+    defines = [ "CHROHIME_C_IMPLEMENTATION" ]
+    sources = [
+      "chrohime.h",
+      "chrohime_c_impl.cc",
+      "chrohime_c_impl.inc",
+      "skia.h",
+    ]
+
+    deps = invoker.deps + [ ":chrohime_generate_c_impls" ]
+
+    if (is_mac) {
+      # Default optimization on apple adds "-dead_strip" to ldflags, which would
+      # strip exported symbols.
+      # There is almost no performance penalty since we are only removing
+      # optimization on the c_impl.cc.
+      configs -= [ "//build/config/compiler:default_optimization" ]
+
+      # Fix the weird dep on test_trace_processor before we can get rid of the
+      # base/test dep in chrohime.
+      if (!is_component_build) {
+        ldflags = [ "-Wcrl,installnametool,-change,@loader_path/Libraries/libtest_trace_processor.dylib,@executable_path/libtest_trace_processor.dylib" ]
+        deps += [ ":copy_test_trace_processor" ]
+      }
+    }
   }
 }
 
-# Same with chrohime_dylib but also includes content APIs.
-shared_library("chrohime_with_content_dylib") {
+# A shared library exposing chrohime C APIs, used for building independent apps.
+chrohime_shared_library("chrohime_dylib") {
   testonly = true
-  output_name = "libchrohime_with_content"
-  sources = chrohime_dylib_files
-  configs += [ ":chrohime_dylib_internal_config" ]
-  deps = [
-    ":chrohime_generate_c_impls",
-    "//chrohime:chrohime_with_content_with_lifetime",
-  ]
 
-  if (is_apple) {
-    configs -= [ "//build/config/compiler:default_optimization" ]
-  }
+  libname = "chrohime"
+  deps = [ "//chrohime:chrohime_no_content_with_lifetime" ]
+}
+
+# Same with chrohime_dylib but also includes content APIs.
+chrohime_shared_library("chrohime_with_content_dylib") {
+  testonly = true
+
+  libname = "chrohime_with_content"
+  deps = [ "//chrohime:chrohime_with_content_with_lifetime" ]
 
   public_configs = [ ":chrohime_with_content_dylib_config" ]
 }
 
-config("chrohime_dylib_internal_config") {
-  defines = [ "CHROHIME_C_IMPLEMENTATION" ]
-}
-
 config("chrohime_with_content_dylib_config") {
   defines = [ "CHROHIME_WITH_CONTENT" ]
-}
-
-# Generate a public header to be shipped.
-action("chrohime_public_c_header") {
-  deps = [ "//chrohime/docs:apis_json" ]
-  inputs = [ "$root_out_dir/chrohime_apis.json" ]
-  outputs = [ "$root_out_dir/chrohime.h" ]
-  script = "generate_c_impls.py"
-  args = [ "--public-header", "--apis-json" ] + rebase_path(inputs) +
-         [ "--output-dir", rebase_path(root_out_dir)]
 }
 
 # Generate implementations of C APIs.
@@ -70,6 +78,212 @@ action("chrohime_generate_c_impls") {
     "$target_gen_dir/generated_impls.h",
   ]
   script = "generate_c_impls.py"
-  args = [ "--apis-json" ] + rebase_path(inputs) +
-         [ "--output-dir", rebase_path(target_gen_dir)]
+  args = [ "--apis-json" ] + rebase_path(inputs, root_build_dir) +
+         [ "--output-dir", rebase_path(target_gen_dir, root_build_dir)]
+}
+
+# Generate zip archives of shared libraries and example code.
+template("chrohime_archive") {
+  with_content = defined(invoker.with_content) && invoker.with_content
+  name = invoker.libname
+  if (current_os == "win") {
+    libprefix = ""
+  } else {
+    libprefix = "lib"
+  }
+  if (current_os == "linux") {
+    libsuffix = ".stripped"
+  } else {
+    libsuffix = ""
+  }
+  if (current_os == "mac") {
+    shlib_ext = "dylib"
+  } else if (current_os == "win") {
+    shlib_ext = "dll"
+  } else {
+    shlib_ext = "so"
+  }
+
+  zip(target_name) {
+    forward_variables_from(invoker, [ "testonly" ])
+
+    output = "$root_out_dir/$name-$chrohime_version-$current_os-$current_cpu.zip"
+    ignore_stripped_suffix = true
+
+    inputs = [
+      "$root_out_dir/$libprefix$name.$shlib_ext$libsuffix",
+      "$root_out_dir/LICENSE",
+      "$root_out_dir/chrohime.h",
+      "$root_out_dir/gallery.c",
+      "$root_out_dir/icudtl.dat",
+    ]
+    if (is_linux) {
+      if (use_qt) {
+        inputs += [ "$root_out_dir/libqt5_shim.so.stripped" ]
+      }
+      if (use_qt6) {
+        inputs += [ "$root_out_dir/libqt6_shim.so.stripped" ]
+      }
+    }
+    if (is_mac && !is_component_build) {
+      inputs += [ "$root_out_dir/libtest_trace_processor.dylib" ]
+    }
+    if (use_egl) {
+      inputs += [
+        "$root_out_dir/libEGL.$shlib_ext$libsuffix",
+        "$root_out_dir/libGLESv2.$shlib_ext$libsuffix",
+      ]
+    }
+    if (with_content) {
+      inputs += [ "$root_out_dir/chrohime_with_content.pak" ]
+      if (v8_use_external_startup_data) {
+        if (use_v8_context_snapshot) {
+          inputs += [ "$root_out_dir/$v8_context_snapshot_filename" ]
+        } else {
+          inputs += [ "$root_out_dir/snapshot_blob.bin" ]
+        }
+      }
+      if (angle_shared_libvulkan) {
+        if (is_win) {
+          inputs += [ "$root_out_dir/vulkan-1.dll" ]
+        } else {
+          inputs += [ "$root_out_dir/libvulkan.$shlib_ext.1$libsuffix" ]
+        }
+      }
+      if (enable_swiftshader) {
+        inputs += [
+          "$root_out_dir/${libprefix}vk_swiftshader.$shlib_ext$libsuffix",
+          "$root_out_dir/vk_swiftshader_icd.json",
+        ]
+      }
+    } else {
+      inputs += [ "$root_out_dir/chrohime.pak" ]
+    }
+
+    deps = [
+      ":chrohime_copy_examples",
+      ":chrohime_license",
+      ":chrohime_public_c_header",
+      "//third_party/icu:copy_icudata",
+    ]
+    if (with_content) {
+      deps += [ "../content:pak" ]
+    } else {
+      deps += [ "..:chrohime_pak" ]
+    }
+    if (is_linux) {
+      deps += [ ":strip_${name}_dylib" ]
+      if (use_qt) {
+        deps += [ "//chrome/installer/linux:strip_qt5_shim" ]
+      }
+      if (use_qt6) {
+        deps += [ "//chrome/installer/linux:strip_qt6_shim" ]
+      }
+    } else {
+      deps += [ ":${name}_dylib" ]
+    }
+    if (is_mac && !is_component_build) {
+      deps += [ ":copy_test_trace_processor" ]
+    }
+    if (use_egl) {
+      if (is_linux) {
+        deps += [
+          "//chrome/installer/linux:strip_libEGL_shlib",
+          "//chrome/installer/linux:strip_libGLESv2_shlib",
+        ]
+      } else {
+        deps += [
+          "//third_party/angle:libEGL",
+          "//third_party/angle:libGLESv2",
+        ]
+      }
+    }
+    if (with_content) {
+      if (v8_use_external_startup_data) {
+        if (use_v8_context_snapshot) {
+          deps += [ "//tools/v8_context_snapshot" ]
+        } else {
+          deps += [ "//v8" ]
+        }
+      }
+      if (angle_shared_libvulkan) {
+        if (is_linux) {
+          deps += [ "//chrome/installer/linux:strip_libvulkan_shlib" ]
+        } else {
+          deps += [ "//third_party/vulkan-deps/vulkan-loader/src:libvulkan" ]
+        }
+      }
+      if (enable_swiftshader) {
+        deps += [ "//third_party/swiftshader/src/Vulkan:icd_file" ]
+        if (is_linux) {
+          deps += [ "//chrome/installer/linux:strip_libvk_swiftshader.shlib" ]
+        } else {
+          deps += [ "//third_party/swiftshader/src/Vulkan:swiftshader_libvulkan" ]
+        }
+      }
+    }
+  }
+
+  if (is_linux) {
+    strip_binary("strip_${name}_dylib") {
+      forward_variables_from(invoker, [ "testonly" ])
+      binary_input = "$root_out_dir/lib$name.$shlib_ext"
+      deps = [ ":${name}_dylib" ]
+    }
+  }
+}
+
+chrohime_archive("chrohime_zip") {
+  testonly = true
+  libname = "chrohime"
+}
+
+chrohime_archive("chrohime_with_content_zip") {
+  testonly = true
+  libname = "chrohime_with_content"
+  with_content = true
+}
+
+# Generate a public header to be shipped.
+action("chrohime_public_c_header") {
+  deps = [ "//chrohime/docs:apis_json" ]
+  inputs = [ "$root_out_dir/chrohime_apis.json" ]
+  outputs = [ "$root_out_dir/chrohime.h" ]
+  script = "generate_c_impls.py"
+  args = [ "--public-header", "--apis-json" ] +
+         rebase_path(inputs, root_build_dir) +
+         [ "--output-dir", rebase_path(root_out_dir, root_build_dir)]
+}
+
+# Generate license file.
+action("chrohime_license") {
+  script = "//tools/licenses/licenses.py"
+  outputs = [ "$root_out_dir/LICENSE" ]
+  args = [
+    "license_file",
+    rebase_path("$root_out_dir/LICENSE", root_build_dir),
+    "--gn-target",
+    "//chrohime/dylib:chrohime_with_content_dylib",
+    "--gn-out-dir",
+    ".",
+  ]
+}
+
+# Copy the example code to root_out_dir which will be shipped in distribution.
+copy("chrohime_copy_examples") {
+  sources = [
+    "../test/gallery.c"
+  ]
+  outputs = [ "$root_out_dir/{{source_file_part}}" ]
+}
+
+# On mac there is weird test_trace_processor dep in a weird place, copy it to
+# root_out_dir before we can get rid of //base:test dep.
+if (is_mac && !is_component_build) {
+  copy("copy_test_trace_processor") {
+    testonly = true
+    sources = [ "$root_out_dir/Libraries/libtest_trace_processor.dylib" ]
+    outputs = [ "$root_out_dir/{{source_file_part}}" ]
+    deps = [ "//base/test:test_trace_processor" ]
+  }
 }
