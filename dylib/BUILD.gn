@@ -112,6 +112,7 @@ template("chrohime_archive") {
 
     inputs = [
       "$root_out_dir/$libprefix$name.$shlib_ext$libsuffix",
+      "$root_out_dir/CMakeLists.txt",
       "$root_out_dir/LICENSE",
       "$root_out_dir/chrohime.h",
       "$root_out_dir/gallery.c",
@@ -127,6 +128,9 @@ template("chrohime_archive") {
     }
     if (is_mac && !is_component_build) {
       inputs += [ "$root_out_dir/libtest_trace_processor.dylib" ]
+    }
+    if (is_win) {
+      inputs += [ "$root_out_dir/$name.dll.lib" ]
     }
     if (use_egl) {
       inputs += [
@@ -272,7 +276,8 @@ action("chrohime_license") {
 # Copy the example code to root_out_dir which will be shipped in distribution.
 copy("chrohime_copy_examples") {
   sources = [
-    "../test/gallery.c"
+    "../test/CMakeLists.txt",
+    "../test/gallery.c",
   ]
   outputs = [ "$root_out_dir/{{source_file_part}}" ]
 }

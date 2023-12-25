@@ -202,7 +202,7 @@ void CreateMaterialButtonExample(hime_view_t view) {
   hime_object_unref((hime_object_t)button5);
 
   hime_view_set_style_number(
-      view, u"min-width", hime_view_get_preferred_size(view).width);
+      view, u"min-width", (float)hime_view_get_preferred_size(view).width);
 }
 
 void CreateCheckboxExample(hime_view_t view) {
@@ -293,7 +293,7 @@ hime_view_t CreateTableViewPage() {
   hime_table_view_column_t columns[4];
   for (size_t i = 0; i < 4; ++i) {
     hime_table_view_column_init(&columns[i]);
-    columns[i].id = i;
+    columns[i].id = (int)i;
   }
   columns[0].title = u"Fruit";
   columns[0].percent = 1;
