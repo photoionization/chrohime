@@ -19,6 +19,7 @@ jobs:
         targetCpu: [x64, arm64]
         config: [Component, Release]
         exclude:
+          # Do Release build for tags.
           - config: ${{ startsWith(github.ref, 'refs/tags/') && 'Component' || 'Release' }}
 
     steps:
@@ -59,8 +60,49 @@ jobs:
           printf "$SECRET_FILE_CONTENT" > ~/.goma_oauth2_config
           node third_party/build_chromium/goma.js
 
-      - name: Build
+      - name: GN Gen
         shell: bash
-        run: |
-          python3 scripts/gn_gen.py --goma --config ${{ matrix.config }} --target-cpu ${{ matrix.targetCpu }} --arg 'chrohime_version="${{ github.ref_name }}"'
-          python3 scripts/build.py --config ${{ matrix.config }} chrohime_gallery chrohime_dylib chrohime_with_content_dylib
+        run: python3 scripts/gn_gen.py --goma --config ${{ matrix.config }} --target-cpu ${{ matrix.targetCpu }} --arg 'chrohime_version="${{ github.ref_name }}"'
+
+      - name: Component Build
+        if: matrix.config == 'Component'
+        run: python3 scripts/build.py chrohime_gallery chrohime_dylib chrohime_with_content_dylib
+
+      - name: Build Chrohime Shared Library
+        # The no_content lib does not work on mac yet.
+        if: matrix.config == 'Release' && matrix.targetOs != 'mac'
+        run: python3 scripts/build.py --config Release chrohime_zip
+
+      - name: Build ChrohimeWithContent Shared Library
+        # The with_content lib does not link on linux yet, wait for below CL to
+        # land in dev channel:
+        # https://chromium-review.googlesource.com/c/chromium/src/+/5119971
+        if: matrix.config == 'Release' && matrix.targetOs != 'linux'
+        run: python3 scripts/build.py --config Release chrohime_with_content_zip
+
+      - name: Upload Shared Libraries
+        if: matrix.config == 'Release'
+        uses: actions/upload-artifact@v3
+        with:
+          path: chromium/out/Release/*.zip
+          retention-days: 1
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download Files
+        uses: actions/download-artifact@v3
+
+      - name: Release
+        uses: ncipollo/release-action@v1
+        with:
+          name: Chrohime ${{ github.ref_name }}
+          body: '## Changelog'
+          draft: true
+          artifacts: artifact/*.zip
+          artifactErrorsFailBuild: true
