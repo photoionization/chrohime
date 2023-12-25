@@ -5,9 +5,12 @@
 #include "chrohime.h"
 
 #include <stdio.h>
+#include <string.h>
 
 #define PADDING 10
 #define GITHUB_REPO u"https://github.com/photoionization/chrohime"
+
+static bool running_test = false;
 
 hime_view_t CreateSection() {
   hime_view_t view = hime_view_create();
@@ -385,6 +388,10 @@ void OnReady(void* data) {
   }
 
   hime_window_activate(window);
+
+  if (running_test) {
+    hime_window_close(window);
+  }
 }
 
 int main(int argc, const char** argv) {
@@ -393,6 +400,8 @@ int main(int argc, const char** argv) {
 #else
   hime_lifetime_t lifetime = hime_lifetime_create(argc, argv);
 #endif
+
+  running_test = argc == 2 && strcmp(argv[1], "--test") == 0;
 
   hime_state_create();
   hime_lifetime_on_ready_connect(lifetime, OnReady, NULL);

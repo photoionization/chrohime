@@ -69,6 +69,12 @@ jobs:
         if: matrix.config == 'Component'
         run: python3 scripts/build.py chrohime_gallery chrohime_dylib chrohime_with_content_dylib
 
+      - name: Test Component Build
+        if: matrix.config == 'Component' && matrix.targetCpu == 'x64'
+        env:
+          DISPLAY: ':99.0'
+        run: ./chromium/out/Component/chrohime_gallery --test
+
       - name: Build Chrohime Shared Library
         # The no_content lib does not work on mac yet.
         if: matrix.config == 'Release' && matrix.targetOs != 'mac'
@@ -83,6 +89,8 @@ jobs:
 
       - name: Test Shared Libraries
         if: matrix.config == 'Release' && matrix.targetCpu == 'x64'
+        env:
+          DISPLAY: ':99.0'
         run: python3 scripts/test_dist.py
 
       - name: Upload Shared Libraries
