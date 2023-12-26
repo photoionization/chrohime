@@ -16,7 +16,17 @@ Goals:
 * Interoperability with CEF APIs.
 * Simple implementation of React Native.
 
-## Build
+## Documentations
+
+API references are not ready yet, but most APIs are commented in the
+`chrohime.h` header, which can be found in the zip distributions in the
+[Releases](https://github.com/photoionization/chrohime/releases) page.
+
+* [Screenshots📷](https://github.com/photoionization/chrohime/issues/1)
+* [Technical details](https://github.com/photoionization/chrohime/blob/main/docs/tutorial/technical-details.md)
+* [Object lifetime management](https://github.com/photoionization/chrohime/blob/main/docs/tutorial/object-lifetime-management.md)
+
+### Build
 
 Download Chromium source code:
 
@@ -31,7 +41,7 @@ Build Chrohime:
 ./scripts/build.py --config Release
 ```
 
-## Source code structure
+### Source code structure
 
 * `/api` - Wrappers of the `ui/views` classes.
 * `/content` - Implementations of content delegates.
