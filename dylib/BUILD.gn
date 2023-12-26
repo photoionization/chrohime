@@ -165,9 +165,9 @@ template("chrohime_archive") {
     }
 
     deps = [
-      ":chrohime_copy_examples",
       ":chrohime_license",
       ":chrohime_public_c_header",
+      "../gallery:chrohime_copy_gallery",
       "//third_party/icu:copy_icudata",
     ]
     if (with_content) {
@@ -271,15 +271,6 @@ action("chrohime_license") {
     "--gn-out-dir",
     ".",
   ]
-}
-
-# Copy the example code to root_out_dir which will be shipped in distribution.
-copy("chrohime_copy_examples") {
-  sources = [
-    "../test/CMakeLists.txt",
-    "../test/gallery.c",
-  ]
-  outputs = [ "$root_out_dir/{{source_file_part}}" ]
 }
 
 # On mac there is weird test_trace_processor dep in a weird place, copy it to

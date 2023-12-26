@@ -269,6 +269,6 @@ group("test_all") {
   testonly = true
   deps = [
     "test:chrohime_test",
-    "test:chrohime_gallery",
+    "gallery:chrohime_gallery",
   ]
 }

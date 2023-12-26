@@ -38,6 +38,7 @@ Build Chrohime:
 * `/chromium` - Downloaded Chromium source code.
 * `/docs` - Descriptions of APIs used for code and documentation generation.
 * `/dylib` - C APIs of the `/api` wrappers.
+* `/gallery` - Sample app shipped in the zip distributions.
 * `/test` - Tests of the C APIs and C++ wrappers.
 * `/scripts` - Scripts for building Chrohime.
 

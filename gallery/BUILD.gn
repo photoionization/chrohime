@@ -1,0 +1,28 @@
+executable("chrohime_gallery") {
+  testonly = true
+  sources = [ "gallery.c" ]
+  include_dirs = [ "../dylib" ]
+
+  deps = [ "//chrohime/dylib:chrohime_with_content_dylib" ]
+  if (is_win) {
+    deps += [ "//build/win:default_exe_manifest" ]
+  }
+
+  if (!is_component_build) {
+    # Set rpath to search libchrohime from out dir.
+    if (is_linux) {
+      configs += [ "//build/config/gcc:rpath_for_built_shared_libraries" ]
+    } else if (is_mac) {
+      ldflags = [ "-Wcrl,installnametool,-change,./libchrohime_with_content.dylib,@executable_path/libchrohime_with_content.dylib" ]
+    }
+  }
+}
+
+# Copy the example code to root_out_dir which will be shipped in distribution.
+copy("chrohime_copy_gallery") {
+  sources = [
+    "CMakeLists.txt",
+    "gallery.c",
+  ]
+  outputs = [ "$root_out_dir/{{source_file_part}}" ]
+}
