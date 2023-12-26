@@ -112,7 +112,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           name: Chrohime ${{ github.ref_name }}
-          body: '## Changelog'
+          bodyFile: dylib/ZIP_DESCRIPTION.md
           draft: true
           artifacts: artifact/*.zip
           artifactErrorsFailBuild: true

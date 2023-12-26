@@ -89,3 +89,12 @@
     description: cl.exe gallery.c chrohime.dll.lib
   - platform: ['win']
     description: gallery.exe
+
+- platform: ['mac']
+  description: |
+    If the gatekeeper prevents you from starting the compiled sample app with
+    warnings about unsigned dylibs, that is because you downloaded the zip
+    distribution from browser and the files have the unsafe attributes.
+
+    It is recommended to use `curl`/`wget` to download the zip files from
+    terminal to work around the gatekeeper.
