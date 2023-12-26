@@ -103,6 +103,11 @@ template("chrohime_archive") {
   } else {
     shlib_ext = "so"
   }
+  if (with_content) {
+    readme = "$root_out_dir/README.with_content.$current_os.md"
+  } else {
+    readme = "$root_out_dir/README.$current_os.md"
+  }
 
   zip(target_name) {
     forward_variables_from(invoker, [ "testonly" ])
@@ -111,6 +116,7 @@ template("chrohime_archive") {
     ignore_stripped_suffix = true
 
     inputs = [
+      "$readme",
       "$root_out_dir/$libprefix$name.$shlib_ext$libsuffix",
       "$root_out_dir/CMakeLists.txt",
       "$root_out_dir/LICENSE",
@@ -165,6 +171,7 @@ template("chrohime_archive") {
     }
 
     deps = [
+      ":${name}_zip_readme",
       ":chrohime_license",
       ":chrohime_public_c_header",
       "../gallery:chrohime_copy_gallery",
@@ -225,6 +232,20 @@ template("chrohime_archive") {
           deps += [ "//third_party/swiftshader/src/Vulkan:swiftshader_libvulkan" ]
         }
       }
+    }
+  }
+
+  action("${name}_zip_readme") {
+    script = "parse_readme.py"
+    outputs = [ readme ]
+    inputs = [ "ZIP_README.yaml" ]
+    args = rebase_path(inputs, root_build_dir) +
+           rebase_path(outputs, root_build_dir) + [
+             "--target-os", current_os,
+             "--target-cpu", current_cpu,
+           ]
+    if (with_content) {
+      args += [ "--with-content" ]
     }
   }
 

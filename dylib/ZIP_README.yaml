@@ -1,0 +1,91 @@
+- This binary distribution contains following files.
+
+- list:
+  - filename: LICENSE
+    description: Includes all licenses of dependencies.
+  - filename: CMakeLists.txt
+    description: A sample CMake file for building the sample app.
+  - filename: gallery.c
+    description: A sample app.
+  - filename: chrohime.h
+    description: The header file of C APIs.
+  - filename: '{libprefix}{name}.{shlib_ext}'
+    description: The shared library of chrohime.
+  - filename: '{name}.dll.lib'
+    platform: ['win']
+    description: The import library for chrohime's shared library.
+  - description: All other files are required at runtime.
+    list:
+      - filename: '{name}.pak'
+        description: Resources files
+      - filename: icudtl.dat
+        description: ICU's data table.
+      - filename: 'v8_context_snapshot.bin'
+        platform: ['win', 'linux']
+        with_content: true
+        description: V8 snapshot file.
+      - filename: 'v8_context_snapshot.x86_64.bin'
+        arch: ['x64']
+        platform: ['mac']
+        with_content: true
+        description: V8 snapshot file.
+      - filename: 'v8_context_snapshot.arm64.bin'
+        arch: ['arm64']
+        platform: ['mac']
+        with_content: true
+        description: V8 snapshot file.
+      - filename: 'libqt5_shim.so'
+        platform: ['linux']
+        description: Optional support for QT desktop features.
+      - filename: 'libqt6_shim.so'
+        platform: ['linux']
+        description: Optional support for QT6 desktop features.
+      - filename: 'libtest_trace_processor.dylib'
+        platform: ['mac']
+        description: Test dependency, will be removed in future.
+      - filename: 'libEGL.{shlib_ext}'
+        description: Shared library of ANGLE.
+      - filename: 'libGLESv2.{shlib_ext}'
+        description: Shared library of ANGLE.
+      - filename: 'vulkan-1.dll'
+        platform: ['win']
+        with_content: true
+        description: Shared library of Vulkan.
+      - filename: 'libvulkan.{shlib_ext}.1'
+        platform: ['linux']
+        with_content: true
+        description: Shared library of Vulkan.
+      - filename: '{libprefix}vk_swiftshader.{shlib_ext}'
+        with_content: true
+        description: Shared library of SwiftShader.
+      - filename: 'vk_swiftshader_icd.json'
+        with_content: true
+        description: Swiftshader Vulkan ICD file.
+
+- To build the sample app with cmake, run following commands.
+-
+  - cmake .
+  - cmake --build .
+  - platform: ['linux', 'mac']
+    description: ./gallery
+  - platform: ['win']
+    description: .\Debug\gallery.exe
+
+- It is also possible to build with compiler directly.
+-
+  - platform: ['linux', 'mac']
+    with_content: true
+    description: clang gallery.c -L. -lchrohime_with_content -DCHROHIME_WITH_CONTENT
+  - platform: ['linux', 'mac']
+    with_content: false
+    description: clang gallery.c -L. -lchrohime
+  - platform: ['linux', 'mac']
+    description: ./a.out
+  - platform: ['win']
+    with_content: true
+    description: cl.exe gallery.c chrohime_with_content.dll.lib -DCHROHIME_WITH_CONTENT
+  - platform: ['win']
+    with_content: false
+    description: cl.exe gallery.c chrohime.dll.lib
+  - platform: ['win']
+    description: gallery.exe
