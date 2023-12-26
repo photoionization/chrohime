@@ -10,7 +10,7 @@ import("zip.gni")
 declare_args() {
   # The version of chrohime library.
   # In the official distribution, it is set via gn args in GitHub Actions.
-  chrohime_version = "v0.0.1"
+  chrohime_version = "v0.0.0"
 }
 
 # Define how a chrohime dylib is built.

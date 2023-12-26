@@ -167,7 +167,7 @@ def write_struct_impl(file, apis, api, write_impl, public_header):
     set_properties.append(f'({api_name})->{prop_name} = {default_value}')
   file.write(f'#define hime_{api_name}_init({api_name}) \\\n')
   file.write(prefix_each_line('; \\\n'.join(set_properties), '  '))
-  file.write('\n\n')
+  file.write('\n')
 
 def write_class_impl(file, apis, api, write_impl, public_header):
   api_name = get_c_name(api)
@@ -271,7 +271,7 @@ def write_function(file, data, write_impl, name, params, impl, export=True):
     file.write('CHROHIME_C_EXPORT\n')
   file.write(f'{name}({params_join(params)})')
   if write_impl:
-    file.write(' {\n' + prefix_each_line(impl, '  ') + '\n}\n')
+    file.write(' {\n' + prefix_each_line(impl, '  ') + '}\n')
   else:
     file.write(';\n')
   if len(defines) > 0:
@@ -284,7 +284,9 @@ def is_content_api(api):
 def get_comment(data):
   if not 'description' in data:
     return ''
-  return prefix_each_line(data['description'], '// ') + '\n'
+  lines = data['description'].splitlines()
+  comments = ['// ' + line if len(line) > 0 else '//' for line in lines]
+  return '\n'.join(comments) + '\n'
 
 def get_enum_name(api, enum):
   stripped_name = api['name'].replace('::', '')
@@ -293,8 +295,8 @@ def get_enum_name(api, enum):
 def get_enum_declaration(api, public_header=False):
   result = 'typedef enum {\n'
   for enum in api['enums']:
-    if public_header:
-      result += '  ' + get_comment(enum)
+    if public_header and 'description' in enum:
+      result += prefix_each_line(get_comment(enum), '  ')
     result += f'  {get_enum_name(api, enum)},\n'
   result += f'}} {get_c_type_name(api)};\n\n'
   return result
@@ -438,7 +440,7 @@ def convert_to_snake_case(string):
 def prefix_each_line(string, prefix):
   lines = string.splitlines()
   prefixed_lines = [prefix + line for line in lines]
-  return '\n'.join(prefixed_lines)
+  return '\n'.join(prefixed_lines) + '\n'
 
 def params_join(params):
   return ', '.join(params)
