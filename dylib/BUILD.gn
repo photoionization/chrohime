@@ -22,13 +22,16 @@ template("chrohime_shared_library") {
 
     defines = [ "CHROHIME_C_IMPLEMENTATION" ]
     sources = [
-      "chrohime.h",
       "chrohime_c_impl.cc",
       "chrohime_c_impl.inc",
       "skia.h",
     ]
 
-    deps = invoker.deps + [ ":chrohime_generate_c_impls" ]
+    configs += [ ":chrohime_dylib_config" ]
+    deps = invoker.deps + [
+      ":chrohime_public_c_header",
+      ":chrohime_generate_c_impls",
+    ]
 
     if (is_mac) {
       # Default optimization on apple adds "-dead_strip" to ldflags, which would
@@ -53,6 +56,7 @@ chrohime_shared_library("chrohime_dylib") {
 
   libname = "chrohime"
   deps = [ "//chrohime:chrohime_no_content_with_lifetime" ]
+  public_configs = [ ":chrohime_dylib_config" ]
 }
 
 # Same with chrohime_dylib but also includes content APIs.
@@ -61,12 +65,29 @@ chrohime_shared_library("chrohime_with_content_dylib") {
 
   libname = "chrohime_with_content"
   deps = [ "//chrohime:chrohime_with_content_with_lifetime" ]
+  public_configs = [
+    ":chrohime_dylib_config",
+    ":chrohime_with_content_dylib_config",
+  ]
+}
 
-  public_configs = [ ":chrohime_with_content_dylib_config" ]
+config("chrohime_dylib_config") {
+  include_dirs = [ "$root_out_dir" ]
 }
 
 config("chrohime_with_content_dylib_config") {
   defines = [ "CHROHIME_WITH_CONTENT" ]
+}
+
+# Generate a public header to be shipped.
+action("chrohime_public_c_header") {
+  deps = [ "//chrohime/docs:apis_json" ]
+  inputs = [ "$root_out_dir/chrohime_apis.json" ]
+  outputs = [ "$root_out_dir/chrohime.h" ]
+  script = "generate_c_impls.py"
+  args = [ "--public-header", "--apis-json" ] +
+         rebase_path(inputs, root_build_dir) +
+         [ "--output-dir", rebase_path(root_out_dir, root_build_dir)]
 }
 
 # Generate implementations of C APIs.
@@ -267,17 +288,6 @@ chrohime_archive("chrohime_with_content_zip") {
   testonly = true
   libname = "chrohime_with_content"
   with_content = true
-}
-
-# Generate a public header to be shipped.
-action("chrohime_public_c_header") {
-  deps = [ "//chrohime/docs:apis_json" ]
-  inputs = [ "$root_out_dir/chrohime_apis.json" ]
-  outputs = [ "$root_out_dir/chrohime.h" ]
-  script = "generate_c_impls.py"
-  args = [ "--public-header", "--apis-json" ] +
-         rebase_path(inputs, root_build_dir) +
-         [ "--output-dir", rebase_path(root_out_dir, root_build_dir)]
 }
 
 # Generate license file.
