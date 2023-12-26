@@ -39,7 +39,7 @@ def main():
 
   for dist in args.dists:
     try:
-      print('Testing', os.path.relpath(dist, SRC_DIR))
+      print('Testing', os.path.relpath(dist, SRC_DIR), flush=True)
       temp_dir = tempfile.mkdtemp()
       extract_zip(dist, temp_dir)
       run_cmake(temp_dir)
@@ -47,10 +47,9 @@ def main():
     finally:
       try:
         shutil.rmtree(temp_dir)
-      except PermissionError:
-        # The child processes might take a while to quit.
-        time.sleep(2)
-        shutil.rmtree(temp_dir)
+      except PermissionError as error:
+        print('Unable to cleanup', temp_dir, 'due to error', error)
+        pass
 
 if __name__ == '__main__':
   main()
