@@ -4,7 +4,7 @@ import os
 import subprocess
 import sys
 
-CHROMIUM_VERSION = '122.0.6182.0'
+CHROMIUM_VERSION = '122.0.6208.0'
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC_DIR = os.path.join(ROOT_DIR, 'chromium')

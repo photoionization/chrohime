@@ -22,6 +22,8 @@ def main():
     'enable_backup_ref_ptr_support=false',
     # The C APIs allow passing function pointers.
     'is_cfi=false',
+    # Blink is always built as part of shared library.
+    'blink_heap_inside_shared_library=true',
   ]
 
   gn_gen_args = [ os.path.join(BUILD_CHROMIUM_DIR, 'gn_gen.py'),

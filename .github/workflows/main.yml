@@ -81,10 +81,7 @@ jobs:
         run: python3 scripts/build.py --config Release chrohime_zip
 
       - name: Build ChrohimeWithContent Shared Library
-        # The with_content lib does not link on linux yet, wait for below CL to
-        # land in dev channel:
-        # https://chromium-review.googlesource.com/c/chromium/src/+/5119971
-        if: matrix.config == 'Release' && matrix.targetOs != 'linux'
+        if: matrix.config == 'Release'
         run: python3 scripts/build.py --config Release chrohime_with_content_zip
 
       - name: Test Shared Libraries
