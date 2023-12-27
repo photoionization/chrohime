@@ -13,6 +13,7 @@
 
 namespace hime {
 
+class ChrohimeViewsDelegate;
 struct LifetimeImpl;
 
 class CHROHIME_EXPORT Lifetime : public ContentLifetimeDelegate {
@@ -51,6 +52,7 @@ class CHROHIME_EXPORT Lifetime : public ContentLifetimeDelegate {
   void Destroy();
 
   raw_ptr<LifetimeImpl> impl_;
+  std::unique_ptr<ChrohimeViewsDelegate> views_delegate_;
   base::RepeatingClosure quit_closure_;
   base::WeakPtrFactory<Lifetime> weak_factory_{this};
 };

@@ -14,10 +14,6 @@ namespace base {
 class RunLoop;
 }
 
-namespace views {
-class TestViewsDelegate;
-}
-
 namespace wm {
 class WMState;
 }
@@ -49,7 +45,6 @@ class CHROHIME_EXPORT ContentLifetimeDelegateMainParts
   std::unique_ptr<wm::WMState> wm_state_;
   std::unique_ptr<display::Screen> screen_;
 #endif
-  std::unique_ptr<views::TestViewsDelegate> views_delegate_;
   std::unique_ptr<base::RunLoop> run_loop_;
 };
 

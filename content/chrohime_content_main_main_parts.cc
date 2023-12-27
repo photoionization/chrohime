@@ -8,7 +8,6 @@
 #include "chrohime/content/content_lifetime_delegate.h"
 #include "content/public/common/result_codes.h"
 #include "ui/base/ime/init/input_method_initializer.h"
-#include "ui/views/test/desktop_test_views_delegate.h"
 
 #if BUILDFLAG(ENABLE_DESKTOP_AURA)
 #include "ui/display/screen.h"
@@ -19,10 +18,6 @@
 #if BUILDFLAG(IS_LINUX)
 #include "ui/linux/linux_ui.h"
 #include "ui/linux/linux_ui_factory.h"
-#endif
-
-#if BUILDFLAG(IS_MAC)
-#include "content/public/browser/context_factory.h"
 #endif
 
 namespace hime {
@@ -47,10 +42,6 @@ int ContentLifetimeDelegateMainParts::PreMainMessageLoopRun() {
   screen_ = views::CreateDesktopScreen();
 #endif
   run_loop_ = std::make_unique<base::RunLoop>();
-  views_delegate_ = std::make_unique<views::DesktopTestViewsDelegate>();
-#if BUILDFLAG(IS_MAC)
-  views_delegate_->set_context_factory(content::GetContextFactory());
-#endif
   delegate_->OnPreMainMessageLoopRun(run_loop_->QuitClosure());
   return content::RESULT_CODE_NORMAL_EXIT;
 }
@@ -62,7 +53,6 @@ void ContentLifetimeDelegateMainParts::WillRunMainMessageLoop(
 
 void ContentLifetimeDelegateMainParts::PostMainMessageLoopRun() {
   delegate_->OnPostMainMessageLoopRun();
-  views_delegate_.reset();
 #if BUILDFLAG(ENABLE_DESKTOP_AURA)
   screen_.reset();
 #endif

@@ -8,6 +8,7 @@
 #include "base/files/file_path.h"
 #include "base/files/scoped_temp_dir.h"
 #include "base/functional/bind.h"
+#include "chrohime/api/lifetime/chrohime_views_delegate.h"
 #include "chrohime/api/state.h"
 #include "chrohime/content/chrohime_content_main_delegate.h"
 #include "content/public/app/content_main.h"
@@ -20,6 +21,7 @@
 #endif
 
 #if BUILDFLAG(IS_MAC)
+#include "content/public/browser/context_factory.h"
 #include "sandbox/mac/seatbelt_exec.h"
 #endif
 
@@ -49,11 +51,18 @@ int Lifetime::RunMain() {
 }
 
 void Lifetime::OnPreMainMessageLoopRun(base::RepeatingClosure quit_closure) {
+  quit_closure_ = std::move(quit_closure);
+
+  views_delegate_ = std::make_unique<ChrohimeViewsDelegate>();
+#if BUILDFLAG(IS_MAC)
+  views_delegate_->set_context_factory(content::GetContextFactory());
+#endif
+
   std::ignore = impl_->temp_dir.CreateUniqueTempDir();
   impl_->browser_context = std::make_unique<webui_examples::BrowserContext>(
       impl_->temp_dir.GetPath());
   State::GetCurrent()->browser_context_ = impl_->browser_context.get();
-  quit_closure_ = std::move(quit_closure);
+
 #if !BUILDFLAG(IS_MAC)
   on_ready.Emit();
 #endif
@@ -61,6 +70,7 @@ void Lifetime::OnPreMainMessageLoopRun(base::RepeatingClosure quit_closure) {
 
 void Lifetime::OnPostMainMessageLoopRun() {
   impl_->browser_context.reset();
+  views_delegate_.reset();
 }
 
 #if BUILDFLAG(IS_WIN)

@@ -85,6 +85,8 @@ source_set("chrohime_lifetime") {
   sources = [
     "api/lifetime.cc",
     "api/lifetime.h",
+    "api/lifetime/chrohime_views_delegate.cc",
+    "api/lifetime/chrohime_views_delegate.h",
   ]
   if (is_mac) {
     sources += [
@@ -101,7 +103,10 @@ source_set("chrohime_lifetime") {
     ]
   }
   configs += [ ":chrohime_internal_config" ]
-  deps = [ ":chrohime_no_content" ]
+  deps = [
+    ":chrohime_no_content",
+    "//ui/views",
+  ]
 }
 
 component("chrohime_no_content_with_lifetime") {
@@ -116,6 +121,9 @@ component("chrohime_no_content_with_lifetime") {
       "../../chromium/content/public/browser/native_event_processor_mac.h",
       "../../chromium/content/public/browser/native_event_processor_observer_mac.h",
       "../../chromium/content/public/browser/native_event_processor_observer_mac.mm",
+      # For ui::AXPlatformForTest:
+      "../../chromium/ui/accessibility/platform/ax_platform_for_test.cc",
+      "../../chromium/ui/accessibility/platform/ax_platform_for_test.h",
     ]
   }
 
@@ -129,10 +137,10 @@ component("chrohime_no_content_with_lifetime") {
   deps = [
     ":chrohime_pak",
     "//base/test:test_support",
+    "//ui/accessibility",
     "//ui/compositor:test_support",
     "//ui/gl",
     "//ui/gl/init",
-    "//ui/views:test_support",
   ]
   if (is_linux) {
     deps += [ "//ui/linux:linux_ui_factory" ]

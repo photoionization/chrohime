@@ -10,6 +10,7 @@
 #include "base/run_loop.h"
 #include "base/test/task_environment.h"
 #include "base/test/test_timeouts.h"
+#include "chrohime/api/lifetime/chrohime_views_delegate.h"
 #include "mojo/core/embedder/embedder.h"
 #include "ui/accessibility/platform/ax_platform_for_test.h"
 #include "ui/base/resource/resource_bundle.h"
@@ -18,7 +19,6 @@
 #include "ui/gfx/font_util.h"
 #include "ui/gl/gl_utils.h"
 #include "ui/gl/init/gl_factory.h"
-#include "ui/views/test/desktop_test_views_delegate.h"
 
 #if BUILDFLAG(ENABLE_DESKTOP_AURA)
 #include "ui/aura/env.h"
@@ -48,7 +48,6 @@ struct LifetimeImpl {
   ui::ScopedOleInitializer ole_initializer;
 #endif
   ui::AXPlatformForTest ax_platform;
-  views::DesktopTestViewsDelegate views_delegate;
   std::unique_ptr<base::test::ScopedDisableRunLoopTimeout> disable_timeout;
   std::unique_ptr<base::test::TaskEnvironment> task_environment;
   std::unique_ptr<ui::TestContextFactories> context_factories;
@@ -65,13 +64,22 @@ struct LifetimeImpl {
 
 int Lifetime::RunMain() {
   impl_->run_loop->Run();
+  OnPostMainMessageLoopRun();
   return 0;
 }
 
 void Lifetime::OnPreMainMessageLoopRun(base::RepeatingClosure quit_closure) {
+  quit_closure_ = std::move(quit_closure);
+
+  views_delegate_ = std::make_unique<ChrohimeViewsDelegate>();
+#if BUILDFLAG(IS_MAC)
+  views_delegate_->set_context_factory(
+      impl_->context_factories->GetContextFactory());
+#endif
 }
 
 void Lifetime::OnPostMainMessageLoopRun() {
+  views_delegate_.reset();
 }
 
 #if BUILDFLAG(IS_WIN)
@@ -91,6 +99,10 @@ void Lifetime::Initialize(int argc, const char** argv) {
   gl::SetGlWorkarounds(gl::GlWorkarounds{.disable_direct_composition = true});
 
   mojo::core::Init();
+
+#if BUILDFLAG(IS_MAC)
+  OnPreBrowserMain();
+#endif
 
   // Viz depends on the task environment to correctly tear down.
   impl_->task_environment.reset(new base::test::TaskEnvironment(
@@ -127,11 +139,6 @@ void Lifetime::Initialize(int argc, const char** argv) {
 
   gfx::InitializeFonts();
 
-#if BUILDFLAG(IS_MAC)
-  impl_->views_delegate.set_context_factory(
-      impl_->context_factories->GetContextFactory());
-#endif
-
 #if BUILDFLAG(ENABLE_DESKTOP_AURA)
   impl_->aura_env = aura::Env::CreateInstance();
   impl_->aura_env->set_context_factory(
@@ -143,11 +150,10 @@ void Lifetime::Initialize(int argc, const char** argv) {
   impl_->disable_timeout.reset(new base::test::ScopedDisableRunLoopTimeout);
   impl_->run_loop.reset(
       new base::RunLoop(base::RunLoop::Type::kNestableTasksAllowed));
-  quit_closure_ = impl_->run_loop->QuitClosure();
 
-#if BUILDFLAG(IS_MAC)
-  OnPreBrowserMain();
-#else
+  OnPreMainMessageLoopRun(impl_->run_loop->QuitClosure());
+
+#if !BUILDFLAG(IS_MAC)
   base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(
       FROM_HERE, base::BindOnce([](base::WeakPtr<Lifetime> self) {
         if (self)

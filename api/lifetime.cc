@@ -8,6 +8,7 @@
 
 #include "base/check.h"
 #include "base/command_line.h"
+#include "chrohime/api/lifetime/chrohime_views_delegate.h"
 
 namespace hime {
 

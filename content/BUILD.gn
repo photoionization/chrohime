@@ -2,7 +2,7 @@ import("//build/config/ui.gni")
 import("//tools/grit/repack.gni")
 
 component("content") {
-  # TODO(zcbenz): views:test_support is a testonly dependency.
+  # TODO(zcbenz): pak is a testonly dependency.
   testonly = true
 
   sources = [
@@ -25,7 +25,7 @@ component("content") {
   deps = [
     ":pak",
     "//content",
-    "//ui/views:test_support",
+    "//ui/base/ime/init",
   ]
   if (is_linux) {
     deps += [ "//ui/linux:linux_ui_factory" ]
