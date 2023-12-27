@@ -4,6 +4,7 @@
 
 #include "chrohime/api/lifetime.h"
 
+#include "chrohime/api/lifetime/chrohime_app.h"
 #include "chrohime/api/lifetime/chrohime_app_delegate.h"
 
 namespace hime {
@@ -14,9 +15,11 @@ ChrohimeAppDelegate* __strong g_app_delegate;
 
 }  // namespace
 
-void Lifetime::InitializeAppDelegate() {
+void Lifetime::OnPreBrowserMain() {
+  CHECK_EQ(NSApp, nil);
+  ChrohimeApplication* app = [ChrohimeApplication sharedApplication];
   g_app_delegate = [[ChrohimeAppDelegate alloc] initWithShell:this];
-  NSApplication.sharedApplication.delegate = g_app_delegate;
+  app.delegate = g_app_delegate;
 }
 
 }  // namespace hime

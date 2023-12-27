@@ -88,6 +88,8 @@ source_set("chrohime_lifetime") {
   ]
   if (is_mac) {
     sources += [
+      "api/lifetime/chrohime_app.h",
+      "api/lifetime/chrohime_app.mm",
       "api/lifetime/chrohime_app_delegate.h",
       "api/lifetime/chrohime_app_delegate.mm",
       "api/lifetime/lifetime_mac.mm",
@@ -107,9 +109,15 @@ component("chrohime_no_content_with_lifetime") {
   # task environment to get rid of testonly.
   testonly = true
 
-  sources = [
-    "api/lifetime/lifetime_no_content.cc",
-  ]
+  sources = [ "api/lifetime/lifetime_no_content.cc" ]
+  if (is_mac) {
+    sources += [
+      # Used by chrohime_app.mm:
+      "../../chromium/content/public/browser/native_event_processor_mac.h",
+      "../../chromium/content/public/browser/native_event_processor_observer_mac.h",
+      "../../chromium/content/public/browser/native_event_processor_observer_mac.mm",
+    ]
+  }
 
   configs += [ ":chrohime_internal_config" ]
 
@@ -135,8 +143,7 @@ component("chrohime_no_content_with_lifetime") {
 }
 
 component("chrohime_with_content_with_lifetime") {
-  # TODO(zcbenz): The views_content_client is for tests, we need our own
-  # content clients to get rid of testonly.
+  # TODO(zcbenz): The //chrohime/content is testonly.
   testonly = true
 
   sources = [

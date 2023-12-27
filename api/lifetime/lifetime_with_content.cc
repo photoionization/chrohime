@@ -44,12 +44,6 @@ int Lifetime::RunMain() {
   return content::ContentMain(std::move(params));
 }
 
-void Lifetime::OnPreBrowserMain() {
-#if BUILDFLAG(IS_MAC)
-  InitializeAppDelegate();
-#endif
-}
-
 void Lifetime::OnPreMainMessageLoopRun(
     content::BrowserContext* browser_context,
     base::RepeatingClosure quit_closure) {

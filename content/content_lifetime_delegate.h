@@ -18,7 +18,7 @@ namespace hime {
 // a dependency.
 class ContentLifetimeDelegate {
  public:
-  virtual void OnPreBrowserMain() = 0;
+  virtual void OnPreBrowserMain() {}
   virtual void OnPreMainMessageLoopRun(
       content::BrowserContext* browser_context,
       base::RepeatingClosure quit_closure) = 0;

@@ -68,9 +68,6 @@ int Lifetime::RunMain() {
   return 0;
 }
 
-void Lifetime::OnPreBrowserMain() {
-}
-
 void Lifetime::OnPreMainMessageLoopRun(
     content::BrowserContext* browser_context,
     base::RepeatingClosure quit_closure) {
@@ -148,7 +145,7 @@ void Lifetime::Initialize(int argc, const char** argv) {
   quit_closure_ = impl_->run_loop->QuitClosure();
 
 #if BUILDFLAG(IS_MAC)
-  InitializeAppDelegate();
+  OnPreBrowserMain();
 #else
   base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(
       FROM_HERE, base::BindOnce([](base::WeakPtr<Lifetime> self) {

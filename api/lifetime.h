@@ -36,7 +36,9 @@ class CHROHIME_EXPORT Lifetime : public ContentLifetimeDelegate {
 
  protected:
   // ContentLifetimeDelegate:
+#if BUILDFLAG(IS_MAC)
   void OnPreBrowserMain() override;
+#endif
   void OnPreMainMessageLoopRun(
       content::BrowserContext* browser_context,
       base::RepeatingClosure quit_closure) override;
@@ -46,9 +48,6 @@ class CHROHIME_EXPORT Lifetime : public ContentLifetimeDelegate {
   void Initialize();
 #else
   void Initialize(int argc, const char** argv);
-#endif
-#if BUILDFLAG(IS_MAC)
-  void InitializeAppDelegate();
 #endif
   void Destroy();
 
