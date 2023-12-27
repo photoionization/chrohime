@@ -3,6 +3,8 @@ executable("chrohime_gallery") {
 
   deps = [ "//chrohime/dylib:chrohime_with_content_dylib" ]
   if (is_win) {
+    # Without a proper manifest file, GPU process will crash at CreateWindowEx
+    # in child_window_win.cc.
     deps += [ "//build/win:default_exe_manifest" ]
   }
 
@@ -25,5 +27,8 @@ copy("chrohime_copy_gallery") {
     "CMakeLists.txt",
     "gallery.c",
   ]
+  if (is_win) {
+    sources += [ "gallery.manifest" ]
+  }
   outputs = [ "$root_out_dir/{{source_file_part}}" ]
 }

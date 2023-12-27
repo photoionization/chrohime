@@ -7,6 +7,9 @@
     description: A sample CMake file for building the sample app.
   - filename: gallery.c
     description: A sample app.
+  - filename: gallery.manifest
+    platform: ['win']
+    description: Executable manifest file for the sample app.
   - filename: chrohime.h
     description: The header file of C APIs.
   - filename: '{libprefix}{name}.{shlib_ext}'

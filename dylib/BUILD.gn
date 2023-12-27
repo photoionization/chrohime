@@ -155,7 +155,10 @@ template("chrohime_archive") {
       inputs += [ "$root_out_dir/libtest_trace_processor.dylib" ]
     }
     if (is_win) {
-      inputs += [ "$root_out_dir/$name.dll.lib" ]
+      inputs += [
+        "$root_out_dir/$name.dll.lib",
+        "$root_out_dir/gallery.manifest",
+      ]
     }
     if (use_egl) {
       inputs += [

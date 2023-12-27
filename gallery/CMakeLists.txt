@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.0)
 project(Gallery)
 
 add_executable(gallery gallery.c)
+if(WIN32)
+  target_sources(gallery PRIVATE gallery.manifest)
+endif()
 
 string(CONCAT WITH_CONTENT_LIB "${CMAKE_CURRENT_SOURCE_DIR}/"
                                "${CMAKE_SHARED_LIBRARY_PREFIX}"
