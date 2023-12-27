@@ -1,3 +1,5 @@
+---
+
 There are 2 types of binaries provided:
 
 * `chrohime-*.zip` - Shared library without content module (i.e. `webview` API).

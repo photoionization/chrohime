@@ -77,10 +77,16 @@
 
 - It is also possible to build with compiler directly.
 -
-  - platform: ['linux', 'mac']
+  - platform: ['linux']
+    with_content: true
+    description: gcc gallery.c -Wl,-rpath=`pwd` -L. -lchrohime_with_content -DCHROHIME_WITH_CONTENT
+  - platform: ['mac']
     with_content: true
     description: clang gallery.c -L. -lchrohime_with_content -DCHROHIME_WITH_CONTENT
-  - platform: ['linux', 'mac']
+  - platform: ['linux']
+    with_content: false
+    description: gcc gallery.c -Wl,-rpath=`pwd` -L. -lchrohime
+  - platform: ['mac']
     with_content: false
     description: clang gallery.c -L. -lchrohime
   - platform: ['linux', 'mac']
