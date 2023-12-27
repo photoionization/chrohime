@@ -7,10 +7,6 @@
 
 #include "base/functional/callback.h"
 
-namespace content {
-class BrowserContext;
-}
-
 namespace hime {
 
 // This header is also used by non-content code so it should only include
@@ -19,9 +15,8 @@ namespace hime {
 class ContentLifetimeDelegate {
  public:
   virtual void OnPreBrowserMain() {}
-  virtual void OnPreMainMessageLoopRun(
-      content::BrowserContext* browser_context,
-      base::RepeatingClosure quit_closure) = 0;
+  virtual void OnPreMainMessageLoopRun(base::RepeatingClosure quit_closure) = 0;
+  virtual void OnPostMainMessageLoopRun() = 0;
 };
 
 }  // namespace hime

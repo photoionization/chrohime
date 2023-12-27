@@ -8,7 +8,6 @@
 #include "base/logging.h"
 #include "base/path_service.h"
 #include "chrohime/content/chrohime_content_browser_client.h"
-#include "content/shell/browser/shell_paths.h"
 #include "ui/base/resource/resource_bundle.h"
 
 namespace hime {
@@ -23,8 +22,6 @@ absl::optional<int> ChrohimeContentMainDelegate::BasicStartupComplete() {
   settings.logging_dest = logging::LOG_TO_SYSTEM_DEBUG_LOG |
                           logging::LOG_TO_STDERR;
   logging::InitLogging(settings);
-
-  content::RegisterShellPathProvider();
   return absl::nullopt;
 }
 

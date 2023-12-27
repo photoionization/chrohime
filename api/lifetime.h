@@ -39,9 +39,8 @@ class CHROHIME_EXPORT Lifetime : public ContentLifetimeDelegate {
 #if BUILDFLAG(IS_MAC)
   void OnPreBrowserMain() override;
 #endif
-  void OnPreMainMessageLoopRun(
-      content::BrowserContext* browser_context,
-      base::RepeatingClosure quit_closure) override;
+  void OnPreMainMessageLoopRun(base::RepeatingClosure quit_closure) override;
+  void OnPostMainMessageLoopRun() override;
 
  private:
 #if BUILDFLAG(IS_WIN)

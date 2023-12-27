@@ -2,7 +2,7 @@ import("//build/config/ui.gni")
 import("//tools/grit/repack.gni")
 
 component("content") {
-  # TODO(zcbenz): content/shell is a testonly dependency.
+  # TODO(zcbenz): views:test_support is a testonly dependency.
   testonly = true
 
   sources = [
@@ -16,11 +16,8 @@ component("content") {
     "chrohime_content_main_main_parts.h",
     "content_lifetime_delegate.h",
   ]
-
   if (is_apple) {
-    sources += [
-    "chrohime_content_main_delegate_mac.mm",
-    ]
+    sources += [ "chrohime_content_main_delegate_mac.mm" ]
   }
 
   configs += [ "//chrohime:chrohime_internal_config" ]
@@ -28,9 +25,11 @@ component("content") {
   deps = [
     ":pak",
     "//content",
-    "//content/shell:content_shell_lib",
+    "//ui/views:test_support",
   ]
-
+  if (is_linux) {
+    deps += [ "//ui/linux:linux_ui_factory" ]
+  }
   if (use_aura) {
     deps += [
       "//ui/aura",

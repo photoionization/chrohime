@@ -14,10 +14,6 @@ namespace base {
 class RunLoop;
 }
 
-namespace content {
-class ShellBrowserContext;
-}
-
 namespace views {
 class TestViewsDelegate;
 }
@@ -55,12 +51,6 @@ class CHROHIME_EXPORT ContentLifetimeDelegateMainParts
 #endif
   std::unique_ptr<views::TestViewsDelegate> views_delegate_;
   std::unique_ptr<base::RunLoop> run_loop_;
-  // The browser_context is a member of main_parts because the content_shell_lib
-  // dependency is a static_library and so we can't use ShellBrowserContext in
-  // lifetime_with_content directly.
-  // TODO(zcbenz): Get rid of ShellBrowserContext and create browser_context in
-  // lifetime_with_content instead.
-  std::unique_ptr<content::ShellBrowserContext> browser_context_;
 };
 
 }  // namespace hime

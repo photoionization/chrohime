@@ -150,6 +150,9 @@ component("chrohime_with_content_with_lifetime") {
     "api/lifetime/lifetime_with_content.cc",
     "api/web_view.cc",
     "api/web_view.h",
+    # For webui_examples::BrowserContext:
+    "../../chromium/ui/webui/examples/browser/browser_context.h",
+    "../../chromium/ui/webui/examples/browser/browser_context.cc",
   ]
 
   configs += [ ":chrohime_internal_config" ]

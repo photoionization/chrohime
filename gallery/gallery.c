@@ -395,15 +395,20 @@ void OnReady(void* data) {
 }
 
 int main(int argc, const char** argv) {
+  running_test = argc == 2 && strcmp(argv[1], "--test") == 0;
+
 #if defined(_WIN32)
   hime_lifetime_t lifetime = hime_lifetime_create();
 #else
   hime_lifetime_t lifetime = hime_lifetime_create(argc, argv);
 #endif
-
-  running_test = argc == 2 && strcmp(argv[1], "--test") == 0;
-
-  hime_state_create();
   hime_lifetime_on_ready_connect(lifetime, OnReady, NULL);
-  return hime_lifetime_run_main(lifetime);
+
+  hime_state_t state = hime_state_create();
+
+  int code = hime_lifetime_run_main(lifetime);
+
+  hime_state_destroy(state);
+  hime_lifetime_destroy(lifetime);
+  return code;
 }

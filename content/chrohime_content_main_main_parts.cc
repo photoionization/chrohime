@@ -7,7 +7,6 @@
 #include "base/run_loop.h"
 #include "chrohime/content/content_lifetime_delegate.h"
 #include "content/public/common/result_codes.h"
-#include "content/shell/browser/shell_browser_context.h"
 #include "ui/base/ime/init/input_method_initializer.h"
 #include "ui/views/test/desktop_test_views_delegate.h"
 
@@ -52,9 +51,7 @@ int ContentLifetimeDelegateMainParts::PreMainMessageLoopRun() {
 #if BUILDFLAG(IS_MAC)
   views_delegate_->set_context_factory(content::GetContextFactory());
 #endif
-  browser_context_ = std::make_unique<content::ShellBrowserContext>(false);
-  delegate_->OnPreMainMessageLoopRun(browser_context_.get(),
-                                     run_loop_->QuitClosure());
+  delegate_->OnPreMainMessageLoopRun(run_loop_->QuitClosure());
   return content::RESULT_CODE_NORMAL_EXIT;
 }
 
@@ -64,7 +61,7 @@ void ContentLifetimeDelegateMainParts::WillRunMainMessageLoop(
 }
 
 void ContentLifetimeDelegateMainParts::PostMainMessageLoopRun() {
-  browser_context_.reset();
+  delegate_->OnPostMainMessageLoopRun();
   views_delegate_.reset();
 #if BUILDFLAG(ENABLE_DESKTOP_AURA)
   screen_.reset();

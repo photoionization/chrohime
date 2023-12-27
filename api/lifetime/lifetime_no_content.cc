@@ -68,9 +68,10 @@ int Lifetime::RunMain() {
   return 0;
 }
 
-void Lifetime::OnPreMainMessageLoopRun(
-    content::BrowserContext* browser_context,
-    base::RepeatingClosure quit_closure) {
+void Lifetime::OnPreMainMessageLoopRun(base::RepeatingClosure quit_closure) {
+}
+
+void Lifetime::OnPostMainMessageLoopRun() {
 }
 
 #if BUILDFLAG(IS_WIN)
