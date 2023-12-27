@@ -1,5 +1,5 @@
-import("//build/config/ui.gni")
 import("//tools/grit/repack.gni")
+import("//tools/v8_context_snapshot/v8_context_snapshot.gni")
 
 component("content") {
   # TODO(zcbenz): pak is a testonly dependency.
@@ -22,19 +22,27 @@ component("content") {
 
   configs += [ "//chrohime:chrohime_internal_config" ]
 
+  # Expose all public content APIs.
+  public_deps = [
+    "//content/public/app",
+    "//content/public/browser",
+    "//content/public/child",
+    "//content/public/common",
+    "//content/public/gpu",
+    "//content/public/renderer",
+    "//content/public/utility",
+  ]
+
   deps = [
     ":pak",
     "//content",
-    "//ui/base/ime/init",
   ]
-  if (is_linux) {
-    deps += [ "//ui/linux:linux_ui_factory" ]
-  }
-  if (use_aura) {
-    deps += [
-      "//ui/aura",
-      "//ui/wm",
-    ]
+  if (v8_use_external_startup_data) {
+    if (use_v8_context_snapshot) {
+      deps += [ "//tools/v8_context_snapshot" ]
+    } else {
+      deps += [ "//v8" ]
+    }
   }
 }
 
@@ -43,10 +51,6 @@ repack("pak") {
   testonly = true
 
   output = "$root_out_dir/chrohime_with_content.pak"
-  sources = [
-    "$root_out_dir/content_shell.pak",
-  ]
-  deps = [
-    "//content/shell:pak",
-  ]
+  sources = [ "$root_out_dir/content_shell.pak" ]
+  deps = [ "//content/shell:pak" ]
 }

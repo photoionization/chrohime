@@ -32,6 +32,10 @@ class CHROHIME_EXPORT State {
   View* GetViewFromViewsView(views::View* view) const;
   content::BrowserContext* GetBrowserContext() const;
 
+  void set_browser_context(content::BrowserContext* browser_context) {
+    browser_context_ = browser_context;
+  }
+
  private:
   friend class Lifetime;
   friend class View;

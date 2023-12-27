@@ -5,16 +5,25 @@
 #ifndef CHROHIME_API_LIFETIME_H_
 #define CHROHIME_API_LIFETIME_H_
 
-#include <memory>
-
 #include "base/memory/weak_ptr.h"
 #include "chrohime/api/signal.h"
 #include "chrohime/content/content_lifetime_delegate.h"
+#include "ui/views/buildflags.h"
+
+namespace display {
+class Screen;
+#if BUILDFLAG(IS_MAC)
+class ScopedNativeScreen;
+#endif
+}
+
+namespace wm {
+class WMState;
+}
 
 namespace hime {
 
 class ChrohimeViewsDelegate;
-struct LifetimeImpl;
 
 class CHROHIME_EXPORT Lifetime : public ContentLifetimeDelegate {
  public:
@@ -25,10 +34,14 @@ class CHROHIME_EXPORT Lifetime : public ContentLifetimeDelegate {
 #else
   Lifetime(int argc, const char** argv);
 #endif
-  virtual ~Lifetime();
+  ~Lifetime() override;
 
   int RunMain();
   void Quit();
+
+  ChrohimeViewsDelegate* views_delegate() const {
+    return views_delegate_.get();
+  }
 
   // Events.
   Signal<void()> on_ready;
@@ -40,7 +53,9 @@ class CHROHIME_EXPORT Lifetime : public ContentLifetimeDelegate {
 #if BUILDFLAG(IS_MAC)
   void OnPreBrowserMain() override;
 #endif
-  void OnPreMainMessageLoopRun(base::RepeatingClosure quit_closure) override;
+  void OnPreMainMessageLoopRun() override;
+  void OnWillRunMainMessageLoop(
+      std::unique_ptr<base::RunLoop>& run_loop) override;
   void OnPostMainMessageLoopRun() override;
 
  private:
@@ -51,8 +66,17 @@ class CHROHIME_EXPORT Lifetime : public ContentLifetimeDelegate {
 #endif
   void Destroy();
 
-  raw_ptr<LifetimeImpl> impl_;
+  std::unique_ptr<base::RunLoop> run_loop_;
+#if BUILDFLAG(IS_MAC)
+  std::unique_ptr<display::ScopedNativeScreen> desktop_screen_;
+#endif
+#if BUILDFLAG(ENABLE_DESKTOP_AURA)
+  std::unique_ptr<wm::WMState> wm_state_;
+  std::unique_ptr<display::Screen> screen_;
+#endif
   std::unique_ptr<ChrohimeViewsDelegate> views_delegate_;
+
+  raw_ptr<ContentLifetimeDelegate> impl_;
   base::RepeatingClosure quit_closure_;
   base::WeakPtrFactory<Lifetime> weak_factory_{this};
 };

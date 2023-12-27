@@ -7,16 +7,6 @@
 
 #include "chrohime/chrohime_export.h"
 #include "content/public/browser/browser_main_parts.h"
-#include "ui/display/screen.h"
-#include "ui/views/buildflags.h"
-
-namespace base {
-class RunLoop;
-}
-
-namespace wm {
-class WMState;
-}
 
 namespace hime {
 
@@ -30,7 +20,6 @@ class CHROHIME_EXPORT ContentLifetimeDelegateMainParts
   ~ContentLifetimeDelegateMainParts() override;
 
   // content::BrowserMainParts:
-  void ToolkitInitialized() override;
   int PreMainMessageLoopRun() override;
   void WillRunMainMessageLoop(
       std::unique_ptr<base::RunLoop>& run_loop) override;
@@ -38,14 +27,6 @@ class CHROHIME_EXPORT ContentLifetimeDelegateMainParts
 
  private:
   raw_ptr<ContentLifetimeDelegate> delegate_;
-#if BUILDFLAG(IS_MAC)
-  display::ScopedNativeScreen desktop_screen_;
-#endif
-#if BUILDFLAG(ENABLE_DESKTOP_AURA)
-  std::unique_ptr<wm::WMState> wm_state_;
-  std::unique_ptr<display::Screen> screen_;
-#endif
-  std::unique_ptr<base::RunLoop> run_loop_;
 };
 
 }  // namespace hime

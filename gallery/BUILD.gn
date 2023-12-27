@@ -7,6 +7,7 @@ executable("chrohime_gallery") {
     deps += [ "//build/win:default_exe_manifest" ]
   }
 
+  # Clang reports raw_ptr warning in C header.
   configs -= [ "//build/config/clang:find_bad_constructs" ]
 
   if (!is_component_build) {

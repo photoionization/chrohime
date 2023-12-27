@@ -1,7 +1,14 @@
-import("//tools/grit/grit_rule.gni")
 import("//tools/grit/repack.gni")
 
-component("chrohime_no_content") {
+group("chrohime") {
+  testonly = true
+  deps = [
+    ":chrohime_no_content_with_lifetime",
+    ":chrohime_with_content_with_lifetime",
+  ]
+}
+
+component("chrohime_base") {
   sources = [
     "api/background.cc",
     "api/background.h",
@@ -104,9 +111,16 @@ source_set("chrohime_lifetime") {
   }
   configs += [ ":chrohime_internal_config" ]
   deps = [
-    ":chrohime_no_content",
+    ":chrohime_base",
+    "//ui/base/ime/init",
     "//ui/views",
   ]
+  if (is_linux) {
+    deps += [ "//ui/linux:linux_ui_factory" ]
+  }
+  if (use_aura) {
+    deps += [ "//ui/wm" ]
+  }
 }
 
 component("chrohime_no_content_with_lifetime") {
@@ -114,24 +128,26 @@ component("chrohime_no_content_with_lifetime") {
   # task environment to get rid of testonly.
   testonly = true
 
-  sources = [ "api/lifetime/lifetime_no_content.cc" ]
+  sources = [
+    "api/lifetime/lifetime_no_content.cc",
+    # For ui::AXPlatformForTest:
+    "../../chromium/ui/accessibility/platform/ax_platform_for_test.cc",
+    "../../chromium/ui/accessibility/platform/ax_platform_for_test.h",
+  ]
   if (is_mac) {
     sources += [
       # Used by chrohime_app.mm:
       "../../chromium/content/public/browser/native_event_processor_mac.h",
       "../../chromium/content/public/browser/native_event_processor_observer_mac.h",
       "../../chromium/content/public/browser/native_event_processor_observer_mac.mm",
-      # For ui::AXPlatformForTest:
-      "../../chromium/ui/accessibility/platform/ax_platform_for_test.cc",
-      "../../chromium/ui/accessibility/platform/ax_platform_for_test.h",
     ]
   }
 
   configs += [ ":chrohime_internal_config" ]
 
   public_deps = [
+    ":chrohime_base",
     ":chrohime_lifetime",
-    ":chrohime_no_content",
     "//skia",
   ]
   deps = [
@@ -142,9 +158,6 @@ component("chrohime_no_content_with_lifetime") {
     "//ui/gl",
     "//ui/gl/init",
   ]
-  if (is_linux) {
-    deps += [ "//ui/linux:linux_ui_factory" ]
-  }
   if (use_aura) {
     deps += [ "//ui/aura" ]
   }
@@ -166,8 +179,8 @@ component("chrohime_with_content_with_lifetime") {
   configs += [ ":chrohime_internal_config" ]
 
   public_deps = [
+    ":chrohime_base",
     ":chrohime_lifetime",
-    ":chrohime_no_content",
     "//url",
   ]
   deps = [

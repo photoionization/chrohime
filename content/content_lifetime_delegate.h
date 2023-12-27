@@ -5,7 +5,11 @@
 #ifndef CHROHIME_CONTENT_CONTENT_LIFETIME_DELEGATE_H_
 #define CHROHIME_CONTENT_CONTENT_LIFETIME_DELEGATE_H_
 
-#include "base/functional/callback.h"
+#include <memory>
+
+namespace base {
+class RunLoop;
+}
 
 namespace hime {
 
@@ -14,9 +18,13 @@ namespace hime {
 // a dependency.
 class ContentLifetimeDelegate {
  public:
+  virtual ~ContentLifetimeDelegate() {}
+
   virtual void OnPreBrowserMain() {}
-  virtual void OnPreMainMessageLoopRun(base::RepeatingClosure quit_closure) = 0;
-  virtual void OnPostMainMessageLoopRun() = 0;
+  virtual void OnPreMainMessageLoopRun() {}
+  virtual void OnWillRunMainMessageLoop(
+      std::unique_ptr<base::RunLoop>& run_loop) {}
+  virtual void OnPostMainMessageLoopRun() {}
 };
 
 }  // namespace hime
