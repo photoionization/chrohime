@@ -77,7 +77,7 @@ void Lifetime::Initialize(int argc, const char** argv) {
   OnPreBrowserMain();
 #endif
 
-  // Viz depends on the task environment to correctly tear down.
+  // The InProcessContextFactory requires base::test::TaskEnvironment.
   impl->task_environment.reset(new base::test::TaskEnvironment(
       base::test::TaskEnvironment::MainThreadType::UI));
 

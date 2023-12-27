@@ -42,6 +42,7 @@
         description: Optional support for QT6 desktop features.
       - filename: 'libtest_trace_processor.dylib'
         platform: ['mac']
+        with_content: false
         description: Test dependency, will be removed in future.
       - filename: 'libEGL.{shlib_ext}'
         description: Shared library of ANGLE.

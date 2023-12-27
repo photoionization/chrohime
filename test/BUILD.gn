@@ -1,6 +1,7 @@
 # This will be the target for running C++ tests, currently a stub.
 executable("chrohime_test") {
   testonly = true
+
   sources = [ "main.cc" ]
   deps = [ "//chrohime:chrohime_with_content_with_lifetime" ]
 

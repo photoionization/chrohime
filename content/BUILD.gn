@@ -2,9 +2,6 @@ import("//tools/grit/repack.gni")
 import("//tools/v8_context_snapshot/v8_context_snapshot.gni")
 
 component("content") {
-  # TODO(zcbenz): pak is a testonly dependency.
-  testonly = true
-
   sources = [
     "chrohime_content_browser_client.cc",
     "chrohime_content_browser_client.h",
@@ -47,10 +44,21 @@ component("content") {
 }
 
 repack("pak") {
-  # TODO(zcbenz): content/shell is a testonly dependency.
-  testonly = true
-
   output = "$root_out_dir/chrohime_with_content.pak"
-  sources = [ "$root_out_dir/content_shell.pak" ]
-  deps = [ "//content/shell:pak" ]
+  sources = [
+    "$root_out_dir/chrohime.pak",
+    "$root_gen_dir/third_party/blink/public/resources/blink_resources.pak",
+    "$root_gen_dir/third_party/blink/public/resources/blink_scaled_resources_100_percent.pak",
+    "$root_gen_dir/third_party/blink/public/resources/inspector_overlay_resources.pak",
+    "$root_gen_dir/third_party/blink/public/strings/blink_accessibility_strings_en-US.pak",
+    "$root_gen_dir/third_party/blink/public/strings/blink_strings_en-US.pak",
+  ]
+  deps = [
+    "//chrohime:chrohime_pak",
+    "//third_party/blink/public:devtools_inspector_resources",
+    "//third_party/blink/public:resources",
+    "//third_party/blink/public:scaled_resources_100_percent",
+    "//third_party/blink/public/strings",
+    "//third_party/blink/public/strings:accessibility_strings",
+  ]
 }

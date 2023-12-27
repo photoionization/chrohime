@@ -16,7 +16,7 @@ declare_args() {
 # Define how a chrohime dylib is built.
 template("chrohime_shared_library") {
   shared_library(target_name) {
-    forward_variables_from(invoker, [ "public_configs", "testonly" ])
+    forward_variables_from(invoker, [ "ldflags", "public_configs", "testonly" ])
 
     output_name = invoker.libname
 
@@ -39,13 +39,6 @@ template("chrohime_shared_library") {
       # There is almost no performance penalty since we are only removing
       # optimization on the c_impl.cc.
       configs -= [ "//build/config/compiler:default_optimization" ]
-
-      # Fix the weird dep on test_trace_processor before we can get rid of the
-      # base/test dep in chrohime.
-      if (!is_component_build) {
-        ldflags = [ "-Wcrl,installnametool,-change,@loader_path/Libraries/libtest_trace_processor.dylib,@executable_path/libtest_trace_processor.dylib" ]
-        deps += [ ":copy_test_trace_processor" ]
-      }
     }
   }
 }
@@ -57,12 +50,17 @@ chrohime_shared_library("chrohime_dylib") {
   libname = "chrohime"
   deps = [ "//chrohime:chrohime_no_content_with_lifetime" ]
   public_configs = [ ":chrohime_dylib_config" ]
+
+  # Fix the weird dep on test_trace_processor before we can get rid of the
+  # base/test dep in chrohime.
+  if (is_mac && !is_component_build) {
+    ldflags = [ "-Wcrl,installnametool,-change,@loader_path/Libraries/libtest_trace_processor.dylib,@executable_path/libtest_trace_processor.dylib" ]
+    deps += [ ":copy_test_trace_processor" ]
+  }
 }
 
 # Same with chrohime_dylib but also includes content APIs.
 chrohime_shared_library("chrohime_with_content_dylib") {
-  testonly = true
-
   libname = "chrohime_with_content"
   deps = [ "//chrohime:chrohime_with_content_with_lifetime" ]
   public_configs = [
@@ -153,7 +151,7 @@ template("chrohime_archive") {
         inputs += [ "$root_out_dir/libqt6_shim.so.stripped" ]
       }
     }
-    if (is_mac && !is_component_build) {
+    if (is_mac && !is_component_build && !with_content) {
       inputs += [ "$root_out_dir/libtest_trace_processor.dylib" ]
     }
     if (is_win) {
@@ -214,7 +212,7 @@ template("chrohime_archive") {
     } else {
       deps += [ ":${name}_dylib" ]
     }
-    if (is_mac && !is_component_build) {
+    if (is_mac && !is_component_build && !with_content) {
       deps += [ ":copy_test_trace_processor" ]
     }
     if (use_egl) {
@@ -285,7 +283,6 @@ chrohime_archive("chrohime_zip") {
 }
 
 chrohime_archive("chrohime_with_content_zip") {
-  testonly = true
   libname = "chrohime_with_content"
   with_content = true
 }

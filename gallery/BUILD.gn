@@ -1,5 +1,4 @@
 executable("chrohime_gallery") {
-  testonly = true
   sources = [ "gallery.c" ]
 
   deps = [ "//chrohime/dylib:chrohime_with_content_dylib" ]

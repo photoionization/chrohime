@@ -1,12 +1,11 @@
 import("//tools/grit/repack.gni")
 
 group("chrohime") {
-  testonly = true
-  deps = [
-    ":chrohime_no_content_with_lifetime",
-    ":chrohime_with_content_with_lifetime",
-  ]
+  deps = [ ":chrohime_base" ]
 }
+
+# The path to the root src dir.
+src_dir = "../../chromium"
 
 component("chrohime_base") {
   sources = [
@@ -131,15 +130,15 @@ component("chrohime_no_content_with_lifetime") {
   sources = [
     "api/lifetime/lifetime_no_content.cc",
     # For ui::AXPlatformForTest:
-    "../../chromium/ui/accessibility/platform/ax_platform_for_test.cc",
-    "../../chromium/ui/accessibility/platform/ax_platform_for_test.h",
+    "$src_dir/ui/accessibility/platform/ax_platform_for_test.cc",
+    "$src_dir/ui/accessibility/platform/ax_platform_for_test.h",
   ]
   if (is_mac) {
     sources += [
       # Used by chrohime_app.mm:
-      "../../chromium/content/public/browser/native_event_processor_mac.h",
-      "../../chromium/content/public/browser/native_event_processor_observer_mac.h",
-      "../../chromium/content/public/browser/native_event_processor_observer_mac.mm",
+      "$src_dir/content/public/browser/native_event_processor_mac.h",
+      "$src_dir/content/public/browser/native_event_processor_observer_mac.h",
+      "$src_dir/content/public/browser/native_event_processor_observer_mac.mm",
     ]
   }
 
@@ -164,16 +163,13 @@ component("chrohime_no_content_with_lifetime") {
 }
 
 component("chrohime_with_content_with_lifetime") {
-  # TODO(zcbenz): The //chrohime/content is testonly.
-  testonly = true
-
   sources = [
     "api/lifetime/lifetime_with_content.cc",
     "api/web_view.cc",
     "api/web_view.h",
     # For webui_examples::BrowserContext:
-    "../../chromium/ui/webui/examples/browser/browser_context.h",
-    "../../chromium/ui/webui/examples/browser/browser_context.cc",
+    "$src_dir/ui/webui/examples/browser/browser_context.h",
+    "$src_dir/ui/webui/examples/browser/browser_context.cc",
   ]
 
   configs += [ ":chrohime_internal_config" ]
