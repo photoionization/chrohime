@@ -2,5 +2,10 @@ name: State
 type: class
 description: Store internal data structures.
 
+class_methods:
+  - name: GetCurrent
+    description: Return the State instance in current thread.
+    returnType: State
+
 constructors:
   - name: Create
