@@ -1,2 +1,0 @@
-# Object lifetime management
-
