@@ -9,7 +9,7 @@ constructors:
       Create a background that fills the canvas in the specified color.
     args:
       - name: color
-        type: SkColor
+        type: Color
 
   - name: CreateThemedSolid
     description: |
@@ -28,7 +28,7 @@ constructors:
       doesn't bleed through the border.
     args:
       - name: color
-        type: SkColor
+        type: Color
       - name: border
         type: int
       - name: radius

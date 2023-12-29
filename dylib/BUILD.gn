@@ -24,7 +24,6 @@ template("chrohime_shared_library") {
     sources = [
       "chrohime_c_impl.cc",
       "chrohime_c_impl.inc",
-      "skia.h",
     ]
 
     configs += [ ":chrohime_dylib_config" ]

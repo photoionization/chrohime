@@ -9,7 +9,7 @@ constructors:
       Create a border that is a simple line of the specified `color` and `thickness`.
     args:
       - name: color
-        type: SkColor
+        type: Color
       - name: thickness
         type: int
 
@@ -28,7 +28,7 @@ constructors:
       Create a border that is a rounded rectangle of the specified `color` and `thickness`.
     args:
       - name: color
-        type: SkColor
+        type: Color
       - name: thickness
         type: int
       - name: radius

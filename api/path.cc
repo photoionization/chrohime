@@ -53,7 +53,7 @@ void Path::ArcTo(const gfx::PointF& point, float rx, float ry, float rotate,
                point.x(), point.y());
 }
 
-void Path::ArcToWithOval(const gfx::Rectf& oval, float start_angle,
+void Path::ArcToWithOval(const gfx::RectF& oval, float start_angle,
                          float sweep_angle, bool force_move_to) {
   path_->arcTo(gfx::RectFToSkRect(oval), start_angle, sweep_angle,
                force_move_to);
@@ -64,12 +64,12 @@ void Path::ArcToWithPoints(const gfx::PointF& point1, const gfx::PointF& point2,
   path_->arcTo(point1.x(), point1.y(), point2.x(), point2.y(), radius);
 }
 
-void Path::AddRect(const gfx::Rectf& rect, Direction direction,
+void Path::AddRect(const gfx::RectF& rect, Direction direction,
                    unsigned start) {
   path_->addRect(gfx::RectFToSkRect(rect), direction, start);
 }
 
-void Path::AddOval(const gfx::Rectf& oval, Direction direction,
+void Path::AddOval(const gfx::RectF& oval, Direction direction,
                    unsigned start) {
   path_->addOval(gfx::RectFToSkRect(oval), direction, start);
 }
@@ -79,12 +79,12 @@ void Path::AddCircle(const gfx::PointF& center, float radius,
   path_->addCircle(center.x(), center.y(), radius, direction);
 }
 
-void Path::AddArc(const gfx::Rectf& oval,
+void Path::AddArc(const gfx::RectF& oval,
                   float start_angle, float sweep_angle) {
   path_->addArc(gfx::RectFToSkRect(oval), start_angle, sweep_angle);
 }
 
-void Path::AddRoundRect(const gfx::Rectf& rect, float rx, float ry,
+void Path::AddRoundRect(const gfx::RectF& rect, float rx, float ry,
                         Direction direction) {
   path_->addRoundRect(gfx::RectFToSkRect(rect), rx, ry, direction);
 }

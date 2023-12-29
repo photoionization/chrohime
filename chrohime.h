@@ -2,8 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef CHROHIME_API_CHROHIME_H_
-#define CHROHIME_API_CHROHIME_H_
+#ifndef CHROHIME_CHROHIME_H_
+#define CHROHIME_CHROHIME_H_
+
+// This is the header loaded by C++ code when building Chrohime as a component
+// of Chromium codebase, the header used by C code is automatically generated
+// to the out dir.
 
 #include "chrohime/api/background.h"
 #include "chrohime/api/badge.h"
@@ -32,4 +36,4 @@
 #include "chrohime/api/web_view.h"
 #endif
 
-#endif  // CHROHIME_API_CHROHIME_H_
+#endif  // CHROHIME_CHROHIME_H_

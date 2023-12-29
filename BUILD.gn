@@ -24,7 +24,6 @@ component("chrohime_base") {
     "api/combobox_model.cc",
     "api/combobox_model.h",
     "api/color_id.h",
-    "api/geometry_f.h",
     "api/label.cc",
     "api/label.h",
     "api/label_button.cc",

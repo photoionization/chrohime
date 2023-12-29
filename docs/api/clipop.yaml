@@ -1,6 +1,6 @@
-name: SkClipOp
+name: ClipOp
 type: enum class
-description: Skia clip operation.
+description: Clip operation.
 
 enums:
   - name: Difference

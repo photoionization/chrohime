@@ -37,7 +37,7 @@ void Painter::Restore() {
   canvas_->Restore();
 }
 
-void Painter::ClipRect(const gfx::Rectf& rect, SkClipOp op) {
+void Painter::ClipRect(const gfx::RectF& rect, SkClipOp op) {
   canvas_->ClipRect(rect, op);
 }
 
@@ -46,7 +46,7 @@ void Painter::ClipPath(const scoped_refptr<Path>& path, SkClipOp op,
   canvas_->sk_canvas()->clipPath(path->sk_path(), op, anti_alias);
 }
 
-void Painter::Translate(const gfx::Vector2df& offset) {
+void Painter::Translate(const gfx::Vector2dF& offset) {
   canvas_->sk_canvas()->translate(offset.x(), offset.y());
 }
 
@@ -67,15 +67,15 @@ void Painter::DrawLine(const gfx::PointF& p1, const gfx::PointF& p2,
   canvas_->DrawLine(p1, p2, PaintToFlags(paint));
 }
 
-void Painter::DrawRect(const gfx::Rectf& rect, const Paint& paint) {
+void Painter::DrawRect(const gfx::RectF& rect, const Paint& paint) {
   canvas_->DrawRect(rect, PaintToFlags(paint));
 }
 
-void Painter::DrawOval(const gfx::Rectf& rect, const Paint& paint) {
+void Painter::DrawOval(const gfx::RectF& rect, const Paint& paint) {
   canvas_->sk_canvas()->drawOval(gfx::RectFToSkRect(rect), PaintToFlags(paint));
 }
 
-void Painter::DrawRoundRect(const gfx::Rectf& rect, float radius,
+void Painter::DrawRoundRect(const gfx::RectF& rect, float radius,
                             const Paint& paint) {
   canvas_->DrawRoundRect(rect, radius, PaintToFlags(paint));
 }

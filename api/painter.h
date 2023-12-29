@@ -7,7 +7,6 @@
 
 #include "base/memory/raw_ptr.h"
 #include "base/memory/scoped_refptr.h"
-#include "chrohime/api/geometry_f.h"
 #include "chrohime/chrohime_export.h"
 #include "third_party/skia/include/core/SkBlendMode.h"
 #include "third_party/skia/include/core/SkClipOp.h"
@@ -16,8 +15,9 @@
 
 namespace gfx {
 class Canvas;
-class Rect;
-class Vector2d;
+class PointF;
+class RectF;
+class Vector2dF;
 }
 
 namespace hime {
@@ -55,19 +55,19 @@ class CHROHIME_EXPORT Painter {
   void Save();
   void Restore();
 
-  void ClipRect(const gfx::Rectf& rect, SkClipOp op);
+  void ClipRect(const gfx::RectF& rect, SkClipOp op);
   void ClipPath(const scoped_refptr<Path>& path, SkClipOp op, bool anti_alias);
 
-  void Translate(const gfx::Vector2df& offset);
+  void Translate(const gfx::Vector2dF& offset);
   void Scale(float x_scale, float y_scale);
   void Rotate(float angle);
 
   void DrawColor(SkColor color, SkBlendMode mode);
   void DrawLine(const gfx::PointF& p1, const gfx::PointF& p2,
                 const Paint& paint);
-  void DrawRect(const gfx::Rectf& rect, const Paint& paint);
-  void DrawOval(const gfx::Rectf& rect, const Paint& paint);
-  void DrawRoundRect(const gfx::Rectf& rect, float radius, const Paint& paint);
+  void DrawRect(const gfx::RectF& rect, const Paint& paint);
+  void DrawOval(const gfx::RectF& rect, const Paint& paint);
+  void DrawRoundRect(const gfx::RectF& rect, float radius, const Paint& paint);
   void DrawPath(const scoped_refptr<Path>& path, const Paint& paint);
 
  private:

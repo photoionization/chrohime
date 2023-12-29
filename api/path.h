@@ -5,9 +5,13 @@
 #ifndef CHROHIME_API_PATH_H_
 #define CHROHIME_API_PATH_H_
 
-#include "chrohime/api/geometry_f.h"
 #include "chrohime/api/object.h"
 #include "third_party/skia/include/core/SkPath.h"
+
+namespace gfx {
+class PointF;
+class RectF;
+}
 
 namespace hime {
 
@@ -34,15 +38,15 @@ class CHROHIME_EXPORT Path : public Object {
                const gfx::PointF& point3);
   void ArcTo(const gfx::PointF& point, float rx, float ry, float rotate,
              ArcSize arc_size, Direction direction);
-  void ArcToWithOval(const gfx::Rectf& oval, float start_angle,
+  void ArcToWithOval(const gfx::RectF& oval, float start_angle,
                      float sweep_angle, bool force_move_to);
   void ArcToWithPoints(const gfx::PointF& point1, const gfx::PointF& point2,
                        float radius);
-  void AddRect(const gfx::Rectf& rect, Direction direction, unsigned start);
-  void AddOval(const gfx::Rectf& oval, Direction direction, unsigned start);
+  void AddRect(const gfx::RectF& rect, Direction direction, unsigned start);
+  void AddOval(const gfx::RectF& oval, Direction direction, unsigned start);
   void AddCircle(const gfx::PointF& center, float radius, Direction direction);
-  void AddArc(const gfx::Rectf& oval, float start_angle, float sweep_angle);
-  void AddRoundRect(const gfx::Rectf& rect, float rx, float ry,
+  void AddArc(const gfx::RectF& oval, float start_angle, float sweep_angle);
+  void AddRoundRect(const gfx::RectF& rect, float rx, float ry,
                     Direction direction);
 
   const SkPath& sk_path() const { return *path_; }

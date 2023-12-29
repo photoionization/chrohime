@@ -1,4 +1,4 @@
-name: SkBlendMode
+name: BlendMode
 type: enum class
 description: |
   Blends are operators that take in two colors (source, destination) and return
@@ -8,7 +8,7 @@ description: |
   For these, we just document what happens to one component, rather than naming
   each one separately.
 
-  Different SkColorTypes have different representations for color components:
+  Different ColorTypes have different representations for color components:
       8-bit: 0..255
       6-bit: 0..63
       5-bit: 0..31

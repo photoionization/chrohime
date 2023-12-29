@@ -15,7 +15,7 @@ static bool running_test = false;
 hime_view_t CreateSection() {
   hime_view_t view = hime_view_create();
   hime_border_t border = hime_border_create_rounded_rect(
-      sk_color_create_argb(50, 0, 0, 0), 1, 4);
+      hime_color_create_argb(50, 0, 0, 0), 1, 4);
   hime_view_set_border(view, border);
   hime_view_set_style_number(view, u"padding", PADDING);
   hime_object_unref((hime_object_t)border);
@@ -322,7 +322,7 @@ void OnDraw(hime_view_t view, hime_painter_t painter, void* data) {
   hime_painter_translate(painter, offset);
   hime_paint_t paint;
   hime_paint_init(&paint);
-  paint.color = sk_color_create_rgb(0xD4, 0x6A, 0x6A);
+  paint.color = hime_color_create_rgb(0xD4, 0x6A, 0x6A);
   hime_painter_draw_path(painter, (hime_path_t)data, &paint);
 }
 

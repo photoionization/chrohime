@@ -11,8 +11,8 @@ properties:
     defaultValue: Fill
 
   - name: color
-    type: SkColor
-    defaultValue: sk_color_create_rgb(0, 0, 0)
+    type: Color
+    defaultValue: hime_color_create_rgb(0, 0, 0)
 
   - name: strokeWidth
     type: float
@@ -24,7 +24,7 @@ properties:
 
   - name: blendMode
     description: The blend mode.
-    type: SkBlendMode
+    type: BlendMode
     defaultValue: SrcOver
 
   - name: antiAlias

@@ -280,7 +280,7 @@ def get_api_from_type_name(apis, type_name):
     return None
 
 def get_cpp_type_name(api):
-  if api['name'].startswith('gfx::') or api['name'].startswith('Sk'):
+  if api['name'].startswith('gfx::'):
     return api['name']
   else:
     return 'hime::' + api['name']
@@ -294,11 +294,7 @@ def get_enum_name(api, enum):
     enum_name = enum['name']
   else:
     enum_name = enum
-  name = api_name.replace('::', '') + enum_name
-  if api_name.startswith('Sk'):
-    return f'k{name}'
-  else:
-    return f'kHime{name}'
+  return 'kHime' + api_name.replace('::', '') + enum_name
 
 def get_cpp_enum_name(api, enum_name):
   if api['name'] == 'ColorId':
@@ -404,8 +400,6 @@ def get_c_type_name(data):
     type_name = data
   if type_name in [ 'std::u16string', 'std::u16string_view', 'GURL' ]:
     return 'const char16_t*'
-  elif type_name.startswith('Sk'):
-    return f'{get_c_name(type_name)}_t'
   elif type_name[0].isupper() or type_name.startswith('gfx::'):
     return f'hime_{get_c_name(type_name)}_t'
   elif type_name.startswith('std::vector<'):
@@ -480,10 +474,6 @@ def main():
       inc_file = os.path.join(__file__, '..', 'chrohime_c_impl.inc')
       with open(os.path.abspath(inc_file), 'r') as inc:
         file.write(inc.read())
-      file.write('\n')
-      skia_header = os.path.join(__file__, '..', 'skia.h')
-      with open(os.path.abspath(skia_header), 'r') as sf:
-        file.write(sf.read())
       file.write('\n')
       # Start writing the API declarations.
       write_c_header_file(file, data['apis'], public_header=True)

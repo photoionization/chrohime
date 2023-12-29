@@ -2,10 +2,22 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "chrohime/api/chrohime.h"
+#include "chrohime/chrohime.h"
 #include "chrohime/dylib/chrohime_c_impl.inc"
-#include "chrohime/dylib/skia.h"
-#include "ui/gfx/geometry/rect.h"  // needed by impls.cc
+
+// Chrohime aliases for skia types.
+namespace hime {
+using Color = SkColor;
+using ClipOp = SkClipOp;
+using BlendMode = SkBlendMode;
+}
+
+// Support using rectf_t instead of rect_f_t as type name in C APIs.
+namespace gfx {
+using Pointf = PointF;
+using Rectf = RectF;
+using Vector2df = Vector2dF;
+}
 
 namespace {
 

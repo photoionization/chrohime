@@ -20,7 +20,7 @@ methods:
       - name: rect
         type: gfx::Rectf
       - name: op
-        type: SkClipOp
+        type: ClipOp
 
   - name: ClipPath
     description: |
@@ -30,7 +30,7 @@ methods:
       - name: path
         type: Path
       - name: op
-        type: SkClipOp
+        type: ClipOp
       - name: antiAlias
         type: bool
 
@@ -61,9 +61,9 @@ methods:
       specified `color` and `mode`.
     args:
       - name: color
-        type: SkColor
+        type: Color
       - name: mode
-        type: SkBlendMode
+        type: BlendMode
 
   - name: DrawLine
     description: Draws a line with the given `paint` parameters.
