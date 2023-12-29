@@ -6,12 +6,20 @@
 
 #include <algorithm>
 
+#include "chrohime/api/view_event_dispatcher.h"
 #include "ui/views/controls/progress_bar.h"
 #include "yoga/Yoga.h"
 
 namespace hime {
 
 namespace {
+
+class ProgressBarImpl : public ViewEventDispatcher<hime::ProgressBar,
+                                                   views::ProgressBar> {
+ public:
+  explicit ProgressBarImpl(hime::ProgressBar* delegate)
+      : ViewEventDispatcher(delegate) {}
+};
 
 YGSize MeasureProgressBar(YGNodeConstRef node,
                           float width, YGMeasureMode mode,
@@ -25,7 +33,7 @@ YGSize MeasureProgressBar(YGNodeConstRef node,
 }  // namespace
 
 ProgressBar::ProgressBar()
-    : View(std::make_unique<views::ProgressBar>(), LayoutType::kLeaf) {
+    : View(std::make_unique<ProgressBarImpl>(this), LayoutType::kLeaf) {
   YGNodeSetMeasureFunc(yoga_node(), MeasureProgressBar);
   // Give ProgressBar a proper default height.
   SetStyleNumber(u"height", 5);

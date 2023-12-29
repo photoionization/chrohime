@@ -1,9 +1,19 @@
 action("apis_json") {
   inputs = [
     # Basic structures, must come first as they have no forward declarations.
-    "api/rect.yaml",
-    "api/size.yaml",
     "api/colorid.yaml",
+    "api/point.yaml",
+    "api/pointf.yaml",
+    "api/rect.yaml",
+    "api/rectf.yaml",
+    "api/size.yaml",
+    "api/vector2d.yaml",
+    "api/vector2df.yaml",
+    "api/skblendmode.yaml",
+    "api/skclipop.yaml",
+    "api/paint_cap.yaml",
+    "api/paint_style.yaml",
+    "api/paint.yaml",
     # Foundamental APIs.
     "api/lifetime.yaml",
     "api/state.yaml",
@@ -20,6 +30,10 @@ action("apis_json") {
     "api/link.yaml",
     "api/materialbutton_style.yaml",
     "api/materialbutton.yaml",
+    "api/painter.yaml",
+    "api/path_arcsize.yaml",
+    "api/path_direction.yaml",
+    "api/path.yaml",
     "api/picker.yaml",
     "api/progressbar.yaml",
     "api/object.yaml",

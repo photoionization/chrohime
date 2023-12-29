@@ -114,6 +114,7 @@ void CreateComboboxExample(hime_view_t view) {
 
   hime_combobox_t combobox = hime_combobox_create();
   hime_combobox_set_model(combobox, (hime_combobox_model_t)model2);
+  hime_combobox_set_placeholder_text(combobox, u"Editable Combobox");
   hime_object_unref((hime_object_t)model2);
   hime_view_add_child_view(view, (hime_view_t)combobox);
   hime_view_set_accessible_name((hime_view_t)combobox, u"Combobox");
@@ -132,7 +133,7 @@ void CreateTextfieldExample(hime_view_t view) {
   hime_object_unref((hime_object_t)text);
 
   hime_textfield_t password = hime_textfield_create();
-  hime_textfield_set_type(password, kChrohimeTextfieldTypePassword);
+  hime_textfield_set_type(password, kHimeTextfieldTypePassword);
   hime_textfield_set_placeholder_text(password, u"Password");
   hime_view_add_child_view(view, (hime_view_t)password);
   hime_object_unref((hime_object_t)password);
@@ -172,7 +173,7 @@ void CreateMaterialButtonExample(hime_view_t view) {
   // Use the preferred background color of views to make buttons look better.
   hime_background_t background =
       hime_background_create_themed_rounded_rect(
-          kChrohimeColorIdDialogBackground, 1, 4);
+          kHimeColorIdDialogBackground, 1, 4);
   hime_view_set_background(view, background);
   hime_object_unref((hime_object_t)background);
 
@@ -193,13 +194,13 @@ void CreateMaterialButtonExample(hime_view_t view) {
   hime_object_unref((hime_object_t)button3);
 
   hime_material_button_t button4 = hime_material_button_create();
-  hime_material_button_set_style(button4, kChrohimeMaterialButtonStyleText);
+  hime_material_button_set_style(button4, kHimeMaterialButtonStyleText);
   hime_label_button_set_title((hime_label_button_t)button4, u"Text");
   hime_view_add_child_view(view, (hime_view_t)button4);
   hime_object_unref((hime_object_t)button4);
 
   hime_material_button_t button5 = hime_material_button_create();
-  hime_material_button_set_style(button5, kChrohimeMaterialButtonStyleTonal);
+  hime_material_button_set_style(button5, kHimeMaterialButtonStyleTonal);
   hime_label_button_set_title((hime_label_button_t)button5, u"Tonal");
   hime_view_add_child_view(view, (hime_view_t)button5);
   hime_object_unref((hime_object_t)button5);
@@ -312,6 +313,37 @@ hime_view_t CreateTableViewPage() {
   return (hime_view_t)scroll_view;
 }
 
+void OnDraw(hime_view_t view, hime_painter_t painter, void* data) {
+  hime_rect_t bounds = hime_view_get_bounds(view);
+  hime_vector2df_t offset = {
+    (bounds.width - 150.f) / 2.f,
+    (bounds.height - 150.f) / 2.f,
+  };
+  hime_painter_translate(painter, offset);
+  hime_paint_t paint;
+  hime_paint_init(&paint);
+  paint.color = sk_color_create_rgb(0xD4, 0x6A, 0x6A);
+  hime_painter_draw_path(painter, (hime_path_t)data, &paint);
+}
+
+hime_view_t CreatePainterPage() {
+  hime_path_t path = hime_path_create();
+#define P(x, y) (hime_pointf_t){x, y}
+  hime_path_move_to(path, P(75, 40));
+  hime_path_cubic_to(path, P(75, 37), P(70, 25), P(50, 25));
+  hime_path_cubic_to(path, P(20, 25), P(20, 62.5f), P(20, 62.5f));
+  hime_path_cubic_to(path, P(20, 80), P(40, 102), P(75, 120));
+  hime_path_cubic_to(path, P(110, 102), P(130, 80), P(130, 62.5f));
+  hime_path_cubic_to(path, P(130, 62.5f), P(130, 25), P(100, 25));
+  hime_path_cubic_to(path, P(85, 25), P(75, 37), P(75, 40));
+#undef P
+
+  hime_view_t view = hime_view_create();
+  hime_view_on_draw_connect_closure(view, OnDraw, path,
+                                    (hime_free_callback)hime_object_unref);
+  return view;
+}
+
 void CreateTabViewExample(hime_view_t view) {
   hime_view_set_style_number(view, u"flex", 1);
 
@@ -320,9 +352,8 @@ void CreateTabViewExample(hime_view_t view) {
   hime_tab_view_add_page(tab, u"TableView", page1);
   hime_object_unref((hime_object_t)page1);
 
-  hime_label_t page2 = hime_label_create();
-  hime_label_set_text(page2, u"Hello World");
-  hime_tab_view_add_page(tab, u"Label", (hime_view_t)page2);
+  hime_view_t page2 = CreatePainterPage();
+  hime_tab_view_add_page(tab, u"Painter", page2);
   hime_object_unref((hime_object_t)page2);
 
 #if defined(CHROHIME_WITH_CONTENT)

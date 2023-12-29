@@ -4,11 +4,21 @@
 
 #include "chrohime/api/badge.h"
 
+#include "chrohime/api/view_event_dispatcher.h"
 #include "ui/views/controls/badge.h"
 
 namespace hime {
 
-Badge::Badge() : View(std::make_unique<views::Badge>(), LayoutType::kLeaf) {
+namespace {
+
+class BadgeImpl : public ViewEventDispatcher<hime::Badge, views::Badge> {
+ public:
+  explicit BadgeImpl(hime::Badge* delegate) : ViewEventDispatcher(delegate) {}
+};
+
+}  // namespace
+
+Badge::Badge() : View(std::make_unique<BadgeImpl>(this), LayoutType::kLeaf) {
   UsePreferredSizeForYogaMeasurement();
 }
 

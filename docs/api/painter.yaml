@@ -1,0 +1,112 @@
+name: Painter
+type: class
+description: Graphic context.
+
+methods:
+  - name: Save
+    description: |
+      Saves a copy of the drawing state onto a stack, operating on this copy
+      until a balanced call to `Restore()` is made.
+
+  - name: Restore
+    description: |
+      Restores the drawing state after a call to `Save()`. It is an error to
+      call `Restore()` more times than `Save()`.
+
+  - name: ClipRect
+    description: |
+      Appliy `rect` to the current clip using the specified region `op`.
+    args:
+      - name: rect
+        type: gfx::Rectf
+      - name: op
+        type: SkClipOp
+
+  - name: ClipPath
+    description: |
+      Adds `path` to the current clip. Set `anti_alias` to true if the clip
+      should be antialiased.
+    args:
+      - name: path
+        type: Path
+      - name: op
+        type: SkClipOp
+      - name: antiAlias
+        type: bool
+
+  - name: Translate
+    description: |
+      Add translate transformation which moves the origin by `offset`.
+    args:
+      - name: offset
+        type: gfx::Vector2df
+
+  - name: Scale
+    description: Add scaling transformation to the painter.
+    args:
+      - name: xScale
+        type: float
+      - name: yScale
+        type: float
+
+  - name: Rotate
+    description: Add rotation transformation to the painter.
+    args:
+      - name: rotate
+        type: float
+
+  - name: DrawColor
+    description: |
+      Fill the entire canvas' bitmap (restricted to current clip) with
+      specified `color` and `mode`.
+    args:
+      - name: color
+        type: SkColor
+      - name: mode
+        type: SkBlendMode
+
+  - name: DrawLine
+    description: Draws a line with the given `paint` parameters.
+    args:
+      - name: p1
+        type: gfx::Pointf
+      - name: p2
+        type: gfx::Pointf
+      - name: flags
+        type: Paint
+
+  - name: DrawRect
+    description: Draw the given rectangle with the given `paint` parameters.
+    args:
+      - name: rect
+        type: gfx::Rectf
+      - name: paint
+        type: Paint
+
+  - name: DrawOval
+    description: Draw an oval.
+    args:
+      - name: rect
+        type: gfx::Rectf
+      - name: paint
+        type: Paint
+
+  - name: DrawRoundRect
+    description: |
+      Draw the given rectangle with rounded corners of `radius` using the
+      given `flags` parameters.
+    args:
+      - name: rect
+        type: gfx::Rectf
+      - name: radius
+        type: float
+      - name: paint
+        type: Paint
+
+  - name: DrawPath
+    description: Draw the given `path` using the given `paint` parameters.
+    args:
+      - name: path
+        type: Path
+      - name: paint
+        type: Paint

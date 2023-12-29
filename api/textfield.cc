@@ -4,11 +4,23 @@
 
 #include "chrohime/api/textfield.h"
 
+#include "chrohime/api/view_event_dispatcher.h"
 #include "ui/views/controls/textfield/textfield.h"
 
 namespace hime {
 
-Textfield::Textfield() : Textfield(std::make_unique<views::Textfield>()) {}
+namespace {
+
+class TextfieldImpl : public ViewEventDispatcher<hime::Textfield,
+                                                 views::Textfield> {
+ public:
+  explicit TextfieldImpl(hime::Textfield* delegate)
+      : ViewEventDispatcher(delegate) {}
+};
+
+}  // namespace
+
+Textfield::Textfield() : Textfield(std::make_unique<TextfieldImpl>(this)) {}
 
 Textfield::Textfield(std::unique_ptr<views::Textfield> to_take)
     : View(std::move(to_take), LayoutType::kLeaf) {

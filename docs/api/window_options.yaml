@@ -4,7 +4,7 @@ description: Options for creating Window.
 
 properties:
   - name: transparent
-    type: bool
-    defaultValue: false
     description: |
       When set to true, the window may be fully or partially transparent.
+    type: bool
+    defaultValue: false

@@ -1,0 +1,118 @@
+name: SkBlendMode
+type: enum class
+description: |
+  Blends are operators that take in two colors (source, destination) and return
+  a new color.
+
+  Many of these operate the same on all 4 components: red, green, blue, alpha.
+  For these, we just document what happens to one component, rather than naming
+  each one separately.
+
+  Different SkColorTypes have different representations for color components:
+      8-bit: 0..255
+      6-bit: 0..63
+      5-bit: 0..31
+      4-bit: 0..15
+     floats: 0...1
+
+  The documentation is expressed as if the component values are always 0..1
+  (floats).
+
+  For brevity, the documentation uses the following abbreviations
+  s  : source
+  d  : destination
+  sa : source alpha
+  da : destination alpha
+
+  Results are abbreviated
+  r  : if all 4 components are computed in the same manner
+  ra : result alpha component
+  rc : result "color": red, green, blue components
+
+enums:
+  - name: Clear
+    description: r = 0
+
+  - name: Src
+    description: r = s
+
+  - name: Dst
+    description: r = d
+
+  - name: SrcOver
+    description: r = s + (1-sa)*d
+
+  - name: DstOver
+    description: r = d + (1-da)*s
+
+  - name: SrcIn
+    description: r = s * da
+
+  - name: DstIn
+    description: r = d * sa
+
+  - name: SrcOut
+    description: r = s * (1-da)
+
+  - name: DstOut
+    description: r = d * (1-sa)
+
+  - name: SrcATop
+    description: r = s*da + d*(1-sa)
+
+  - name: DstATop
+    description: r = d*sa + s*(1-da)
+
+  - name: Xor
+    description: r = s*(1-da) + d*(1-sa)
+
+  - name: Plus
+    description: r = min(s + d, 1)
+
+  - name: Modulate
+    description: r = s*d
+
+  - name: Screen
+    description: r = s + d - s*d
+
+  - name: Overlay
+    description: Multiply or screen, depending on destination.
+
+  - name: Darken
+    description: rc = s + d - max(s*da, d*sa), ra = SrcOver
+
+  - name: Lighten
+    description: rc = s + d - min(s*da, d*sa), ra = SrcOver
+
+  - name: ColorDodge
+    description: Brighten destination to reflect source.
+
+  - name: ColorBurn
+    description: Darken destination to reflect source.
+
+  - name: HardLight
+    description: Multiply or screen, depending on source.
+
+  - name: SoftLight
+    description: Lighten or darken, depending on source.
+
+  - name: Difference
+    description: rc = s + d - 2*(min(s*da, d*sa)), ra = SrcOver
+
+  - name: Exclusion
+    description: rc = s + d - two(s*d), ra = SrcOver
+
+  - name: Multiply
+    description: r = s*(1-da) + d*(1-sa) + s*d
+
+  - name: Hue
+    description: Hue of source with saturation and luminosity of destination.
+
+  - name: Saturation
+    description: Saturation of source with hue and luminosity of destination.
+
+  - name: Color
+    description: Hue and saturation of source with luminosity of destination.
+
+  - name: Luminosity
+    description: Luminosity of source with hue and saturation of destination.

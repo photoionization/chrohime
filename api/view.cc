@@ -10,6 +10,7 @@
 #include "chrohime/api/yoga_layout_manager.h"
 #include "chrohime/api/yoga_util.h"
 #include "chrohime/api/state.h"
+#include "chrohime/api/view_event_dispatcher.h"
 #include "ui/display/screen.h"
 #include "ui/views/background.h"
 #include "ui/views/border.h"
@@ -20,6 +21,11 @@
 namespace hime {
 
 namespace {
+
+class ViewImpl : public ViewEventDispatcher<hime::View, views::View> {
+ public:
+  explicit ViewImpl(hime::View* delegate) : ViewEventDispatcher(delegate) {}
+};
 
 // Convert case to lower and remove non-ASCII characters.
 std::u16string StripStyleName(std::u16string_view name) {
@@ -49,14 +55,14 @@ View* View::FromViews(views::View* view) {
   return State::GetCurrent()->GetViewFromViewsView(view);
 }
 
-View::View() : View(std::make_unique<views::View>(), LayoutType::kContainer) {}
+View::View() : View(std::make_unique<ViewImpl>(this), LayoutType::kContainer) {}
 
 View::View(std::unique_ptr<views::View> to_take, LayoutType layout_type)
     : layout_type_(layout_type),
       yoga_config_(YGConfigNew()),
       yoga_node_(YGNodeNewWithConfig(yoga_config_)),
-      view_(to_take.get()),
-      ownership_(std::move(to_take)) {
+      ownership_(std::move(to_take)),
+      view_(ownership_.get()) {
   view_->AddObserver(this);
   State::GetCurrent()->views_map_[view_] = this;
   YGNodeSetContext(yoga_node_, this);

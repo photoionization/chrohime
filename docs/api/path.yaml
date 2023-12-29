@@ -1,0 +1,268 @@
+name: Path
+type: refcounted
+inherit: Object
+description: |
+  A ref-counted wrapper of SkPath.
+
+  SkPath contain geometry. SkPath may be empty, or contain one or more verbs that
+  outline a figure. SkPath always starts with a move verb to a Cartesian coordinate,
+  and may be followed by additional verbs that add lines or curves.
+  Adding a close verb makes the geometry into a continuous loop, a closed contour.
+  SkPath may contain any number of contours, each beginning with a move verb.
+
+  SkPath contours may contain only a move verb, or may also contain lines,
+  quadratic beziers, conics, and cubic beziers. SkPath contours may be open or
+  closed.
+
+  When used to draw a filled area, SkPath describes whether the fill is inside or
+  outside the geometry. SkPath also describes the winding rule used to fill
+  overlapping contours.
+
+constructors:
+  - name: Create
+    description: |
+      Create an empty SkPath.
+
+      By default, SkPath has no verbs, no SkPoint, and no weights. FillType is
+      set to kWinding.
+
+methods:
+  - name: Reset
+    description: |
+      Set SkPath to its initial state.
+
+      Remove verb array, SkPoint array, and weights, and sets FillType to
+      kWinding. Internal storage associated with SkPath is released.
+
+  - name: IsEmpty
+    description: Return if SkPath is empty.
+    returnType: bool
+
+  - name: Close
+    description: Append kClose_Verb to SkPath.
+
+  - name: MoveTo
+    description: Add beginning of contour at `point`.
+    args:
+      - name: point
+        type: gfx::Pointf
+
+  - name: LineTo
+    description: Add line from last point to `point`.
+    args:
+      - name: point
+        type: gfx::Pointf
+
+  - name: QuadTo
+    description: Add quad from last point towards `point1`, to `point2`.
+    args:
+      - name: point1
+        type: gfx::Pointf
+      - name: point2
+        type: gfx::Pointf
+
+  - name: ConicTo
+    description: |
+      Add conic from last point towards `point1`, to `point2`, weighted by
+      `weight`.
+    args:
+      - name: point1
+        type: gfx::Pointf
+      - name: point2
+        type: gfx::Pointf
+      - name: weight
+        type: float
+
+  - name: CubicTo
+    description: |
+      Add cubic from last point towards `point1`, then towards `point2`, ending
+      at `point3`.
+    args:
+      - name: point1
+        type: gfx::Pointf
+      - name: point2
+        type: gfx::Pointf
+      - name: point3
+        type: gfx::Pointf
+
+  - name: ArcTo
+    description: |
+      Append arc to SkPath.
+
+      Arc is implemented by one or more conics weighted to describe part of
+      oval with radii (rx, ry) rotated by xAxisRotate degrees. Arc curves from
+      last SkPath `point`, choosing one of four possible routes: clockwise or
+      counterclockwise, and smaller or larger.
+
+      Arc sweep is always less than 360 degrees. arcTo() appends line to (x, y)
+      if either radii are zero, or if last SkPath SkPoint equals (x, y). arcTo()
+      scales radii (rx, ry) to fit last SkPath SkPoint and (x, y) if both are
+      greater than zero but too small.
+    args:
+      - name: point
+        description: End of arc.
+        type: gfx::Pointf
+      - name: rx
+        description: Radius on x-axis before x-axis rotation.
+        type: float
+      - name: ry
+        description: Radius on y-axis before x-axis rotation.
+        type: float
+      - name: rotate
+        description: X-axis rotation in degrees; positive values are clockwise.
+        type: float
+      - name: arcSize
+        description: Choose smaller or larger arc.
+        type: Path::ArcSize
+      - name: sweep
+        description: Choose clockwise or counterclockwise arc.
+        type: Path::Direction
+
+  - name: ArcToWithOval
+    description: |
+    args:
+      - name: oval
+        description: Bounds of ellipse containing arc.
+        type: gfx::Rectf
+      - name: startAngle
+        description: Starting angle of arc in degrees.
+        type: float
+      - name: sweepAngle
+        description: Sweep in degrees. Positive is clockwise.
+        type: float
+      - name: forceMoveTo
+        description: Set true to start a new contour with arc.
+        type: bool
+
+  - name: ArcToWithPoints
+    description: |
+      Append arc to SkPath, after appending line if needed. Arc is implemented
+      by conic weighted to describe part of circle. Arc is contained by tangent
+      from last SkPath point to `point1`, and tangent from `point1` to `point2`.
+      Arc is part of circle sized to `radius`, positioned so it touches both
+      tangent lines.
+    args:
+      - name: point1
+        type: gfx::Pointf
+      - name: point2
+        type: gfx::Pointf
+      - name: weight
+        type: float
+
+  - name: AddRect
+    description: |
+      Add a new contour to the path, defined by the rect, and wound in the
+      specified direction. The verbs added to the path will be:
+
+      kMove, kLine, kLine, kLine, kClose
+
+      start specifies which corner to begin the contour:
+          0: upper-left  corner
+          1: upper-right corner
+          2: lower-right corner
+          3: lower-left  corner
+
+      This start point also acts as the implied beginning of the subsequent,
+      contour, if it does not have an explicit moveTo().
+    args:
+      - name: rect
+        description: The rectangel to add as a closed contour.
+        type: gfx::Rectf
+      - name: direction
+        description: Direction to orient the new contour.
+        type: Path::Direction
+      - name: start
+        description: Initial corner of rect to add.
+        type: unsigned
+
+  - name: AddOval
+    description: |
+      Add oval to SkPath.
+
+      Oval is upright ellipse bounded by SkRect oval with radii equal to half
+      oval width and half oval height. Oval begins at start and continues
+      clockwise if `direction` is `CW`, counterclockwise if `direction` is
+      `CCW`.
+    args:
+      - name: oval
+        description: Bounds of ellipse added.
+        type: gfx::Rectf
+      - name: direction
+        description: Direction to wind ellipse.
+        type: Path::Direction
+      - name: start
+        description: Index of initial point of ellipse.
+        type: unsigned
+
+  - name: AddCircle
+    description: |
+      Add circle centered at (x, y) of size radius to SkPath.
+
+      Circle begins at (x + radius, y), continuing clockwise if `direction` is
+      `CW`, and counterclockwise if `direction` is `CCW`.
+
+      Has no effect if radius is zero or negative.
+    args:
+      - name: center
+        description: Center of circle.
+        type: gfx::Pointf
+      - name: radius
+        description: Distance from center to edge.
+        type: float
+      - name: direction
+        description: Direction to wind circle.
+        type: Path::Direction
+
+  - name: AddArc
+    description: |
+      Append arc to SkPath, as the start of new contour.
+
+      Arc added is part of ellipse bounded by oval, from startAngle through
+      sweepAngle. Both startAngle and sweepAngle are measured in degrees, where
+      zero degrees is aligned with the positive x-axis, and positive sweeps
+      extends arc clockwise.
+
+      If sweepAngle <= -360, or sweepAngle >= 360; and startAngle modulo 90 is
+      nearly zero, append oval instead of arc. Otherwise, sweepAngle values are
+      treated modulo 360, and arc may or may not draw depending on numeric
+      rounding.
+    args:
+      - name: oval
+        description: Bounds of ellipse containing arc.
+        type: gfx::Rectf
+      - name: startAngle
+        description: Starting angle of arc in degrees.
+        type: float
+      - name: sweepAngle
+        description: Sweep in degrees. Positive is clockwise.
+        type: float
+
+  - name: AddRoundRect
+    description: |
+      Append SkRRect to SkPath, creating a new closed contour.
+
+      SkRRect has bounds equal to rect; each corner is 90 degrees of an
+      ellipse with radii (rx, ry). If `direction` is `CW`, SkRRect starts at
+      top-left of the lower-left corner and winds clockwise. If `direction` is
+      `CCW`, SkRRect starts at the bottom-left of the upper-left corner and
+      winds counterclockwise.
+
+      If either `rx` or `ry` is too large, `rx` and `ry` are scaled uniformly
+      until the corners fit. If `rx` or `ry` is less than or equal to zero,
+      `AddRoundRect` appends SkRect rect to SkPath.
+
+      After appending, SkPath may be empty, or may contain SkRect, oval, or
+      SkRRect.
+    args:
+      - name: rect
+        description: The rectangel to add as a closed contour.
+        type: gfx::Rectf
+      - name: rx
+        description: X-axis radius of rounded corners on the SkRRect.
+        type: float
+      - name: ry
+        description: Y-axis radius of rounded corners on the SkRRect.
+        type: float
+      - name: direction
+        description: Direction to wind SkRRect.
+        type: Path::Direction

@@ -5,13 +5,23 @@
 #include "chrohime/api/picker.h"
 
 #include "chrohime/api/combobox_model.h"
+#include "chrohime/api/view_event_dispatcher.h"
 #include "ui/base/models/combobox_model.h"
 #include "ui/views/controls/combobox/combobox.h"
 
 namespace hime {
 
+namespace {
+
+class PickerImpl : public ViewEventDispatcher<hime::Picker, views::Combobox> {
+ public:
+  explicit PickerImpl(hime::Picker* delegate) : ViewEventDispatcher(delegate) {}
+};
+
+}  // namespace
+
 Picker::Picker()
-    : View(std::make_unique<views::Combobox>(), LayoutType::kLeaf) {
+    : View(std::make_unique<PickerImpl>(this), LayoutType::kLeaf) {
   GetView()->SetCallback(
       base::BindRepeating(&Picker::OnChange, base::Unretained(this)));
   UsePreferredSizeForYogaMeasurement();

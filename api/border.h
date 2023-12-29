@@ -29,6 +29,7 @@ class CHROHIME_EXPORT Border : public Object {
   explicit Border(std::unique_ptr<views::Border> to_take);
   ~Border() override;
 
+ private:
   // Due to restrictions of ui/views API, the views::Border object can not
   // be shared between views and we must handle it ownership when setting the
   // background of a view.

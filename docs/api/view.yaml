@@ -150,3 +150,24 @@ methods:
 
   - name: GetGroup
     description: Get the group id of this view.
+
+events:
+  - name: onDraw
+    description: Emitted when the drawing of view is done.
+    args:
+      - name: view
+        type: View
+      - name: painter
+        type: Painter
+
+  - name: onWillDraw
+    description: |
+      Emitted when the drawing of view is going to start.
+
+      Returning true will prevent the default paint routine of view.
+    args:
+      - name: view
+        type: View
+      - name: painter
+        type: Painter
+    returnType: bool

@@ -5,13 +5,25 @@
 #include "chrohime/api/combobox.h"
 
 #include "chrohime/api/combobox_model.h"
+#include "chrohime/api/view_event_dispatcher.h"
 #include "ui/base/models/combobox_model.h"
 #include "ui/views/controls/editable_combobox/editable_combobox.h"
 
 namespace hime {
 
+namespace {
+
+class ComboboxImpl : public ViewEventDispatcher<hime::Combobox,
+                                                views::EditableCombobox> {
+ public:
+  explicit ComboboxImpl(hime::Combobox* delegate)
+      : ViewEventDispatcher(delegate) {}
+};
+
+}  // namespace
+
 Combobox::Combobox()
-    : View(std::make_unique<views::EditableCombobox>(), LayoutType::kLeaf) {
+    : View(std::make_unique<ComboboxImpl>(this), LayoutType::kLeaf) {
   GetView()->SetCallback(
       base::BindRepeating(&Combobox::OnChange, base::Unretained(this)));
   UsePreferredSizeForYogaMeasurement();

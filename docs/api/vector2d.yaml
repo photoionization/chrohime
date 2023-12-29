@@ -1,0 +1,11 @@
+name: gfx::Vector2d
+type: geometry
+description: Represent a distance in two dimensions between two points.
+
+properties:
+  - name: x
+    type: int
+    defaultValue: 0
+  - name: y
+    type: int
+    defaultValue: 0

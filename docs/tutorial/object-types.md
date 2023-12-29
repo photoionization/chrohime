@@ -70,4 +70,4 @@ hime_state_t state = hime_state_create();
 hime_state_destroy(state);
 ```
 
-Currently the only class types are `State` and `Lifetime`.
+Currently the only class types are: `State`, `Lifetime`, `Painter`.

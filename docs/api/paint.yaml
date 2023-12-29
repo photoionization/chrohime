@@ -1,0 +1,32 @@
+name: Paint
+type: struct
+description: |
+  Holds the style and color information about how to draw geometries, text
+  and bitmaps.
+
+properties:
+  - name: style
+    description: Stroke or fill.
+    type: Paint::Style
+    defaultValue: Fill
+
+  - name: color
+    type: SkColor
+    defaultValue: sk_color_create_rgb(0, 0, 0)
+
+  - name: strokeWidth
+    type: float
+    defaultValue: 1.f
+
+  - name: strokeCap
+    type: Paint::Cap
+    defaultValue: Butt
+
+  - name: blendMode
+    description: The blend mode.
+    type: SkBlendMode
+    defaultValue: SrcOver
+
+  - name: antiAlias
+    type: bool
+    defaultValue: true

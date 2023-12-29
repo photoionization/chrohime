@@ -4,11 +4,21 @@
 
 #include "chrohime/api/label.h"
 
+#include "chrohime/api/view_event_dispatcher.h"
 #include "ui/views/controls/label.h"
 
 namespace hime {
 
-Label::Label() : Label(std::make_unique<views::Label>()) {}
+namespace {
+
+class LabelImpl : public ViewEventDispatcher<hime::Label, views::Label> {
+ public:
+  explicit LabelImpl(hime::Label* delegate) : ViewEventDispatcher(delegate) {}
+};
+
+}  // namespace
+
+Label::Label() : Label(std::make_unique<LabelImpl>(this)) {}
 
 Label::Label(std::unique_ptr<views::Label> to_take)
     : View(std::move(to_take), LayoutType::kLeaf) {

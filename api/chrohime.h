@@ -12,6 +12,8 @@
 #include "chrohime/api/link.h"
 #include "chrohime/api/lifetime.h"
 #include "chrohime/api/material_button.h"
+#include "chrohime/api/painter.h"
+#include "chrohime/api/path.h"
 #include "chrohime/api/picker.h"
 #include "chrohime/api/progress_bar.h"
 #include "chrohime/api/radio_button.h"

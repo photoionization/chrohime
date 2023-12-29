@@ -1,0 +1,8 @@
+name: Paint::Style
+type: enum class
+description: Paint by filling or stroking.
+
+enums:
+  - name: Fill
+  - name: Stroke
+  - name: StrokeAndFill

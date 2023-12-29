@@ -4,11 +4,23 @@
 
 #include "chrohime/api/textarea.h"
 
+#include "chrohime/api/view_event_dispatcher.h"
 #include "ui/views/controls/textarea/textarea.h"
 
 namespace hime {
 
-Textarea::Textarea() : Textfield(std::make_unique<views::Textarea>()) {}
+namespace {
+
+class TextareaImpl : public ViewEventDispatcher<hime::Textarea,
+                                                views::Textarea> {
+ public:
+  explicit TextareaImpl(hime::Textarea* delegate)
+      : ViewEventDispatcher(delegate) {}
+};
+
+}  // namespace
+
+Textarea::Textarea() : Textfield(std::make_unique<TextareaImpl>(this)) {}
 
 Textarea::~Textarea() = default;
 

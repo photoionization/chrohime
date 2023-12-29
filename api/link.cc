@@ -4,11 +4,21 @@
 
 #include "chrohime/api/link.h"
 
+#include "chrohime/api/view_event_dispatcher.h"
 #include "ui/views/controls/link.h"
 
 namespace hime {
 
-Link::Link() : Label(std::make_unique<views::Link>()) {
+namespace {
+
+class LinkImpl : public ViewEventDispatcher<hime::Link, views::Link> {
+ public:
+  explicit LinkImpl(hime::Link* delegate) : ViewEventDispatcher(delegate) {}
+};
+
+}  // namespace
+
+Link::Link() : Label(std::make_unique<LinkImpl>(this)) {
   GetView()->SetCallback(
       base::BindRepeating(&Link::OnClick, base::Unretained(this)));
 }

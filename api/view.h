@@ -25,6 +25,7 @@ namespace hime {
 
 class Background;
 class Border;
+class Painter;
 
 class CHROHIME_EXPORT View : public Object,
                              public views::ViewObserver {
@@ -64,15 +65,20 @@ class CHROHIME_EXPORT View : public Object,
   // Internal: Give the ownership of underlying views::View to caller.
   std::unique_ptr<views::View> TransferOwnership();
 
-  // Yoga layout related properties.
+  // Internal: Yoga layout related properties.
   enum class LayoutType { kContainer, kLeaf };
   LayoutType layout_type() const { return layout_type_; }
   YGNodeRef yoga_node() const { return yoga_node_; }
 
+  // Internal: Get the underlying view.
   // Note that the returned pointer might be null, and caller must check before
   // using to avoid crashes.
-  // TODO(zcbenz): Make this a protected member.
+  // TODO(zcbenz): Make this a protected member, do no use it in new code.
   views::View* view() const { return view_.get(); }
+
+  // Events.
+  Signal<bool(View*, Painter*)> on_will_draw;
+  Signal<void(View*, Painter*)> on_draw;
 
  protected:
   View(std::unique_ptr<views::View> to_take, LayoutType layout_type);
@@ -105,8 +111,8 @@ class CHROHIME_EXPORT View : public Object,
   // null if the ownership has been transferred to other classes and then gets
   // destructed. The |ownership_| pointer manages the views::View, and may
   // become null after TransferOwnership() gets called.
-  raw_ptr<views::View> view_ = nullptr;
   std::unique_ptr<views::View> ownership_;
+  raw_ptr<views::View> view_ = nullptr;
 };
 
 // Helper for guarding against destroyed views.

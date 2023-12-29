@@ -1,0 +1,11 @@
+name: gfx::Pointf
+type: geometry
+description: A floating version of point.
+
+properties:
+  - name: x
+    type: float
+    defaultValue: 0.f
+  - name: y
+    type: float
+    defaultValue: 0.f

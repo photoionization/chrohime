@@ -1,0 +1,13 @@
+name: Paint::Cap
+type: enum class
+description: Cap draws at the beginning and end of an open path contour.
+
+enums:
+  - name: Butt
+    description: No stroke extension.
+
+  - name: Round
+    description: Add circle.
+
+  - name: Square
+    description: Add square.

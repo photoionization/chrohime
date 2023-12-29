@@ -1,0 +1,11 @@
+name: gfx::Point
+type: geometry
+description: A point has an x and y coordinate.
+
+properties:
+  - name: x
+    type: int
+    defaultValue: 0
+  - name: y
+    type: int
+    defaultValue: 0

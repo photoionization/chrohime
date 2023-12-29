@@ -1,0 +1,11 @@
+name: gfx::Vector2df
+type: geometry
+description: A floating version of Vector2d.
+
+properties:
+  - name: x
+    type: float
+    defaultValue: 0.f
+  - name: y
+    type: float
+    defaultValue: 0.f

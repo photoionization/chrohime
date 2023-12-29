@@ -1,0 +1,7 @@
+name: Path::ArcSize
+type: enum class
+description: Larger or smaller of arc pair
+
+enums:
+  - name: Small
+  - name: Large
