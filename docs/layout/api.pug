@@ -123,7 +123,7 @@ block content
       tr
         td Inherits
         td
-          +type(doc.inherit)
+          a.type(href=`${doc.inherit.id}.html`) #{doc.inherit.name}
     if doc.platform
       tr
         td Platforms

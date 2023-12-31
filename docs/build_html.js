@@ -17,6 +17,7 @@ const outDir = process.argv[7]
 const guideFiles = process.argv.slice(8)
 
 const lang = 'c'
+const meta = require('./meta.json')
 
 function main() {
   const langDir = path.join(outDir, lang)
@@ -24,11 +25,12 @@ function main() {
 
   const parse = getMarkdownParser(lang)
   const pugOptions = {
+    ...meta,
     lang,
     version,
     markdown: parse,
     imarkdown: (text) => inlineMarkdown(parse, text),
-    firstline: (text) => text.split('\n')[0],
+    firstline: findFirstLine,
     filters: { 'css-minimize': cssMinimize },
   }
 
@@ -131,6 +133,17 @@ function parseMarkdown(parse, content) {
 function inlineMarkdown(parse, str) {
   let markdown = parse(str)
   return markdown.substr(3, markdown.length - 8)
+}
+
+// Find the first line in a markdown text.
+function findFirstLine(text) {
+  let result = ''
+  for (const line of text.split('\n')) {
+    if (line.trim().length == 0)
+      break;
+    result += line
+  }
+  return result
 }
 
 // A simple CSS minimize function.

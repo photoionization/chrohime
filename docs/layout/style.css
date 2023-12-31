@@ -11,7 +11,7 @@ body {
 }
 
 a {
-  color: #0366d6;
+  color: #0071ce;
   text-decoration: none;
 }
 
@@ -27,17 +27,20 @@ a:hover {
   width: 100%;
   height: 50px;
   line-height: 50px;
-  background-color: #3b73d4;
+  background-color: #4c4c4c;
 }
 
-#header .logo {
-  font-weight: 700;
+#header .project-title, #header .logo {
   font-size: 30px;
-  color: white;
   display: inline-block;
-  padding-left: 45px;
-  padding-right: 45px;
   margin: 0;
+}
+
+#header .project-title {
+  color: white;
+  font-weight: 700;
+  padding-left: 45px;
+  padding-right: 5px;
 }
 
 #header .nav {
@@ -55,7 +58,7 @@ a:hover {
 #footer {
   height: 30px;
   width: 100%;
-  background-color: #3b73d4;
+  background-color: #4c4c4c;
 }
 
 #footer p {

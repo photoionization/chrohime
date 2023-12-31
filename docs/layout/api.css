@@ -1,13 +1,13 @@
 .markdown-body h3 {
-  color: #e86850;
+  color: #e60023;
 }
 
 .markdown-body h4 {
-  color: #587498;
+  color: #484d51;
 }
 
 .markdown-body a.type {
-  color: #587058;
+  color: #00345A;
 }
 
 .markdown-body span.type {
@@ -29,11 +29,11 @@
   font-weight: 300;
   border-radius: 3px;
   color: white;
-  background-color: #ee9584
+  background-color: #8c8c8c
 }
 
 .signature .return-type, .signature .punctuation {
-  color: #999
+  color: #8c8c8c
 }
 
 #container {

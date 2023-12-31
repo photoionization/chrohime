@@ -1,7 +1,7 @@
 doctype html
 html
   head
-    title #{doc.name} - Chrohime
+    title #{doc.name} - #{project}
     meta(charset="utf-8")
     style
       include:css-minimize style.css
@@ -17,11 +17,12 @@ html
         - var docslink = "../index.html"
       else
         - var docslink = "index.html"
-      a.logo(href=`${docslink}`) Chrohime
+      a.project-title(href=`${docslink}`) #{project}
+      span.logo #{logo}
       .nav
         a(href=`${docslink}`) Docs
         a(href="/") Versions
-        a(href="https://github.com/photoionization/chrohime") GitHub
+        a(href=`https://github.com/${repo}`) GitHub
     #container
       #content.markdown-body
         block content
