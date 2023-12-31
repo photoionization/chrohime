@@ -1,6 +1,9 @@
-name: chrohime
+name: Build Chrohime
 
-on: push
+on:
+  push:
+  # Allow running manually from the Actions tab.
+  workflow_dispatch:
 
 jobs:
   build:

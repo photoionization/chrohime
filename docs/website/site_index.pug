@@ -1,0 +1,19 @@
+doctype html
+head
+  title #{project}
+  style
+    | * { font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    | a { margin-right: 6px; }
+    | html { max-width: 38rem; padding: 2rem; margin: auto; color: #333; font-size: 1.2em; }
+
+body
+  h1 #{project}
+  p #{introduction}
+  h2 Links
+  a(href=`https://github.com/${repo}`) Repo
+  a(href=`https://github.com/${repo}/releases`) Releases
+  h2 Latest Docs
+  a(href='docs/latest/c/index.html') #{latest}
+  h2 Versions
+  each v in versions
+    a(href=`docs/${v}/c/index.html`) #{v}
