@@ -9,7 +9,7 @@ properties:
     description: A unique identifier for the column.
 
   - name: title
-    type: std::u16string
+    type: string
     defaultValue: ""
     description: The title for the column.
 

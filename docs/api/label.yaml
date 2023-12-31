@@ -12,11 +12,11 @@ methods:
     description: Set the text to display.
     args:
       - name: text
-        type: std::u16string
+        type: string
 
   - name: GetText
     description: Return the text displayed.
-    returnType: const std::u16string&
+    returnType: string ref
 
   - name: SetMultiLine
     description: Set if the label text can wrap on multiple lines.

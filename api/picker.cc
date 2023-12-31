@@ -52,8 +52,7 @@ const std::u16string& Picker::GetSelectedItem() const {
   absl::optional<size_t> result = GetView()->GetSelectedRow();
   if (!result.has_value())
     return base::EmptyString16();
-  selected_item_ = GetView()->GetTextForRow(result.value());
-  return selected_item_;
+  return cached_result_ = GetView()->GetTextForRow(result.value());
 }
 
 int Picker::GetSelectedItemIndex() const {

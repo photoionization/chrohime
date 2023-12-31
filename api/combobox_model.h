@@ -18,7 +18,7 @@ class CHROHIME_EXPORT ComboboxModel : public Object,
                                       public ui::ComboboxModelObserver {
  public:
   size_t GetItemCount() const;
-  std::u16string GetItemText(size_t index) const;
+  const std::u16string& GetItemText(size_t index) const;
 
   // Internal: Give the ownership of underlying ui::ComboboxModel to caller.
   std::unique_ptr<ui::ComboboxModel> TransferOwnership();
@@ -34,6 +34,9 @@ class CHROHIME_EXPORT ComboboxModel : public Object,
   ui::ComboboxModel* model() const { return model_.get(); }
 
  private:
+  // Cache the result so we can return const string reference in APIs.
+  mutable std::u16string cached_result_;
+
   raw_ptr<ui::ComboboxModel> model_ = nullptr;
   std::unique_ptr<ui::ComboboxModel> ownership_;
 };

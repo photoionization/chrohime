@@ -13,4 +13,4 @@ methods:
     args:
       - name: index
         type: size_t
-    returnType: std::u16string
+    returnType: string ref

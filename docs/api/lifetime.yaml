@@ -10,11 +10,11 @@ class_methods:
 constructors:
   - name: Create
     description: Create a Lifetime instance for current thread.
-    platforms: [ win ]
+    platform: [ win ]
 
   - name: Create
     description: Create a Lifetime instance for current thread.
-    platforms: [ mac, linux ]
+    platform: [ mac, linux ]
     args:
       - name: argc
         type: int

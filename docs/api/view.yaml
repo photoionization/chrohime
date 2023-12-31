@@ -36,7 +36,7 @@ methods:
     description: Sets or unsets the size that this View will request during layout.
     args:
       - name: size
-        type: absl::optional<gfx::Size>
+        type: optional<gfx::Size>
 
   - name: GetPreferredSize
     description: Return the size the view would like to be under the current bounds.
@@ -52,15 +52,15 @@ methods:
       the new styles apply immediately you can call `Layout` method.
     args:
       - name: name
-        type: std::u16string_view
+        type: string
       - name: value
-        type: std::u16string_view
+        type: string
 
   - name: SetStyleNumber
     description: *setstyle
     args:
       - name: name
-        type: std::u16string_view
+        type: string
       - name: value
         type: float
 
@@ -131,11 +131,11 @@ methods:
       understanding the purpose of that object non-visually.
     args:
       - name: name
-        type: std::u16string
+        type: string
 
   - name: GetAccessibleName
     description: Get the accessible name.
-    returnType: const std::u16string&
+    returnType: string ref
 
   - name: SetGroup
     description: |

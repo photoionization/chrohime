@@ -18,7 +18,7 @@ methods:
     description: Set the `text` currently displayed in the Textfield.
     args:
       - name: text
-        type: std::u16string
+        type: string
 
   - name: GetText
     description: |
@@ -26,13 +26,13 @@ methods:
 
       Call sites should take care to not reveal the text for a password
       textfield.
-    returnType: const std::u16string&
+    returnType: string ref
 
   - name: SetPlaceholderText
     description: Set the `placeholder` text to display when empty.
     args:
       - name: placeholder
-        type: std::u16string
+        type: string
 
   - name: SetReadonly
     description: Set whether the textfield is `readonly`.

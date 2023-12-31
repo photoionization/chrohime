@@ -11,6 +11,6 @@ constructors:
     description: Create a radio button with `title` and `group` id.
     args:
       - name: title
-        type: std::u16string
+        type: string
       - name: group
         type: int

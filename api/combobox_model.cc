@@ -28,9 +28,9 @@ size_t ComboboxModel::GetItemCount() const {
   return model_->GetItemCount();
 }
 
-std::u16string ComboboxModel::GetItemText(size_t index) const {
-  HIME_RETURN_VALUE_ON_DESTROYED_COMBOBOX_MODEL(this, base::EmptyString16());
-  return model_->GetItemAt(index);
+const std::u16string& ComboboxModel::GetItemText(size_t index) const {
+  HIME_RETURN_VALUE_ON_DESTROYED_COMBOBOX_MODEL(this, cached_result_);
+  return cached_result_ = model_->GetItemAt(index);
 }
 
 std::unique_ptr<ui::ComboboxModel> ComboboxModel::TransferOwnership() {

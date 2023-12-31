@@ -1,3 +1,8 @@
+---
+priority: 12
+description: Why Chrohime was created and what it can be used for.
+---
+
 # Technical visions
 
 The `ui/views` library is Chromium's internal UI toolkit for creating the

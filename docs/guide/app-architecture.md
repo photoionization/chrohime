@@ -1,3 +1,8 @@
+---
+priority: 11
+description: The basic skeleton of an app, and concepts of state and lifetime.
+---
+
 # App architecture
 
 Chrohime may be used in 2 environments:

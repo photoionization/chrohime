@@ -1,0 +1,108 @@
+.markdown-body h3 {
+  color: #e86850;
+}
+
+.markdown-body h4 {
+  color: #587498;
+}
+
+.markdown-body a.type {
+  color: #587058;
+}
+
+.markdown-body span.type {
+  color: #24292e;
+}
+
+.markdown-body span.optional {
+  color: #24292e;
+  font-weight: 300;
+}
+
+.markdown-body .code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+
+.markdown-body .platform {
+  padding: .1em .4em;
+  font-size: .88em;
+  font-weight: 300;
+  border-radius: 3px;
+  color: white;
+  background-color: #ee9584
+}
+
+.signature .return-type, .signature .punctuation {
+  color: #999
+}
+
+#container {
+  display: flex;
+  flex-direction: row;
+}
+
+#content {
+  flex-grow: 1;
+}
+
+#sidebar {
+  padding-left: 0;
+  padding-right: 45px;
+  flex: 0 0 200px;
+  overflow: hidden;
+}
+
+#sidebar ul {
+  padding: 0;
+  list-style-type: none;
+}
+
+#sidebar .current {
+  font-weight: 500;
+}
+
+#sidebar .disabled {
+  color: #d3d4d5;
+}
+
+#sidebar .lang-switcher {
+  white-space: nowrap;
+}
+
+#index {
+  display: flex;
+  flex-direction: column;
+}
+
+#index .column {
+  flex: 1;
+}
+
+#index .column.guide ul {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+#index .column.guide ul li {
+  width: calc(100% / 3);
+  margin: 0;
+}
+
+#index .column.api {
+  display: flex;
+  flex-direction: row;
+}
+
+#index .column.api .column:first-child {
+  padding-right: 45px;
+}
+
+#index ul {
+  padding: 0;
+  list-style-type: none;
+}
+
+#index li h3 {
+  margin: 16px 0 8px 0;
+}

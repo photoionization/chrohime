@@ -16,7 +16,7 @@ methods:
     description: Append a new row.
     args:
       - name: row
-        type: std::vector<std::u16string>
+        type: vector<string>
 
   - name: RemoveRowAt
     description: Remove the row at `index`.

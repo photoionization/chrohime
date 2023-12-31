@@ -37,12 +37,8 @@ class CHROHIME_EXPORT Picker : public View {
  private:
   void OnChange();
 
-  // The actual implementation of GetSelectedItem returns the text from model,
-  // which is a copy instead of const reference. But GetSelectedItem is such a
-  // common operation in Picker that returning a string copy would make the API
-  // very hard to use, thus we cache the string and return const reference to
-  // make the API easier.
-  mutable std::u16string selected_item_;
+  // Cache the result so we can return const string reference in APIs.
+  mutable std::u16string cached_result_;
 
   scoped_refptr<ComboboxModel> model_;
 };

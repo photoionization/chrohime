@@ -1,60 +1,122 @@
-action("apis_json") {
-  inputs = [
-    # Basic structures, must come first as they have no forward declarations.
-    "api/colorid.yaml",
-    "api/point.yaml",
-    "api/pointf.yaml",
-    "api/rect.yaml",
-    "api/rectf.yaml",
-    "api/size.yaml",
-    "api/vector2d.yaml",
-    "api/vector2df.yaml",
-    "api/blendmode.yaml",
-    "api/clipop.yaml",
-    "api/paint_cap.yaml",
-    "api/paint_style.yaml",
-    "api/paint.yaml",
-    # Foundamental APIs.
-    "api/lifetime.yaml",
-    "api/state.yaml",
-    # Normal APIs.
-    "api/background.yaml",
-    "api/badge.yaml",
-    "api/border.yaml",
-    "api/button.yaml",
-    "api/checkbox.yaml",
-    "api/combobox.yaml",
-    "api/comboboxmodel.yaml",
-    "api/label.yaml",
-    "api/labelbutton.yaml",
-    "api/link.yaml",
-    "api/materialbutton_style.yaml",
-    "api/materialbutton.yaml",
-    "api/painter.yaml",
-    "api/path_arcsize.yaml",
-    "api/path_direction.yaml",
-    "api/path.yaml",
-    "api/picker.yaml",
-    "api/progressbar.yaml",
-    "api/object.yaml",
-    "api/radiobutton.yaml",
-    "api/scrollview.yaml",
-    "api/simplecomboboxmodel.yaml",
-    "api/simpletablemodel.yaml",
-    "api/slider.yaml",
-    "api/tabview.yaml",
-    "api/tablemodel.yaml",
-    "api/tableview_column.yaml",
-    "api/tableview.yaml",
-    "api/togglebutton.yaml",
-    "api/textarea.yaml",
-    "api/textfield_type.yaml",
-    "api/textfield.yaml",
-    "api/view.yaml",
-    "api/webview.yaml",
-    "api/window_options.yaml",
-    "api/window.yaml",
+import("//build/config/python.gni")
+import("//build/config/zip.gni")
+import("../chrohime.gni")
+
+docs_apis = [
+  # Basic structures, must come first as they have no forward declarations.
+  "api/color_id.yaml",
+  "api/point.yaml",
+  "api/pointf.yaml",
+  "api/rect.yaml",
+  "api/rectf.yaml",
+  "api/size.yaml",
+  "api/vector2d.yaml",
+  "api/vector2df.yaml",
+  "api/blend_mode.yaml",
+  "api/clip_op.yaml",
+  "api/paint_cap.yaml",
+  "api/paint_style.yaml",
+  "api/paint.yaml",
+  # Foundamental APIs.
+  "api/lifetime.yaml",
+  "api/state.yaml",
+  # Normal APIs.
+  "api/background.yaml",
+  "api/badge.yaml",
+  "api/border.yaml",
+  "api/button.yaml",
+  "api/checkbox.yaml",
+  "api/combobox.yaml",
+  "api/combobox_model.yaml",
+  "api/label.yaml",
+  "api/label_button.yaml",
+  "api/link.yaml",
+  "api/material_button_style.yaml",
+  "api/material_button.yaml",
+  "api/painter.yaml",
+  "api/path_arc_size.yaml",
+  "api/path_direction.yaml",
+  "api/path.yaml",
+  "api/picker.yaml",
+  "api/progress_bar.yaml",
+  "api/object.yaml",
+  "api/radio_button.yaml",
+  "api/scroll_view.yaml",
+  "api/simple_combobox_model.yaml",
+  "api/simple_table_model.yaml",
+  "api/slider.yaml",
+  "api/tab_view.yaml",
+  "api/table_model.yaml",
+  "api/table_view_column.yaml",
+  "api/table_view.yaml",
+  "api/toggle_button.yaml",
+  "api/textarea.yaml",
+  "api/textfield_type.yaml",
+  "api/textfield.yaml",
+  "api/view.yaml",
+  "api/web_view.yaml",
+  "api/window_options.yaml",
+  "api/window.yaml",
+]
+
+docs_guides = [
+  "guide/app-architecture.md",
+  "guide/object-types.md",
+  "guide/technical-visions.md",
+]
+
+action("chrohime_docs") {
+  inputs = docs_guides + [
+    "$root_out_dir/chrohime_apis.json",
+    "../third_party/node_modules/fs-extra.js",
+    "../third_party/node_modules/highlight.js",
+    "../third_party/node_modules/marked.js",
+    "../third_party/node_modules/pug.js",
+    "build_html.js",
+    "layout/api.pug",
+    "layout/guide.pug",
+    "layout/index.pug",
+    "layout/api.css",
+    "layout/guide.css",
+    "layout/highlight.css",
+    "layout/markdown.css",
+    "layout/style.css",
   ]
+
+  docs_dir = "$root_out_dir/chrohime_docs"
+  outputs = [
+    "$docs_dir/c/index.html",
+  ]
+  foreach(api, docs_apis) {
+    outputs += [ "$docs_dir/c/" + string_replace(api, "yaml", "html") ]
+  }
+  foreach(guide, docs_guides) {
+    outputs += [ "$docs_dir/c/" + string_replace(guide, "md", "html") ]
+  }
+
+  script = "build_html.py"
+  args = [
+    "--apis-json", rebase_path("$root_out_dir/chrohime_apis.json", root_build_dir),
+    "--version", chrohime_version,
+    "--api-template", rebase_path("layout/api.pug", root_build_dir),
+    "--guide-template", rebase_path("layout/guide.pug", root_build_dir),
+    "--index-template", rebase_path("layout/index.pug", root_build_dir),
+    "--output-dir", rebase_path(docs_dir, root_build_dir),
+  ] + rebase_path(docs_guides, root_build_dir)
+
+  deps = [ ":chrohime_apis_json" ]
+}
+
+zip("chrohime_docs_zip") {
+  output = "$root_out_dir/chrohime_docs-$chrohime_version.zip"
+  inputs = get_target_outputs(":chrohime_docs")
+  base_dir = "$root_out_dir/chrohime_docs"
+
+  deps = [ ":chrohime_docs" ]
+}
+
+action_with_pydeps("chrohime_apis_json") {
+  inputs = docs_apis
   outputs = [
     "$root_out_dir/chrohime_apis.json",
     "$root_out_dir/chrohime_apis_barebone.json",
@@ -62,4 +124,11 @@ action("apis_json") {
 
   script = "parse_apis.py"
   args = rebase_path(inputs) + [ "--output-dir", rebase_path(root_out_dir) ]
+}
+
+zip("chrohime_apis_json_zip") {
+  output = "$root_out_dir/chrohime_apis_json-$chrohime_version.zip"
+  inputs = [ "$root_out_dir/chrohime_apis.json" ]
+
+  deps = [ ":chrohime_apis_json" ]
 }

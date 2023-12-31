@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import copy
 import json
 import os
 import re
@@ -11,30 +12,34 @@ def write_c_header_file(file, apis, public_header=False):
                '#if defined(CHROHIME_C_IMPLEMENTATION)\n')
     # Write the typedefs for actual C++ implementations.
     for api in apis:
-      if api['type'] in [ 'refcounted', 'class' ]:
+      if api['type']['type'] in [ 'refcounted', 'class' ]:
         if is_content_api(api):
           file.write('#if defined(CHROHIME_WITH_CONTENT)\n')
-        file.write(f'typedef {get_cpp_type_name(api)}* {get_c_type_name(api)};\n')
+        file.write(f'typedef {api["type"]["cpp"]}* {api["type"]["c"]};\n')
         if is_content_api(api):
           file.write('#endif\n')
     file.write('#else\n')
   # Write fake typedefs for library users.
   file.write('// Declarations for opaque pointers.\n')
   for api in apis:
-    if api['type'] in [ 'refcounted', 'class' ]:
-      api_name = get_c_name(api)
-      file.write(f'typedef struct hime_{api_name}_tag* {get_c_type_name(api)};\n')
+    if api['type']['type'] in [ 'refcounted', 'class' ]:
+      file.write(f'typedef struct priv_{api["type"]["c"]}* {api["type"]["c"]};\n')
   if not public_header:
     file.write('#endif\n')
   file.write('\n')
   for api in apis:
-    if api['type'] in [ 'enum', 'enum class' ]:
-      file.write(get_enum_declaration(api, public_header=public_header))
+    if api['type']['type'] in [ 'enum', 'enum class' ]:
+      file.write('typedef enum {\n')
+      for enum in api['enums']:
+        if public_header and 'description' in enum:
+          file.write(prefix_each_line(get_comment(enum), '  '))
+        file.write(f'  {enum["c"]},\n')
+      file.write(f'}} {api["type"]["c"]};\n\n')
   file.write('#if defined(__cplusplus)\n'
              'extern "C" {\n'
              '#endif\n\n')
   for api in apis:
-    write_c_impls(file, apis, api, write_impl=False, public_header=public_header)
+    write_c_impls(file, api, write_impl=False, public_header=public_header)
   file.write('#if defined(__cplusplus)\n'
              '}\n'
              '#endif\n')
@@ -44,8 +49,8 @@ def write_c_impl_file(file, apis):
   # Write converters between structures.
   file.write('namespace {\n\n')
   for api in apis:
-    if api['type'] in [ 'struct', 'geometry', 'enum', 'enum class' ]:
-      write_converters(file, apis, api)
+    if api['type']['type'] in [ 'struct', 'geometry', 'enum', 'enum class' ]:
+      write_converters(file, api)
   # Write a helper for converting c struct array to vectors.
   file.write('template<typename T, typename F>\n'
              'std::vector<T> ToHimeVector(F* from, size_t from_size) {\n'
@@ -58,194 +63,170 @@ def write_c_impl_file(file, apis):
   file.write('}  // namespace\n\n')
   # Write the implementations of APIs.
   for api in apis:
-    write_c_impls(file, apis, api, write_impl=True)
+    write_c_impls(file, api, write_impl=True)
 
-def write_converters(file, apis, api):
-  api_type_name = get_c_type_name(api)
-  api_cpp_type = get_cpp_type_name(api)
-  if api['type'] == 'struct':
+def write_converters(file, api):
+  if api['type']['type'] == 'struct':
     set_properties = []
     for prop in api['properties']:
-      prop_name = get_c_name(prop)
-      prop_arg = get_c_arg(apis, prop, 'c->')
-      set_properties.append(f'cpp.{prop_name} = {prop_arg};\n')
+      prop_arg = get_c_arg(prop, 'c->')
+      set_properties.append(f'cpp.{prop["id"]} = {prop_arg};\n')
     write_function(file, api, True,
-                   f'{api_cpp_type} ToHime',
-                   [ f'{api_type_name}* c' ],
-                   f'if (c->struct_size != sizeof({api_type_name})) {{\n'
-                   f'  LOG(FATAL) << "Struct size does not match.";\n'
-                   f'}}\n'
-                   f'{api_cpp_type} cpp;\n' + ''.join(set_properties) + \
+                   f'{api["type"]["cpp"]} ToHime',
+                   [ f'{api["type"]["c"]}* c' ],
+                   # TODO(zcbenz): Make use of struct_size to implement ABI
+                   # compatibility with old versions.
+                   f'CHECK_EQ(c->struct_size, sizeof({api["type"]["c"]}))\n'
+                   f'    << "Struct size does not match.";\n'
+                   f'{api["type"]["cpp"]} cpp;\n' + ''.join(set_properties) + \
                    f'return cpp;')
-  elif api['type'] == 'geometry':
+  elif api['type']['type'] == 'geometry':
     # Write a converter from c to cpp.
-    args = [ f'c.{get_c_name(prop)}' for prop in api['properties'] ]
+    args = [ f'c.{prop["id"]}' for prop in api['properties'] ]
     write_function(file, api, True,
-                   f'inline {api_cpp_type} ToHime',
-                   [ f'{api_type_name} c' ],
-                   f'return {api_cpp_type}({params_join(args)});')
+                   f'inline {api["type"]["cpp"]} ToHime',
+                   [ f'{api["type"]["c"]} c' ],
+                   f'return {api["type"]["cpp"]}({params_join(args)});')
     # Write a converter from c to absl::optional.
     write_function(file, api, True,
-                   f'inline absl::optional<{api_cpp_type}> ToHime',
-                   [ f'{api_type_name}* ptr' ],
+                   f'inline absl::optional<{api["type"]["cpp"]}> ToHime',
+                   [ f'{api["type"]["c"]}* ptr' ],
                    f'if (!ptr)\n'
-                   f'  return absl::optional<{api_cpp_type}>();\n'
+                   f'  return absl::optional<{api["type"]["cpp"]}>();\n'
                    f'return ToHime(*ptr);')
     # Write a converter from cpp to c.
-    set_properties = [ 'c.{0} = cpp.{0}();\n'.format(get_c_name(prop)) for prop in api['properties'] ]
+    set_properties = [ 'c.{0} = cpp.{0}();\n'.format(prop['id']) for prop in api['properties'] ]
     write_function(file, api, True,
-                   f'inline {api_type_name} FromHime',
-                   [ f'const {api_cpp_type}& cpp' ],
-                   f'{api_type_name} c;\n' + ''.join(set_properties) + \
+                   f'inline {api["type"]["c"]} FromHime',
+                   [ f'const {api["type"]["cpp"]}& cpp' ],
+                   f'{api["type"]["c"]} c;\n' + ''.join(set_properties) + \
                    f'return c;')
-  elif api['type'] in [ 'enum', 'enum class' ]:
+  elif api['type']['type'] in [ 'enum', 'enum class' ]:
     # Write a converter from c to cpp.
     return_enum_classes = [
-        f'  case {get_enum_name(api, enum)}:\n'
-        f'    return {get_cpp_enum_name(api, enum["name"])};\n' for enum in api['enums'] ]
+        f'  case {enum["c"]}:\n'
+        f'    return {enum["cpp"]};\n' for enum in api['enums'] ]
     write_function(file, api, True,
-                   f'inline {api_cpp_type} ToHime',
-                   [ f'{api_type_name} c' ],
+                   f'inline {api["type"]["cpp"]} ToHime',
+                   [ f'{api["type"]["c"]} c' ],
                    f'switch (c) {{\n' + ''.join(return_enum_classes) + \
                    f'}}\n')
     # Write a converter from cpp to c.
     return_enums = [
-        f'  case {get_cpp_enum_name(api, enum["name"])}:\n'
-        f'    return {get_enum_name(api, enum)};\n' for enum in api['enums'] ]
+        f'  case {enum["cpp"]}:\n'
+        f'    return {enum["c"]};\n' for enum in api['enums'] ]
     write_function(file, api, True,
-                   f'inline {api_type_name} FromHime',
-                   [ f'{api_cpp_type} cpp' ],
+                   f'inline {api["type"]["c"]} FromHime',
+                   [ f'{api["type"]["cpp"]} cpp' ],
                    'switch (cpp) {\n' + ''.join(return_enums) + \
-                   f'  default: return static_cast<{api_type_name}>(0);\n'
+                   f'  default: return static_cast<{api["type"]["c"]}>(0);\n'
                    '}\n')
 
-def write_c_impls(file, apis, api, write_impl, public_header=False):
-  if api['type'] in [ 'struct', 'geometry' ]:
-    write_struct_impl(file, apis, api, write_impl, public_header)
-  elif api['type'] in [ 'refcounted', 'class' ]:
+def write_c_impls(file, api, write_impl, public_header=False):
+  if api['type']['type'] in [ 'struct', 'geometry' ]:
+    write_struct_impl(file, api, write_impl, public_header)
+  elif api['type']['type'] in [ 'refcounted', 'class' ]:
     if is_content_api(api):
       file.write('#if defined(CHROHIME_WITH_CONTENT)\n\n')
-    write_class_impl(file, apis, api, write_impl, public_header)
+    write_class_impl(file, api, write_impl, public_header)
     if is_content_api(api):
       file.write('#endif  // defined(CHROHIME_WITH_CONTENT)\n\n')
 
-def write_struct_impl(file, apis, api, write_impl, public_header):
+def write_struct_impl(file, api, write_impl, public_header):
   if write_impl:
     return
-  api_name = get_c_name(api)
-  api_type_name = get_c_type_name(api)
   if public_header:
     file.write(get_comment(api))
   # Write the struct declaration.
   file.write(f'typedef struct {{\n')
-  if api['type'] == 'struct':
+  if api['type']['type'] == 'struct':
     file.write(f'  uint32_t struct_size;\n')
   for prop in api['properties']:
-    prop_type = get_c_parameter_type(apis, prop['type'])
-    prop_name = get_c_name(prop)
-    file.write(f'  {prop_type} {prop_name};\n')
-  file.write(f'}} {api_type_name};\n')
+    file.write(f'  {prop["type"]["c"]} {prop["id"]};\n')
+  file.write(f'}} {api["type"]["c"]};\n')
   # A define that sets the size member and init default values.
   set_properties = []
-  if api['type'] == 'struct':
-    set_properties.append(f'({api_name})->struct_size = sizeof({api_type_name})')
+  if api['type']['type'] == 'struct':
+    set_properties.append(f'({api["id"]})->struct_size = sizeof({api["type"]["c"]})')
   for prop in api['properties']:
-    prop_name = get_c_name(prop)
-    default_value = get_c_value(apis, prop['type'], prop['defaultValue'])
-    set_properties.append(f'({api_name})->{prop_name} = {default_value}')
-  file.write(f'#define hime_{api_name}_init({api_name}) \\\n')
+    set_properties.append(f'({api["id"]})->{prop["id"]} = {prop["cDefaultValue"]}')
+  file.write(f'#define {api["type"]["c"][:-1]}init({api["id"]}) \\\n')
   file.write(prefix_each_line('; \\\n'.join(set_properties), '  '))
   file.write('\n')
 
-def write_class_impl(file, apis, api, write_impl, public_header):
-  api_name = get_c_name(api)
-  api_prefix = f'hime_{api_name}'
-  api_type_name = f'{api_prefix}_t'
+def write_class_impl(file, api, write_impl, public_header):
   # Write class_create constructor methods.
   for constructor in api['constructors']:
     if public_header:
       file.write(get_comment(constructor))
-    constructor_args = params_join(get_c_args(apis, api, constructor))
-    constructor_call = f'new {get_cpp_type_name(api)}({constructor_args})'
-    if api['type'] == 'refcounted':
+    constructor_args = params_join(get_c_args(api, constructor))
+    constructor_call = f'new {api["type"]["cpp"]}({constructor_args})'
+    if api['type']['type'] == 'refcounted':
       # The refcounted types require putting into scoped_refptr first.
       constructor_call = f'base::AdoptRef({constructor_call}).release()'
     write_function(file, constructor, write_impl,
-                   f'{api_type_name} {api_prefix}_{get_c_name(constructor)}',
-                   get_c_params(apis, api, constructor),
+                   f'{api["type"]["c"]} {constructor["c"]}',
+                   get_c_params(api, constructor),
                    f'return {constructor_call};')
   # Write class_destroy methods.
-  if api['type'] == 'class' and len(api['constructors']) > 0:
+  if api['type']['type'] == 'class' and len(api['constructors']) > 0:
     write_function(file, {}, write_impl,
-                   f'void {api_prefix}_destroy',
-                   [ f'{api_type_name} {api_name}' ],
-                   f'delete {api_name};')
+                   f'void {api["type"]["c"][:-1]}destroy',
+                   [ f'{api["type"]["c"]} {api["id"]}' ],
+                   f'delete {api["id"]};')
   # Write class methods.
   for method in api['class_methods']:
     if public_header:
       file.write(get_comment(method))
-    return_type = get_c_return_type(apis, method['returnType'])
     write_function(file, method, write_impl,
-                   f'{return_type} {api_prefix}_{get_c_name(method)}',
-                   get_c_params(apis, api, method),
-                   f'return {get_cpp_type_name(api)}::{get_function_call(apis, api, method)};')
+                   f'{method["returnType"]["c"]} {method["c"]}',
+                   get_c_params(api, method),
+                   f'return {api["type"]["cpp"]}::{get_function_call(api, method)};')
   # Write normal methods.
   for method in api['methods']:
     if public_header:
       file.write(get_comment(method))
-    return_type = get_c_return_type(apis, method['returnType'])
-    method_name = get_c_name(method)
-    params = get_c_params(apis, api, method, include_this=True)
-    if method['returnType'] == 'std::u16string':
-      write_function(file, method, write_impl,
-                     f'size_t {api_prefix}_{method_name}_size',
-                     params,
-                     f'return {get_function_call(apis, api, method, include_this=True)}.size();')
-      write_function(file, method, write_impl,
-                     f'{return_type} {api_prefix}_{method_name}',
-                     params + [ 'char16_t* out', 'size_t size' ],
-                     f'{method["returnType"]} result = {get_function_call(apis, api, method, include_this=True)};\n'
-                     f'std::copy_n(result.begin(), std::min(result.size(), size), out);')
-    else:
-      write_function(file, method, write_impl,
-                     f'{return_type} {api_prefix}_{method_name}',
-                     params,
-                     get_method_impl(apis, api, method))
+    return_type = method['returnType']['c']
+    params = get_c_params(api, method)
+    if method['returnType']['name'] == 'string':
+      raise ValueError('Returning string copy in APIs has not been implemented')
+    write_function(file, method, write_impl,
+                   f'{return_type} {method["c"]}',
+                   params,
+                   get_method_impl(api, method))
   # Write events.
   for event in api['events']:
     if public_header:
       file.write(get_comment(event))
-    event_name = get_c_name(event)
-    event_api_prefix = f'{api_prefix}_{event_name}'
-    event_callback_type = f'{event_api_prefix}_callback'
+    event_callback_type = f'{event["c"]}_callback'
     if not write_impl:
       # Write definition of callback type.
-      event_parameters = get_c_params(apis, api, event) + [ 'void* data' ]
-      file.write(f'typedef {event["returnType"]} (*{event_callback_type})({params_join(event_parameters)});\n\n')
+      event_parameters = get_c_params(api, event) + [ 'void* data' ]
+      file.write(f'typedef {event["returnType"]["name"]} (*{event_callback_type})({params_join(event_parameters)});\n\n')
     callback_params = [
         f'{event_callback_type} callback',
-        f'scoped_refptr<DataHolder> holder' ] + get_c_params(apis, api, event)
-    callback_args = get_c_args(apis, api, event) + [ 'holder->data()' ]
-    impl = (f'return {api_name}->{event_name}.Connect(base::BindRepeating(\n'
+        f'scoped_refptr<DataHolder> holder' ] + get_c_params(api, event)
+    callback_args = get_c_args(api, event) + [ 'holder->data()' ]
+    impl = (f'return {api["id"]}->{event["cpp"]}.Connect(base::BindRepeating(\n'
             f'    []({params_join(callback_params)}) {{\n'
             f'        return callback({params_join(callback_args)});\n'
             f'    }}, callback, base::MakeRefCounted<DataHolder>(data, free)));\n')
     write_function(file, event, write_impl,
-                   f'int32_t {event_api_prefix}_connect_closure',
-                   [ f'{api_type_name} {api_name}',
+                   f'int32_t {event["c"]}_connect_closure',
+                   [ f'{api["type"]["c"]} {api["id"]}',
                      f'{event_callback_type} callback',
                      'void* data',
                      'hime_free_callback free' ],
                    impl);
     if not write_impl:
       # Write a event_connect define for simplifying API.
-      file.write(f'#define {event_api_prefix}_connect({api_name}, callback, data) \\\n'
-                 f'  {event_api_prefix}_connect_closure({api_name}, callback, data, NULL)\n\n')
+      file.write(f'#define {event["c"]}_connect({api["id"]}, callback, data) \\\n'
+                 f'  {event["c"]}_connect_closure({api["id"]}, callback, data, NULL)\n\n')
     write_function(file, event, write_impl,
-                   f'void {event_api_prefix}_disconnect',
-                   [ f'{api_type_name} {api_name}',
+                   f'void {event["c"]}_disconnect',
+                   [ f'{api["type"]["c"]} {api["id"]}',
                      'uint32_t signal_id' ],
-                   f'{api_name}->{event_name}.Disconnect(signal_id);');
+                   f'{api["id"]}->{event["cpp"]}.Disconnect(signal_id);');
 
 def write_function(file, data, write_impl, name, params, impl, export=True):
   defines = get_platform_defines(data)
@@ -273,176 +254,57 @@ def get_comment(data):
   comments = ['// ' + line if len(line) > 0 else '//' for line in lines]
   return '\n'.join(comments) + '\n'
 
-def get_api_from_type_name(apis, type_name):
-  try:
-    return next(api for api in apis if api['name'] == type_name)
-  except StopIteration:
-    return None
-
-def get_cpp_type_name(api):
-  if api['name'].startswith('gfx::'):
-    return api['name']
-  else:
-    return 'hime::' + api['name']
-
-def get_enum_name(api, enum):
-  if isinstance(api, dict):
-    api_name = api['name']
-  else:
-    api_name = api
-  if isinstance(enum, dict):
-    enum_name = enum['name']
-  else:
-    enum_name = enum
-  return 'kHime' + api_name.replace('::', '') + enum_name
-
-def get_cpp_enum_name(api, enum_name):
-  if api['name'] == 'ColorId':
-    return 'ui::kColor' + enum_name
-  return get_cpp_type_name(api) + '::k' + enum_name
-
-def get_enum_declaration(api, public_header=False):
-  result = 'typedef enum {\n'
-  for enum in api['enums']:
-    if public_header and 'description' in enum:
-      result += prefix_each_line(get_comment(enum), '  ')
-    result += f'  {get_enum_name(api, enum)},\n'
-  result += f'}} {get_c_type_name(api)};\n\n'
-  return result
-
-def get_function_call(apis, api, func, include_this=False):
-  call = f'{func["name"]}({params_join(get_c_args(apis, api, func))})'
-  if include_this:
+def get_function_call(api, func, first_arg_is_this=False):
+  if first_arg_is_this:
+    func = copy.copy(func)
+    func['parameters'] = func['parameters'][1:]
+  call = f'{func["name"]}({params_join(get_c_args(api, func))})'
+  if first_arg_is_this:
     call = f'self->{call}'
-  if get_type_of_type(apis, func['returnType']) in [ 'struct', 'geometry', 'enum', 'enum class' ]:
+  if func['returnType']['type'] in [ 'struct', 'geometry', 'enum', 'enum class' ]:
     call = f'FromHime({call})'
-  if func['returnType'] == 'const std::u16string&':
+  if func['returnType']['name'] == 'string ref':
     return f'{call}.c_str()'
   return call
 
-def get_method_impl(apis, api, method):
-  function_call = get_function_call(apis, api, method, include_this=True)
-  if method['returnType'] != 'void':
+def get_method_impl(api, method):
+  function_call = get_function_call(api, method, first_arg_is_this=True)
+  if method['returnType']['name'] != 'void':
     return f'return {function_call};'
   else:
     return f'{function_call};'
 
-def get_type_of_type(apis, type_name):
-  if type_name.startswith('std::vector<'):
-    type_name = type_name[12:-1]
-  elif type_name.startswith('absl::optional<'):
-    type_name = type_name[15:-1]
-  api = get_api_from_type_name(apis, type_name)
-  if api:
-    return api['type']
-  else:
-    return 'primitive'
-
-def get_c_name(data):
-  if isinstance(data, dict):
-    name = data['name']
-  else:
-    name = data
-  if name.startswith('gfx::'):
-    name = name[5:]
-  return convert_to_snake_case(name.replace('::', ''))
-
-def get_c_value(apis, api_name, value):
-  if api_name == 'bool':
-    return 'true' if value else 'false'
-  if api_name in [ 'std::u16string', 'const std::u16string&' ]:
-    return f'u"{value}"'
-  type_name = get_type_of_type(apis, api_name)
-  if type_name in [ 'enum', 'enum class' ]:
-    return get_enum_name(api_name, value)
-  return str(value)
-
-def get_c_params(apis, api, method, include_this=False):
+def get_c_params(api, method):
   parameters = []
-  if include_this:
-    parameters.append(f'{get_c_type_name(api)} self')
-  for arg in method['args']:
-    type_name = get_c_parameter_type(apis, arg['type'])
-    parameter_name = get_c_name(arg)
-    parameters.append(f'{type_name} {parameter_name}')
-    if arg['type'].startswith('std::vector<'):
-      parameters.append(f'size_t {parameter_name}_size')
+  for arg in method['parameters']:
+    parameters.append(f'{arg["type"]["c"]} {arg["id"]}')
   return parameters
 
-def get_c_arg(apis, arg, prefix=''):
-  arg_name = f'{prefix}{get_c_name(arg)}'
-  arg_type = get_type_of_type(apis, arg['type'])
-  if arg['type'].startswith('std::vector<'):
-    if arg_type == 'primitive':
-      # For primitives just convert to vector from arary.
-      return f'{arg["type"]}({arg_name}, {arg_name} + {arg_name}_size)'
-    else:
-      api = get_api_from_type_name(apis, arg['type'][12:-1])
-      return f'ToHimeVector<{get_cpp_type_name(api)}>({arg_name}, {arg_name}_size)'
-  elif arg_type in [ 'struct', 'geometry', 'enum', 'enum class' ]:
+def get_c_arg(arg, prefix=''):
+  arg_name = f'{prefix}{arg["id"]}'
+  if arg['type']['name'].startswith('vector<'):
+    return f'ToHimeVector<{arg["type"]["cpp"][12:-1]}>({arg_name}, {arg_name}_size)'
+  elif arg['type']['type'] in [ 'struct', 'geometry', 'enum', 'enum class' ]:
     return f'ToHime({arg_name})'
-  elif arg['type'] in [ 'GURL' ]:
-    return f'{arg["type"]}({arg_name})'
+  elif arg['type']['name'] in [ 'GURL' ]:
+    return f'{arg["type"]["cpp"]}({arg_name})'
   else:
     return arg_name
 
-def get_c_args(apis, api, data, include_this=False):
-  if include_this:
-    data_args = [ {'name': 'self', 'type': api['name']} ] + data['args']
-  else:
-    data_args = data['args']
-  return [ get_c_arg(apis, arg) for arg in data_args ]
-
-def get_c_type_name(data):
-  if isinstance(data, dict):
-    type_name = data['name']
-  else:
-    type_name = data
-  if type_name in [ 'std::u16string', 'std::u16string_view', 'GURL' ]:
-    return 'const char16_t*'
-  elif type_name[0].isupper() or type_name.startswith('gfx::'):
-    return f'hime_{get_c_name(type_name)}_t'
-  elif type_name.startswith('std::vector<'):
-    return get_c_type_name(type_name[12:-1]) + '*'
-  elif type_name.startswith('absl::optional<'):
-    return get_c_type_name(type_name[15:-1]) + '*'
-  else:
-    return type_name
-
-def get_c_return_type(apis, type_name):
-  if type_name == 'const std::u16string&':
-    return 'const char16_t*'
-  elif type_name == 'std::u16string':
-    return 'void'
-  else:
-    return get_c_type_name(type_name)
-
-def get_c_parameter_type(apis, type_name):
-  result = get_c_type_name(type_name)
-  if not type_name.startswith('std::vector<') and get_type_of_type(apis, type_name) == 'struct':
-    return result + '*'
-  else:
-    return result
+def get_c_args(api, data):
+  return [ get_c_arg(arg) for arg in data['parameters'] if arg['type']['type'] != 'size parameter']
 
 def get_platform_defines(data):
   defines = []
-  if 'platforms' in data:
-    platforms = data['platforms']
-    if 'win' in platforms:
+  if 'platform' in data:
+    platform = data['platform']
+    if 'win' in platform:
       defines += [ '_WIN32' ]
-    if 'mac' in platforms:
+    if 'mac' in platform:
       defines += [ '__APPLE__' ]
-    if 'linux' in platforms:
+    if 'linux' in platform:
       defines += [ '__linux__' ]
   return defines
-
-def convert_to_snake_case(string):
-  snake_case_string = ''
-  for index, char in enumerate(string):
-    if char.isupper() and index != 0:
-      snake_case_string += '_'
-    snake_case_string += char.lower()
-  return snake_case_string
 
 def prefix_each_line(string, prefix):
   lines = string.splitlines()
@@ -464,7 +326,7 @@ def main():
   args = parser.parse_args()
 
   with open(args.apis_json, 'r') as json_file:
-    data = json.load(json_file)
+    apis = json.load(json_file)
 
   if args.public_header:
     with open(os.path.join(args.output_dir, 'chrohime.h'), 'w') as file:
@@ -476,14 +338,14 @@ def main():
         file.write(inc.read())
       file.write('\n')
       # Start writing the API declarations.
-      write_c_header_file(file, data['apis'], public_header=True)
+      write_c_header_file(file, apis, public_header=True)
       file.write('\n#endif  // CHROHIME_H_\n')
   else:
     with open(os.path.join(args.output_dir, 'generated_impls.h'), 'w') as file:
-      write_c_header_file(file, data['apis'])
+      write_c_header_file(file, apis)
 
     with open(os.path.join(args.output_dir, 'generated_impls.cc'), 'w') as file:
-      write_c_impl_file(file, data['apis'])
+      write_c_impl_file(file, apis)
 
 if __name__ == '__main__':
   main()

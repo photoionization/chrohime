@@ -29,7 +29,7 @@ methods:
 
   - name: GetSelectedItem
     description: Return the text of selected item.
-    returnType: const std::u16string&
+    returnType: string ref
 
   - name: GetSelectedItemIndex
     description: |

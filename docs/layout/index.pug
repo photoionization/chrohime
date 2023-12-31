@@ -1,0 +1,43 @@
+extends page.pug
+
+//- Display a link with chosen state.
+mixin switch(text, href, chosen)
+  if chosen
+    span.current #{text}
+  else
+    a(href=href) #{text}
+
+mixin item(dir, node)
+  li
+    h3
+      a(href=`${dir}/${node.id}.html`) #{node.name}
+    if node.description
+      != ' ' + imarkdown(firstline(node.description))
+
+mixin items(filter)
+  ul
+    each api in apis
+      if filter.includes(api.type.type)
+        +item('api', api)
+
+block content
+  h1 Docs Index
+  #index
+    .column.guide
+      h2 Guides
+      ul
+        each guide in guides
+          +item('guide', guide)
+
+    .column.api
+      .column
+        h2 Components
+        +items([ 'class', 'refcounted' ])
+
+      .column
+        h2 Structures
+        +items([ 'geometry', 'struct', 'enum', 'enum class' ])
+
+block sidebar
+  h4 Version:
+  span.current #{version}

@@ -1,0 +1,218 @@
+extends page.pug
+
+//- Anchor link
+mixin anchor(id)
+  a.anchor(aria-hidden="true" href=`#${id}`)
+    <svg aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg>
+
+//- Title with permanent link.
+mixin title(level, id, str)
+  #{level}(id=id)
+    +anchor(id)
+    | #{str}
+
+//- Block description of a method or properties.
+mixin description(node)
+  if node.description
+    != markdown(node.description)
+  if node.detail
+    != markdown(node.detail)
+
+//- Display a type with possible goto link.
+mixin type(node)
+  if ![ 'primitive', 'size parameter' ].includes(node.type)
+    a.type(href=`${node.id}.html`) #{node[lang]}
+  else
+    span.type #{node[lang]}
+
+//- A list of parameter.
+mixin parameters(parameters)
+  ul
+    each param in parameters
+      li
+        +parameter(param)
+
+//- Inline description of parameter.
+mixin parameter(node)
+  code
+    +type(node.type)
+  |  
+  if lang == 'c'
+    span.code #{node.id}
+  else
+    span.code #{node.name}
+  if node.description
+    |  -
+    != ' ' + imarkdown(node.description)
+  if node.properties
+    ul
+      each property in node.properties
+        li
+          +parameter(property)
+
+//- The title with platform label.
+mixin signature_title(node)
+  h3.signature(id=node.id)
+    +anchor(node.id)
+    +signature(node)
+    if node.platform
+      each platform in node.platform
+        |  
+        span.platform #{platform}
+
+//- Compose signature text.
+mixin signature(node)
+  span.return-type #{node.returnType[lang]} 
+  span.method-name #{node[lang]}
+  span.punctuation (
+  each param, index in node.parameters
+    span.param-name #{param.id}
+    if index < node.parameters.length - 1
+      span.punctuation , 
+  span.punctuation )
+
+//- Display a method.
+mixin method(node)
+  +signature_title(node)
+  +description(node)
+  if node.parameters.length > 0
+    h4 Parameters
+    +parameters(node.parameters)
+  if node.returnType
+    h4 Return
+    code
+      +type(node.returnType)
+
+//- Display a link with chosen state.
+mixin switch(text, href, chosen, enabled)
+  if !enabled
+    span.disabled #{text}
+  else if chosen
+    span.current #{text}
+  else
+    a(href=href) #{text}
+
+//- Display TOC items.
+mixin toc_methods(methods)
+  ul
+    each node in methods
+      li
+        +switch(node.id, `${doc.id}.html#${node.id}`, false, true)
+
+mixin toc_properties(properties)
+  ul
+    each node in properties
+      li
+        +switch(node.name, `${doc.id}.html#${node.id}`, false, true)
+
+//- Main page starts from here.
+block content
+  h1 #{doc.name}
+  != markdown(doc.description)
+
+  table.code
+    tr
+      td Category
+      td
+        | #{doc.type.type}
+    tr
+      td Type
+      td
+        | #{doc.type[lang]}
+    if doc.inherit
+      tr
+        td Inherits
+        td
+          +type(doc.inherit)
+    if doc.platform
+      tr
+        td Platforms
+        td
+          each platform, i in doc.platform
+            | #{platform}
+            if i != doc.platform.length - 1
+              | , 
+
+  if doc.detail
+    != markdown(doc.detail)
+
+  if doc.enums && doc.enums.length > 0
+    p This type can have following values:
+    ul
+      each e in doc.enums
+        li
+          code #{e[lang]}
+          if e.description
+            |  - 
+            != imarkdown(e.description)
+
+  if doc.constructors && doc.constructors.length > 0
+    +title('h2', 'constructors', 'Constructors')
+    each node in doc.constructors
+      +method(node)
+
+  if doc.class_methods && doc.class_methods.length > 0
+    +title('h2', 'class-methods', 'Class methods')
+    each node in doc.class_methods
+      +method(node)
+
+  if doc.properties && doc.properties.length > 0
+    +title('h2', 'properties', 'Properties')
+    each node in doc.properties
+      h3(id=node.id)
+        +anchor(node.id)
+        code
+          +type(node.type)
+        |  #{node.name}
+        if node.optional
+          |  
+          span.optional (optional)
+        if node.platform
+          each platform in node.platform
+            |  
+            span.platform #{platform}
+      +description(node)
+
+  if doc.methods && doc.methods.length > 0
+    +title('h2', 'methods', 'Methods')
+    each node in doc.methods
+      +method(node)
+
+  if doc.events && doc.events.length > 0
+    +title('h2', 'events', 'Events')
+    each node in doc.events
+      +signature_title(node)
+      +description(node)
+      if node.parameters.length > 0
+        h4 Parameters
+        +parameters(node.parameters)
+      h4 Preventable
+      if node.returnType.name != 'void'
+        p Yes.
+      else
+        p No.
+
+//- The sidebar that lists all types.
+block sidebar
+  h4 Version:
+  span.current #{version}
+
+  if doc.constructors && doc.constructors.length > 0
+    h4 Constructors:
+    +toc_methods(doc.constructors)
+
+  if doc.class_methods && doc.class_methods.length > 0
+    h4 Class methods:
+    +toc_methods(doc.class_methods)
+
+  if doc.properties && doc.properties.length > 0
+    h4 Properties:
+    +toc_properties(doc.properties)
+
+  if doc.methods && doc.methods.length > 0
+    h4 Methods:
+    +toc_methods(doc.methods)
+
+  if doc.events && doc.events.length > 0
+    h4 Events:
+    +toc_methods(doc.events)

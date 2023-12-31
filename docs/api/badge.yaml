@@ -12,4 +12,4 @@ methods:
     description: Set the text to display.
     args:
       - name: text
-        type: std::u16string
+        type: string

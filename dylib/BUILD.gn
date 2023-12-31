@@ -5,13 +5,9 @@ if (is_linux) {
   import("//build/linux/strip_binary.gni")
   import("//ui/qt/qt.gni")
 }
-import("zip.gni")
 
-declare_args() {
-  # The version of chrohime library.
-  # In the official distribution, it is set via gn args in GitHub Actions.
-  chrohime_version = "v0.0.0"
-}
+import("../chrohime.gni")
+import("zip.gni")
 
 # Define how a chrohime dylib is built.
 template("chrohime_shared_library") {
@@ -78,7 +74,7 @@ config("chrohime_with_content_dylib_config") {
 
 # Generate a public header to be shipped.
 action("chrohime_public_c_header") {
-  deps = [ "//chrohime/docs:apis_json" ]
+  deps = [ "//chrohime/docs:chrohime_apis_json" ]
   inputs = [ "$root_out_dir/chrohime_apis.json" ]
   outputs = [ "$root_out_dir/chrohime.h" ]
   script = "generate_c_impls.py"
@@ -89,7 +85,7 @@ action("chrohime_public_c_header") {
 
 # Generate implementations of C APIs.
 action("chrohime_generate_c_impls") {
-  deps = [ "//chrohime/docs:apis_json" ]
+  deps = [ "//chrohime/docs:chrohime_apis_json" ]
   inputs = [ "$root_out_dir/chrohime_apis_barebone.json" ]
   outputs = [
     "$target_gen_dir/generated_impls.cc",

@@ -17,11 +17,11 @@ methods:
     description: Set the text shown on the button.
     args:
       - name: title
-        type: std::u16string
+        type: string
 
   - name: GetTitle
     description: Get the text shown on the button.
-    returnType: const std::u16string&
+    returnType: string ref
 
   - name: MakeDefault
     description: |

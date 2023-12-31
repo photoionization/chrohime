@@ -57,11 +57,11 @@ methods:
     description: Set window title.
     args:
       - name: title
-        type: std::u16string
+        type: string
 
   - name: GetTitle
     description: Return window title.
-    returnType: const std::u16string&
+    returnType: string ref
 
 events:
   - name: onClose

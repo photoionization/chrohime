@@ -17,7 +17,7 @@ methods:
     description: Set the columns of the table.
     args:
       - name: columns
-        type: std::vector<TableView::Column>
+        type: vector<TableView::Column>
 
   - name: SetModel
     description: Set the table model used for displaying.

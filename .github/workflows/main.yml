@@ -89,7 +89,11 @@ jobs:
           DISPLAY: ':99.0'
         run: python3 scripts/test_dist.py
 
-      - name: Upload Shared Libraries
+      - name: Build Documentations
+        if: matrix.targetOs == 'linux' && matrix.targetCpu == 'x64'
+        run: python3 scripts/build.py --config ${{ matrix.config }} chrohime_docs_zip chrohime_apis_json_zip
+
+      - name: Upload Zip Distributions
         uses: actions/upload-artifact@v3
         with:
           path: chromium/out/${{ matrix.config }}/*.zip

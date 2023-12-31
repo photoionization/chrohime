@@ -1,0 +1,31 @@
+doctype html
+html
+  head
+    title #{doc.name} - Chrohime
+    meta(charset="utf-8")
+    style
+      include:css-minimize style.css
+      include:css-minimize markdown.css
+      include:css-minimize highlight.css
+      if page == 'api' || page == 'index'
+        include:css-minimize api.css
+      else if page == 'guide'
+        include:css-minimize guide.css
+  body
+    #header
+      if page == 'api' || page == 'guide'
+        - var docslink = "../index.html"
+      else
+        - var docslink = "index.html"
+      a.logo(href=`${docslink}`) Chrohime
+      .nav
+        a(href=`${docslink}`) Docs
+        a(href="/") Versions
+        a(href="https://github.com/photoionization/chrohime") GitHub
+    #container
+      #content.markdown-body
+        block content
+      #sidebar.markdown-body
+        block sidebar
+    #footer
+      p Content of this page is in public domain.

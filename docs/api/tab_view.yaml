@@ -12,7 +12,7 @@ methods:
     description: Add `view` as a new page with `title`.
     args:
       - name: title
-        type: std::u16string
+        type: string
       - name: view
         type: View
 
@@ -20,7 +20,7 @@ methods:
     description: Add `view` as a new page with `title` at `index`.
     args:
       - name: title
-        type: std::u16string
+        type: string
       - name: view
         type: View
       - name: index

@@ -5,20 +5,6 @@
 #include "chrohime/chrohime.h"
 #include "chrohime/dylib/chrohime_c_impl.inc"
 
-// Chrohime aliases for skia types.
-namespace hime {
-using Color = SkColor;
-using ClipOp = SkClipOp;
-using BlendMode = SkBlendMode;
-}
-
-// Support using rectf_t instead of rect_f_t as type name in C APIs.
-namespace gfx {
-using Pointf = PointF;
-using Rectf = RectF;
-using Vector2df = Vector2dF;
-}
-
 namespace {
 
 // A helper used by xx_on_event_connect implementations.
@@ -41,6 +27,11 @@ class DataHolder : public base::RefCounted<DataHolder> {
   raw_ptr<void> data_;
   hime_free_callback free_;
 };
+
+// Make ToHimeVector happen to work with string array.
+inline std::u16string ToHime(const char16_t** str) {
+  return std::u16string(*str);
+}
 
 }  // namespace
 

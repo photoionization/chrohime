@@ -1,3 +1,8 @@
+---
+priority: 10
+description: Walkthrough of object lifetime management.
+---
+
 # Object types
 
 There are mainly 4 types of objects in Chrohime, the design was made with
