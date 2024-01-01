@@ -4,12 +4,26 @@
 
 #include "chrohime/api/radio_button.h"
 
+#include "chrohime/api/view_event_dispatcher.h"
 #include "ui/views/controls/button/radio_button.h"
 
 namespace hime {
 
+namespace {
+
+class RadioButtonImpl : public ViewEventDispatcher<hime::RadioButton,
+                                                   views::RadioButton> {
+ public:
+  RadioButtonImpl(hime::RadioButton* delegate,
+                  const std::u16string& title,
+                  int group_id)
+      : ViewEventDispatcher(delegate, title, group_id) {}
+};
+
+}  // namespace
+
 RadioButton::RadioButton(const std::u16string& title, int group_id)
-    : Checkbox(std::make_unique<views::RadioButton>(title, group_id)) {}
+    : Checkbox(std::make_unique<RadioButtonImpl>(this, title, group_id)) {}
 
 RadioButton::~RadioButton() = default;
 

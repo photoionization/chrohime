@@ -4,12 +4,24 @@
 
 #include "chrohime/api/label_button.h"
 
+#include "chrohime/api/view_event_dispatcher.h"
 #include "ui/views/controls/button/label_button.h"
 
 namespace hime {
 
+namespace {
+
+class LabelButtonImpl : public ViewEventDispatcher<hime::LabelButton,
+                                                   views::LabelButton> {
+ public:
+  explicit LabelButtonImpl(hime::LabelButton* delegate)
+      : ViewEventDispatcher(delegate) {}
+};
+
+}  // namespace
+
 LabelButton::LabelButton()
-    : LabelButton(std::make_unique<views::LabelButton>()) {}
+    : LabelButton(std::make_unique<LabelButtonImpl>(this)) {}
 
 LabelButton::LabelButton(std::unique_ptr<views::LabelButton> to_take)
     : Button(std::move(to_take)) {}

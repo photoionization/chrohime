@@ -5,13 +5,25 @@
 #include "chrohime/api/web_view.h"
 
 #include "chrohime/api/state.h"
+#include "chrohime/api/view_event_dispatcher.h"
 #include "ui/views/controls/webview/webview.h"
 
 namespace hime {
 
+namespace {
+
+class WebViewImpl : public ViewOnPaintDispatcher<hime::WebView,
+                                                 views::WebView> {
+ public:
+  WebViewImpl(hime::WebView* delegate, content::BrowserContext* browser_context)
+      : ViewOnPaintDispatcher(delegate, browser_context) {}
+};
+
+}  // namespace
+
 WebView::WebView()
-    : View(std::make_unique<views::WebView>(
-               State::GetCurrent()->GetBrowserContext()),
+    : View(std::make_unique<WebViewImpl>(
+               this, State::GetCurrent()->GetBrowserContext()),
            LayoutType::kLeaf) {
   GetView()->GetWebContents()->SetDelegate(this);
 }

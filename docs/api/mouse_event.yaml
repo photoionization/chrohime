@@ -1,0 +1,16 @@
+name: MouseEvent
+type: class
+inherit: LocatedEvent
+description: Mouse event.
+
+methods:
+  - name: GetClickCount
+    description: |
+      Get the click count.
+
+      Can be 1, 2 or 3 for mousedown messages, 0 otherwise.
+    returnType: int
+
+  - name: GetMovement
+    description: Get the movement since last event.
+    returnType: gfx::Vector2df

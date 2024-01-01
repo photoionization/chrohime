@@ -11,9 +11,9 @@ namespace hime {
 
 namespace {
 
-class LinkImpl : public ViewEventDispatcher<hime::Link, views::Link> {
+class LinkImpl : public ViewOnPaintDispatcher<hime::Link, views::Link> {
  public:
-  explicit LinkImpl(hime::Link* delegate) : ViewEventDispatcher(delegate) {}
+  explicit LinkImpl(hime::Link* delegate) : ViewOnPaintDispatcher(delegate) {}
 };
 
 }  // namespace

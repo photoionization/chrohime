@@ -4,12 +4,24 @@
 
 #include "chrohime/api/tab_view.h"
 
+#include "chrohime/api/view_event_dispatcher.h"
 #include "ui/views/controls/tabbed_pane/tabbed_pane.h"
 
 namespace hime {
 
+namespace {
+
+class TabViewImpl : public ViewOnPaintDispatcher<hime::TabView,
+                                                 views::TabbedPane> {
+ public:
+  explicit TabViewImpl(hime::TabView* delegate)
+      : ViewOnPaintDispatcher(delegate) {}
+};
+
+}  // namespace
+
 TabView::TabView()
-    : View(std::make_unique<views::TabbedPane>(), LayoutType::kLeaf) {}
+    : View(std::make_unique<TabViewImpl>(this), LayoutType::kLeaf) {}
 
 TabView::~TabView() = default;
 

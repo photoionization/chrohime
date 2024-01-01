@@ -33,7 +33,10 @@ def write_c_header_file(file, apis, public_header=False):
       for enum in api['enums']:
         if public_header and 'description' in enum:
           file.write(prefix_each_line(get_comment(enum), '  '))
-        file.write(f'  {enum["c"]},\n')
+        file.write(f'  {enum["c"]}')
+        if 'value' in enum:
+          file.write(f' = {enum["value"]}')
+        file.write(',\n')
       file.write(f'}} {api["type"]["c"]};\n\n')
   file.write('#if defined(__cplusplus)\n'
              'extern "C" {\n'
@@ -149,7 +152,7 @@ def write_struct_impl(file, api, write_impl, public_header):
   if api['type']['type'] == 'struct':
     set_properties.append(f'({api["id"]})->struct_size = sizeof({api["type"]["c"]})')
   for prop in api['properties']:
-    set_properties.append(f'({api["id"]})->{prop["id"]} = {prop["cDefaultValue"]}')
+    set_properties.append(f'({api["id"]})->{prop["id"]} = {prop["defaultValue"]["c"]}')
   file.write(f'#define {api["type"]["c"][:-1]}init({api["id"]}) \\\n')
   file.write(prefix_each_line('; \\\n'.join(set_properties), '  '))
   file.write('\n')

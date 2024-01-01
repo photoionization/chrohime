@@ -24,6 +24,7 @@ component("chrohime_base") {
     "api/combobox_model.cc",
     "api/combobox_model.h",
     "api/color_id.h",
+    "api/event.h",
     "api/label.cc",
     "api/label.h",
     "api/label_button.cc",
@@ -89,6 +90,7 @@ component("chrohime_base") {
   public_deps = [
     "//base",
     "//ui/base",
+    "//ui/events",
   ]
 }
 

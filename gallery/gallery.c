@@ -239,10 +239,10 @@ void CreateRadioButtonExample(hime_view_t view) {
   hime_view_set_style(view, u"justify-content", u"center");
   hime_view_set_style_number(view, u"gap", PADDING);
   for (int i = 0; i < 3; ++i ) {
-    char16_t title[] = u"Checkbox ?";
-    title[9] = u'1' + i;
-    hime_radio_button_t radio =
-        hime_radio_button_create_with_title_and_group(title, 1);
+    char16_t title[] = u"Radio ?";
+    title[6] = u'1' + i;
+    hime_radio_button_t radio = hime_radio_button_create();
+    hime_label_button_set_title((hime_label_button_t)radio, title);
     if (i == 0)
       hime_checkbox_set_checked((hime_checkbox_t)radio, true);
     hime_view_add_child_view(view, (hime_view_t)radio);

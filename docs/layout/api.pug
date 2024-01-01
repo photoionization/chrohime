@@ -103,12 +103,11 @@ mixin toc_properties(properties)
   ul
     each node in properties
       li
-        +switch(node.name, `${doc.id}.html#${node.id}`, false, true)
+        +switch(node.id, `${doc.id}.html#${node.id}`, false, true)
 
 //- Main page starts from here.
 block content
   h1 #{doc.name}
-  != markdown(doc.description)
 
   table.code
     tr
@@ -133,8 +132,7 @@ block content
             if i != doc.platform.length - 1
               | , 
 
-  if doc.detail
-    != markdown(doc.detail)
+  != markdown(doc.description)
 
   if doc.enums && doc.enums.length > 0
     p This type can have following values:
@@ -163,7 +161,7 @@ block content
         +anchor(node.id)
         code
           +type(node.type)
-        |  #{node.name}
+        |  #{node.id}
         if node.optional
           |  
           span.optional (optional)
@@ -172,6 +170,9 @@ block content
             |  
             span.platform #{platform}
       +description(node)
+      p Default value is 
+        code #{node.defaultValue[lang]}
+        | .
 
   if doc.methods && doc.methods.length > 0
     +title('h2', 'methods', 'Methods')

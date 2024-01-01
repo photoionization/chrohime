@@ -5,13 +5,25 @@
 #include "chrohime/api/scroll_view.h"
 
 #include "chrohime/api/table_view.h"
+#include "chrohime/api/view_event_dispatcher.h"
 #include "ui/views/controls/scroll_view.h"
 #include "ui/views/controls/table/table_view.h"
 
 namespace hime {
 
+namespace {
+
+class ScrollViewImpl : public ViewOnPaintDispatcher<hime::ScrollView,
+                                                    views::ScrollView> {
+ public:
+  explicit ScrollViewImpl(hime::ScrollView* delegate)
+      : ViewOnPaintDispatcher(delegate) {}
+};
+
+}  // namespace
+
 ScrollView::ScrollView()
-    : ScrollView(std::make_unique<views::ScrollView>()) {}
+    : ScrollView(std::make_unique<ScrollViewImpl>(this)) {}
 
 ScrollView::ScrollView(scoped_refptr<TableView> table)
     : ScrollView(views::TableView::CreateScrollViewWithTable(

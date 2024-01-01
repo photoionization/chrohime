@@ -4,12 +4,24 @@
 
 #include "chrohime/api/toggle_button.h"
 
+#include "chrohime/api/view_event_dispatcher.h"
 #include "ui/views/controls/button/toggle_button.h"
 
 namespace hime {
 
+namespace {
+
+class ToggleButtonImpl : public ViewEventDispatcher<hime::ToggleButton,
+                                                    views::ToggleButton> {
+ public:
+  explicit ToggleButtonImpl(hime::ToggleButton* delegate)
+      : ViewEventDispatcher(delegate) {}
+};
+
+}  // namespace
+
 ToggleButton::ToggleButton()
-    : Button(std::make_unique<views::ToggleButton>()) {}
+    : Button(std::make_unique<ToggleButtonImpl>(this)) {}
 
 ToggleButton::~ToggleButton() = default;
 

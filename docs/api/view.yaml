@@ -171,3 +171,48 @@ events:
       - name: painter
         type: Painter
     returnType: bool
+
+  - name: onMouseDown
+    description: Emitted when pressing mouse buttons.
+    args:
+      - name: view
+        type: View
+      - name: event
+        type: MouseEvent
+    returnType: bool
+
+  - name: onMouseUp
+    description: Emitted when releasing mouse buttons.
+    args:
+      - name: view
+        type: View
+      - name: event
+        type: MouseEvent
+    returnType: bool
+
+  - name: onMouseMove
+    description: Emitted when user moves mouse in the view.
+    args:
+      - name: view
+        type: View
+      - name: event
+        type: MouseEvent
+    returnType: bool
+
+  - name: onMouseEnter
+    description: Emitted when mouse enters the view.
+    args:
+      - name: view
+        type: View
+      - name: event
+        type: MouseEvent
+    returnType: bool
+
+  - name: onMouseLeave
+    description: Emitted when mouse leaves the view.
+    args:
+      - name: view
+        type: View
+      - name: event
+        type: MouseEvent
+    returnType: bool

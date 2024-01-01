@@ -30,6 +30,8 @@ def parse_apis(apis):
           'cpp': converter.get_cpp_enum_name(api, e),
         })
         copy_common_keys(converter, enums[-1], e)
+        if 'value' in e:
+          enums[-1]['value'] = e['value']
       api['enums'] = enums
 
     elif raw['type'] in [ 'geometry', 'struct' ]:
@@ -86,8 +88,10 @@ def parse_properties(converter, props):
     c_types = converter.get_c_parameter_types(p['type'])
     properties.append({
       'type': get_type_info(converter, p['type'], c_types[0]),
-      'defaultValue': p['defaultValue'],
-      'cDefaultValue': converter.get_c_value(p['type'], p['defaultValue']),
+      'defaultValue': {
+        'name': p['defaultValue'],
+        'c': converter.get_c_value(p['type'], p['defaultValue']),
+      },
     })
     copy_common_keys(converter, properties[-1], p)
     if len(c_types) > 1:

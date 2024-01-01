@@ -4,12 +4,24 @@
 
 #include "chrohime/api/material_button.h"
 
+#include "chrohime/api/view_event_dispatcher.h"
 #include "ui/views/controls/button/md_text_button.h"
 
 namespace hime {
 
+namespace {
+
+class MaterialButtonImpl : public ViewEventDispatcher<hime::MaterialButton,
+                                                      views::MdTextButton> {
+ public:
+  explicit MaterialButtonImpl(hime::MaterialButton* delegate)
+      : ViewEventDispatcher(delegate) {}
+};
+
+}  // namespace
+
 MaterialButton::MaterialButton()
-    : LabelButton(std::make_unique<views::MdTextButton>()) {}
+    : LabelButton(std::make_unique<MaterialButtonImpl>(this)) {}
 
 MaterialButton::~MaterialButton() = default;
 

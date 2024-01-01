@@ -1,0 +1,70 @@
+name: Event
+type: class
+description: Generic input event type.
+
+methods:
+  - name: GetFlags
+    description: Return bit fields of `Event::Flag`s.
+    returnType: int
+
+  - name: GetType
+    description: Return the event type.
+    returnType: Event::Type
+
+  - name: IsCancelable
+    description: |
+      Return whether this event can be cancelled.
+
+      By default, events are "cancelable", this means any default processing that
+      the containing abstraction layer may perform can be prevented by calling
+      `SetHandled()`. `SetHandled()` or `StopPropagation()` must not be called
+      for events that are not cancelable.
+    returnType: bool
+
+  - name: SetHandled
+    description: |
+       Mark the event as having been handled.
+
+       A handled event does not reach the next event phase. For example, if an
+       event is handled during the pre-target phase, then the event is
+       dispatched to all pre-target handlers, but not to the target or
+       post-target handlers.
+
+       Note that `SetHandled()` can be called only for cancelable events.
+
+  - name: IsHandled
+    description: Return whether the event has been handled.
+    returnType: bool
+
+  - name: StopPropagation
+    description: |
+      Immediately stop the propagation of the event.
+
+      This must be called only from an EventHandler during an event-dispatch.
+      Any event handler that may be in the list will not receive the event after
+      this is called.
+
+      Note that `StopPropagation()` can be called only for cancelable events.
+
+  - name: IsConsumed
+    description: Return whether StopPropagation has been called.
+    returnType: bool
+
+  - name: SetSkipped
+    description: |
+      Mark the event as skipped.
+
+      This immediately stops the propagation of the event like
+      `StopPropagation()` but sets an extra bit so that the dispatcher of the
+      event can use this extra information to decide to handle the event
+      themselves.
+
+      For example in the case of ash-chrome - lacros-chrome interaction in
+      ChromeOS, lacros-chrome can mark the event as 'skipped' to stop the
+      propagation, but also notifies ash-chroem that the event was not handled
+      in lacros.
+
+      Note that `IsHandled()` will still return true to stop the event from
+      being passed to the next phase.
+
+      Note that `SetSkipped()` can be called only for cancelable events.

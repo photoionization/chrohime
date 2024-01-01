@@ -14,12 +14,6 @@ mixin item(dir, node)
     if node.description
       != ' ' + imarkdown(firstline(node.description))
 
-mixin items(filter)
-  ul
-    each api in apis
-      if filter.includes(api.type.type)
-        +item('api', api)
-
 block content
   h1 Docs Index
   #index
@@ -32,11 +26,15 @@ block content
     .column.api
       .column
         h2 Components
-        +items([ 'class', 'refcounted' ])
+        ul
+          each api in apis.filter(a => [ 'class', 'refcounted' ].includes(a.type.type) && !a.type.name.endsWith('Event'))
+            +item('api', api)
 
       .column
         h2 Structures
-        +items([ 'geometry', 'struct', 'enum', 'enum class' ])
+        ul
+          each api in apis.filter(a => [ 'geometry', 'struct', 'enum', 'enum class' ].includes(a.type.type) || a.type.name.endsWith('Event'))
+            +item('api', api)
 
 block sidebar
   h4 Version:

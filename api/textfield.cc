@@ -11,11 +11,11 @@ namespace hime {
 
 namespace {
 
-class TextfieldImpl : public ViewEventDispatcher<hime::Textfield,
-                                                 views::Textfield> {
+class TextfieldImpl : public ViewOnPaintDispatcher<hime::Textfield,
+                                                   views::Textfield> {
  public:
   explicit TextfieldImpl(hime::Textfield* delegate)
-      : ViewEventDispatcher(delegate) {}
+      : ViewOnPaintDispatcher(delegate) {}
 };
 
 }  // namespace

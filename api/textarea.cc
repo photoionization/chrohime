@@ -11,11 +11,11 @@ namespace hime {
 
 namespace {
 
-class TextareaImpl : public ViewEventDispatcher<hime::Textarea,
-                                                views::Textarea> {
+class TextareaImpl : public ViewOnPaintDispatcher<hime::Textarea,
+                                                  views::Textarea> {
  public:
   explicit TextareaImpl(hime::Textarea* delegate)
-      : ViewEventDispatcher(delegate) {}
+      : ViewOnPaintDispatcher(delegate) {}
 };
 
 }  // namespace

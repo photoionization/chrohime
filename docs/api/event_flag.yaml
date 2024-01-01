@@ -1,0 +1,55 @@
+name: Event::Flag
+type: enum
+description: Bitwise flags of event.
+
+enums:
+  - name: None
+    value: 0
+
+  - name: IsSynthesized
+    value: 1 << 0
+
+  - name: ShiftDown
+    value: 1 << 1
+
+  - name: ControlDown
+    value: 1 << 2
+
+  - name: AltDown
+    value: 1 << 3
+
+  - name: CommandDown
+    value: 1 << 4
+
+  - name: FunctionDown
+    value: 1 << 5
+
+  - name: AltgrDown
+    value: 1 << 6
+
+  - name: Mod3Down
+    value: 1 << 7
+
+  - name: NumLockOn
+    value: 1 << 8
+
+  - name: CapsLockOn
+    value: 1 << 9
+
+  - name: ScrollLockOn
+    value: 1 << 10
+
+  - name: LeftMouseButton
+    value: 1 << 11
+
+  - name: MiddleMouseButton
+    value: 1 << 12
+
+  - name: RightMouseButton
+    value: 1 << 13
+
+  - name: BackMouseButton
+    value: 1 << 14
+
+  - name: ForwardMouseButton
+    value: 1 << 15

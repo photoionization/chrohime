@@ -1,0 +1,11 @@
+name: LocatedEvent
+type: class
+inherit: Event
+description: Event type with location information.
+
+methods:
+  - name: GetLocation
+    returnType: gfx::Pointf
+
+  - name: GetRootLocation
+    returnType: gfx::Pointf

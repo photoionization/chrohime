@@ -14,11 +14,11 @@ namespace hime {
 
 namespace {
 
-class ProgressBarImpl : public ViewEventDispatcher<hime::ProgressBar,
-                                                   views::ProgressBar> {
+class ProgressBarImpl : public ViewOnPaintDispatcher<hime::ProgressBar,
+                                                     views::ProgressBar> {
  public:
   explicit ProgressBarImpl(hime::ProgressBar* delegate)
-      : ViewEventDispatcher(delegate) {}
+      : ViewOnPaintDispatcher(delegate) {}
 };
 
 YGSize MeasureProgressBar(YGNodeConstRef node,

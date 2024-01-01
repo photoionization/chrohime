@@ -5,12 +5,24 @@
 #include "chrohime/api/table_view.h"
 
 #include "chrohime/api/table_model.h"
+#include "chrohime/api/view_event_dispatcher.h"
 #include "ui/views/controls/table/table_view.h"
 
 namespace hime {
 
+namespace {
+
+class TableViewImpl : public ViewOnPaintDispatcher<hime::TableView,
+                                                   views::TableView> {
+ public:
+  explicit TableViewImpl(hime::TableView* delegate)
+      : ViewOnPaintDispatcher(delegate) {}
+};
+
+}  // namespace
+
 TableView::TableView()
-    : View(std::make_unique<views::TableView>(), LayoutType::kLeaf) {}
+    : View(std::make_unique<TableViewImpl>(this), LayoutType::kLeaf) {}
 
 TableView::~TableView() = default;
 

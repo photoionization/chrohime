@@ -1,0 +1,14 @@
+name: Event::Type
+type: enum class
+description: Event types.
+
+enums:
+  - name: Unknown
+  - name: MouseDown
+  - name: MouseDrag
+  - name: MouseUp
+  - name: MouseMove
+  - name: MouseEnter
+  - name: MouseLeave
+  - name: KeyDown
+  - name: KeyUp

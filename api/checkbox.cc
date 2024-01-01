@@ -4,12 +4,24 @@
 
 #include "chrohime/api/checkbox.h"
 
+#include "chrohime/api/view_event_dispatcher.h"
 #include "ui/views/controls/button/checkbox.h"
 
 namespace hime {
 
+namespace {
+
+class CheckboxImpl : public ViewEventDispatcher<hime::Checkbox,
+                                                views::Checkbox> {
+ public:
+  explicit CheckboxImpl(hime::Checkbox* delegate)
+      : ViewEventDispatcher(delegate) {}
+};
+
+}  // namespace
+
 Checkbox::Checkbox()
-    : Checkbox(std::make_unique<views::Checkbox>()) {}
+    : Checkbox(std::make_unique<CheckboxImpl>(this)) {}
 
 Checkbox::Checkbox(std::unique_ptr<views::Checkbox> to_take)
     : LabelButton(std::move(to_take)) {

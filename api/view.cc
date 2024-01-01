@@ -22,9 +22,9 @@ namespace hime {
 
 namespace {
 
-class ViewImpl : public ViewEventDispatcher<hime::View, views::View> {
+class ViewImpl : public ViewOnPaintDispatcher<hime::View, views::View> {
  public:
-  explicit ViewImpl(hime::View* delegate) : ViewEventDispatcher(delegate) {}
+  explicit ViewImpl(hime::View* delegate) : ViewOnPaintDispatcher(delegate) {}
 };
 
 // Convert case to lower and remove non-ASCII characters.

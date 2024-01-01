@@ -74,5 +74,3 @@ not inherit from `Object` and are not ref-counted. For each object created with
 hime_state_t state = hime_state_create();
 hime_state_destroy(state);
 ```
-
-Currently the only class types are: `State`, `Lifetime`, `Painter`.
