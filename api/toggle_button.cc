@@ -11,8 +11,8 @@ namespace hime {
 
 namespace {
 
-class ToggleButtonImpl : public ViewOnMouseDispatcher<hime::ToggleButton,
-                                                      views::ToggleButton> {
+class ToggleButtonImpl : public ViewInputEventDispatcher<hime::ToggleButton,
+                                                         views::ToggleButton> {
  public:
   explicit ToggleButtonImpl(hime::ToggleButton* delegate)
       : ViewBaseDispatcher(delegate) {}

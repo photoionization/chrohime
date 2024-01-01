@@ -24,6 +24,7 @@ component("chrohime_base") {
     "api/combobox_model.cc",
     "api/combobox_model.h",
     "api/color_id.h",
+    "api/event.cc",
     "api/event.h",
     "api/label.cc",
     "api/label.h",
@@ -85,6 +86,7 @@ component("chrohime_base") {
 
   deps = [
     ":yoga",
+    "//ui/events:dom_keycode_converter",
     "//ui/views",
   ]
   public_deps = [

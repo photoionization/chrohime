@@ -1,0 +1,23 @@
+name: KeyEvent
+type: class
+inherit: Event
+description: Keyboard event.
+
+methods:
+  - name: GetKey
+    description: |
+      Return the meaning (character or action) of the key event, in the context
+      of the active layout and modifiers. It corresponds to DOM UI Events
+      KeyboardEvent `key` values.
+
+      See http://www.w3.org/TR/DOM-Level-3-Events-key/ for possible values.
+    returnType: string ref
+
+  - name: GetCode
+    description: |
+      Return a platform-independent representation of the physical key, based
+      on DOM UI Events KeyboardEvent `code` values. It does not vary depending
+      on key layout.
+
+      See http://www.w3.org/TR/DOM-Level-3-Events-code/ for possible values.
+    returnType: string ref

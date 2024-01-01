@@ -25,6 +25,7 @@ namespace hime {
 
 class Background;
 class Border;
+class KeyEvent;
 class MouseEvent;
 class Painter;
 
@@ -85,6 +86,8 @@ class CHROHIME_EXPORT View : public Object,
   Signal<bool(View*, MouseEvent*)> on_mouse_move;
   Signal<bool(View*, MouseEvent*)> on_mouse_enter;
   Signal<bool(View*, MouseEvent*)> on_mouse_leave;
+  Signal<bool(View*, KeyEvent*)> on_key_down;
+  Signal<bool(View*, KeyEvent*)> on_key_up;
 
  protected:
   View(std::unique_ptr<views::View> to_take, LayoutType layout_type);

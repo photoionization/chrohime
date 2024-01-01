@@ -31,6 +31,7 @@ docs_apis = [
   "api/event_flag.yaml",
   "api/event_type.yaml",
   "api/event.yaml",
+  "api/key_event.yaml",
   "api/label.yaml",
   "api/label_button.yaml",
   "api/link.yaml",

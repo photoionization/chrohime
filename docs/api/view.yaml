@@ -216,3 +216,21 @@ events:
       - name: event
         type: MouseEvent
     returnType: bool
+
+  - name: onKeyDown
+    description: Emitted when pressing keyboard.
+    args:
+      - name: view
+        type: View
+      - name: event
+        type: KeyEvent
+    returnType: bool
+
+  - name: onKeyUp
+    description: Emitted when releasing keyboard.
+    args:
+      - name: view
+        type: View
+      - name: event
+        type: KeyEvent
+    returnType: bool

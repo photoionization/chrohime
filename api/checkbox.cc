@@ -11,7 +11,7 @@ namespace hime {
 
 namespace {
 
-class CheckboxImpl : public ViewOnMouseDispatcher<hime::Checkbox,
+class CheckboxImpl : public ViewInputEventDispatcher<hime::Checkbox,
                                                   views::Checkbox> {
  public:
   explicit CheckboxImpl(hime::Checkbox* delegate)

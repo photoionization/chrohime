@@ -83,8 +83,26 @@ class CHROHIME_EXPORT MouseEvent : public LocatedEvent {
   const gfx::Vector2dF& GetMovement() const { return event()->movement(); }
 
   ui::MouseEvent* event() const {
-    return static_cast<ui::MouseEvent*>(LocatedEvent::event());
+    return static_cast<ui::MouseEvent*>(Event::event());
   }
+};
+
+class CHROHIME_EXPORT KeyEvent : public Event {
+ public:
+  explicit KeyEvent(ui::KeyEvent* event);
+  ~KeyEvent();
+
+  const std::u16string& GetKey() const;
+  const std::u16string& GetCode() const;
+
+  ui::KeyEvent* event() const {
+    return static_cast<ui::KeyEvent*>(Event::event());
+  }
+
+ private:
+  // Cache the result so we can return const string reference in APIs.
+  mutable std::u16string cached_key_;
+  mutable std::u16string cached_code_;
 };
 
 }  // namespace hime

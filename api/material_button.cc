@@ -11,8 +11,9 @@ namespace hime {
 
 namespace {
 
-class MaterialButtonImpl : public ViewOnMouseDispatcher<hime::MaterialButton,
-                                                        views::MdTextButton> {
+class MaterialButtonImpl
+    : public ViewInputEventDispatcher<hime::MaterialButton,
+                                      views::MdTextButton> {
  public:
   explicit MaterialButtonImpl(hime::MaterialButton* delegate)
       : ViewBaseDispatcher(delegate) {}

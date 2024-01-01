@@ -11,8 +11,8 @@ namespace hime {
 
 namespace {
 
-class RadioButtonImpl : public ViewOnMouseDispatcher<hime::RadioButton,
-                                                     views::RadioButton> {
+class RadioButtonImpl : public ViewInputEventDispatcher<hime::RadioButton,
+                                                        views::RadioButton> {
  public:
   RadioButtonImpl(hime::RadioButton* delegate,
                   const std::u16string& title,

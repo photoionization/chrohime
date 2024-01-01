@@ -45,7 +45,6 @@ class ViewOnPaintDispatcher : virtual public ViewBaseDispatcher<T, V> {
  public:
   using ViewBaseDispatcher<T, V>::delegate;
 
-  // A dummy constructor to make compiler happy.
   ViewOnPaintDispatcher() {}
 
   // views::View:
@@ -63,7 +62,6 @@ class ViewOnMouseDispatcher : virtual public ViewBaseDispatcher<T, V> {
  public:
   using ViewBaseDispatcher<T, V>::delegate;
 
-  // A dummy constructor to make compiler happy.
   ViewOnMouseDispatcher() {}
 
   // views::View:
@@ -103,12 +101,43 @@ class ViewOnMouseDispatcher : virtual public ViewBaseDispatcher<T, V> {
   }
 };
 
+template<typename T, typename V>
+class ViewOnKeyDispatcher : virtual public ViewBaseDispatcher<T, V> {
+ public:
+  using ViewBaseDispatcher<T, V>::delegate;
+
+  ViewOnKeyDispatcher() {}
+
+  // views::View:
+  bool OnKeyPressed(const ui::KeyEvent& event) override {
+    KeyEvent wrapper(&const_cast<ui::KeyEvent&>(event));
+    if (delegate()->on_key_down.Emit(delegate(), &wrapper))
+      return true;
+    return V::OnKeyPressed(event);
+  }
+
+  bool OnKeyReleased(const ui::KeyEvent& event) override {
+    KeyEvent wrapper(&const_cast<ui::KeyEvent&>(event));
+    if (delegate()->on_key_up.Emit(delegate(), &wrapper))
+      return true;
+    return V::OnKeyReleased(event);
+  }
+};
+
+// The event dispatcher which supports all input event handlers.
+template<typename T, typename V>
+class ViewInputEventDispatcher : public ViewOnMouseDispatcher<T, V>,
+                                 public ViewOnKeyDispatcher<T, V> {
+ public:
+  ViewInputEventDispatcher() {}
+};
+
 // The default event dispatcher which supports all event handlers.
 template<typename T, typename V>
 class ViewEventDispatcher : public ViewOnPaintDispatcher<T, V>,
-                            public ViewOnMouseDispatcher<T, V> {
+                            public ViewOnMouseDispatcher<T, V>,
+                            public ViewOnKeyDispatcher<T, V> {
  public:
-  // A dummy constructor to make compiler happy.
   ViewEventDispatcher() {}
 };
 
