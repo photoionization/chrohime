@@ -11,11 +11,11 @@ namespace hime {
 
 namespace {
 
-class LabelButtonImpl : public ViewEventDispatcher<hime::LabelButton,
-                                                   views::LabelButton> {
+class LabelButtonImpl : public ViewOnMouseDispatcher<hime::LabelButton,
+                                                     views::LabelButton> {
  public:
   explicit LabelButtonImpl(hime::LabelButton* delegate)
-      : ViewEventDispatcher(delegate) {}
+      : ViewBaseDispatcher(delegate) {}
 };
 
 }  // namespace

@@ -4,11 +4,19 @@
 
 #include "chrohime/api/slider.h"
 
+#include "chrohime/api/view_event_dispatcher.h"
 #include "yoga/Yoga.h"
 
 namespace hime {
 
 namespace {
+
+class SliderImpl : public ViewOnPaintDispatcher<hime::Slider,
+                                                views::Slider> {
+ public:
+  explicit SliderImpl(hime::Slider* delegate)
+      : ViewBaseDispatcher(delegate, delegate) {}
+};
 
 YGSize MeasureSlider(YGNodeConstRef node,
                      float width, YGMeasureMode mode,
@@ -24,10 +32,8 @@ YGSize MeasureSlider(YGNodeConstRef node,
 
 }  // namespace
 
-// TODO(zcbenz): Slider hides overriden methods so we can not implement the
-// ViewEventDispatcher interface on it.
 Slider::Slider()
-    : View(std::make_unique<views::Slider>(this), LayoutType::kLeaf) {
+    : View(std::make_unique<SliderImpl>(this), LayoutType::kLeaf) {
   YGNodeSetMeasureFunc(yoga_node(), MeasureSlider);
 }
 

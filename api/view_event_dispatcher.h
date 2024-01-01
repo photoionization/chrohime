@@ -16,11 +16,55 @@ namespace hime {
 
 // Convert virtual methods into signals.
 template<typename T, typename V>
-class ViewEventDispatcher : public V {
+class ViewBaseDispatcher : public V {
  public:
+  // This constructor must be explicitly defined otherwise derived classes would
+  // have to explicitly construct all its base classes.
+  ViewBaseDispatcher() {
+    CHECK(false) <<
+        "The default constructor of ViewBaseDispatcher is not supposed to be "
+        "actualled called, this usually happens when you does not pass a "
+        "delegate when constructing ViewBaseDispatcher in the derived class.";
+  }
+
   template<typename... Arg>
-  ViewEventDispatcher(T* delegate, Arg&&... args)
+  ViewBaseDispatcher(T* delegate, Arg&&... args)
       : V(std::forward<Arg>(args)...), delegate_(delegate) {}
+
+  T* delegate() const { return delegate_; }
+
+ private:
+  raw_ptr<T> delegate_;
+};
+
+// Ideally every class should just inherit from ViewEventDispatcher, but some
+// views mark OnPaint as final (i.e. Button) and it is impossible to implement
+// the on_draw event for them.
+template<typename T, typename V>
+class ViewOnPaintDispatcher : virtual public ViewBaseDispatcher<T, V> {
+ public:
+  using ViewBaseDispatcher<T, V>::delegate;
+
+  // A dummy constructor to make compiler happy.
+  ViewOnPaintDispatcher() {}
+
+  // views::View:
+  void OnPaint(gfx::Canvas* canvas) override {
+    Painter painter(canvas);
+    if (delegate()->on_will_draw.Emit(delegate(), &painter))
+      return;
+    V::OnPaint(canvas);
+    delegate()->on_draw.Emit(delegate(), &painter);
+  }
+};
+
+template<typename T, typename V>
+class ViewOnMouseDispatcher : virtual public ViewBaseDispatcher<T, V> {
+ public:
+  using ViewBaseDispatcher<T, V>::delegate;
+
+  // A dummy constructor to make compiler happy.
+  ViewOnMouseDispatcher() {}
 
   // views::View:
   bool OnMousePressed(const ui::MouseEvent& event) override {
@@ -57,33 +101,15 @@ class ViewEventDispatcher : public V {
       return;
     V::OnMouseExited(event);
   }
-
-  T* delegate() const { return delegate_; }
-
- private:
-  raw_ptr<T> delegate_;
 };
 
-// Ideally every class should just inherit from ViewEventDispatcher, but some
-// views mark OnPaint as final (i.e. Button) and it is impossible to implement
-// the on_draw event for them.
+// The default event dispatcher which supports all event handlers.
 template<typename T, typename V>
-class ViewOnPaintDispatcher : public ViewEventDispatcher<T, V> {
+class ViewEventDispatcher : public ViewOnPaintDispatcher<T, V>,
+                            public ViewOnMouseDispatcher<T, V> {
  public:
-  using ViewEventDispatcher<T, V>::delegate;
-
-  template<typename... Arg>
-  ViewOnPaintDispatcher(T* delegate, Arg&&... args)
-      : ViewEventDispatcher<T, V>(delegate, std::forward<Arg>(args)...) {}
-
-  // views::View:
-  void OnPaint(gfx::Canvas* canvas) override {
-    Painter painter(canvas);
-    if (delegate()->on_will_draw.Emit(delegate(), &painter))
-      return;
-    V::OnPaint(canvas);
-    delegate()->on_draw.Emit(delegate(), &painter);
-  }
+  // A dummy constructor to make compiler happy.
+  ViewEventDispatcher() {}
 };
 
 }  // namespace hime

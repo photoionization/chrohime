@@ -13,11 +13,11 @@ namespace hime {
 
 namespace {
 
-class ScrollViewImpl : public ViewOnPaintDispatcher<hime::ScrollView,
-                                                    views::ScrollView> {
+class ScrollViewImpl : public ViewEventDispatcher<hime::ScrollView,
+                                                  views::ScrollView> {
  public:
   explicit ScrollViewImpl(hime::ScrollView* delegate)
-      : ViewOnPaintDispatcher(delegate) {}
+      : ViewBaseDispatcher(delegate) {}
 };
 
 }  // namespace

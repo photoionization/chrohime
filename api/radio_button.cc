@@ -11,13 +11,13 @@ namespace hime {
 
 namespace {
 
-class RadioButtonImpl : public ViewEventDispatcher<hime::RadioButton,
-                                                   views::RadioButton> {
+class RadioButtonImpl : public ViewOnMouseDispatcher<hime::RadioButton,
+                                                     views::RadioButton> {
  public:
   RadioButtonImpl(hime::RadioButton* delegate,
                   const std::u16string& title,
                   int group_id)
-      : ViewEventDispatcher(delegate, title, group_id) {}
+      : ViewBaseDispatcher(delegate, title, group_id) {}
 };
 
 }  // namespace

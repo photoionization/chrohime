@@ -11,11 +11,11 @@ namespace hime {
 
 namespace {
 
-class CheckboxImpl : public ViewEventDispatcher<hime::Checkbox,
-                                                views::Checkbox> {
+class CheckboxImpl : public ViewOnMouseDispatcher<hime::Checkbox,
+                                                  views::Checkbox> {
  public:
   explicit CheckboxImpl(hime::Checkbox* delegate)
-      : ViewEventDispatcher(delegate) {}
+      : ViewBaseDispatcher(delegate) {}
 };
 
 }  // namespace

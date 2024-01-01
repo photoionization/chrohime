@@ -13,11 +13,11 @@ namespace hime {
 
 namespace {
 
-class ComboboxImpl : public ViewOnPaintDispatcher<hime::Combobox,
-                                                  views::EditableCombobox> {
+class ComboboxImpl : public ViewEventDispatcher<hime::Combobox,
+                                                views::EditableCombobox> {
  public:
   explicit ComboboxImpl(hime::Combobox* delegate)
-      : ViewOnPaintDispatcher(delegate) {}
+      : ViewBaseDispatcher(delegate) {}
 };
 
 }  // namespace

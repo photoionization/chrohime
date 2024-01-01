@@ -13,11 +13,11 @@ namespace hime {
 
 namespace {
 
-class PickerImpl : public ViewOnPaintDispatcher<hime::Picker,
-                                                views::Combobox> {
+class PickerImpl : public ViewEventDispatcher<hime::Picker,
+                                              views::Combobox> {
  public:
   explicit PickerImpl(hime::Picker* delegate)
-      : ViewOnPaintDispatcher(delegate) {}
+      : ViewBaseDispatcher(delegate) {}
 };
 
 }  // namespace

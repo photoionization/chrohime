@@ -12,11 +12,11 @@ namespace hime {
 
 namespace {
 
-class TableViewImpl : public ViewOnPaintDispatcher<hime::TableView,
-                                                   views::TableView> {
+class TableViewImpl : public ViewEventDispatcher<hime::TableView,
+                                                 views::TableView> {
  public:
   explicit TableViewImpl(hime::TableView* delegate)
-      : ViewOnPaintDispatcher(delegate) {}
+      : ViewBaseDispatcher(delegate) {}
 };
 
 }  // namespace

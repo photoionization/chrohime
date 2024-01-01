@@ -11,9 +11,9 @@ namespace hime {
 
 namespace {
 
-class BadgeImpl : public ViewOnPaintDispatcher<hime::Badge, views::Badge> {
+class BadgeImpl : public ViewEventDispatcher<hime::Badge, views::Badge> {
  public:
-  explicit BadgeImpl(hime::Badge* delegate) : ViewOnPaintDispatcher(delegate) {}
+  explicit BadgeImpl(hime::Badge* delegate) : ViewBaseDispatcher(delegate) {}
 };
 
 }  // namespace

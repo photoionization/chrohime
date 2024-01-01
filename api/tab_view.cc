@@ -11,11 +11,11 @@ namespace hime {
 
 namespace {
 
-class TabViewImpl : public ViewOnPaintDispatcher<hime::TabView,
-                                                 views::TabbedPane> {
+class TabViewImpl : public ViewEventDispatcher<hime::TabView,
+                                               views::TabbedPane> {
  public:
   explicit TabViewImpl(hime::TabView* delegate)
-      : ViewOnPaintDispatcher(delegate) {}
+      : ViewBaseDispatcher(delegate) {}
 };
 
 }  // namespace

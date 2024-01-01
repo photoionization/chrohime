@@ -12,11 +12,11 @@ namespace hime {
 
 namespace {
 
-class WebViewImpl : public ViewOnPaintDispatcher<hime::WebView,
-                                                 views::WebView> {
+class WebViewImpl : public ViewEventDispatcher<hime::WebView,
+                                               views::WebView> {
  public:
   WebViewImpl(hime::WebView* delegate, content::BrowserContext* browser_context)
-      : ViewOnPaintDispatcher(delegate, browser_context) {}
+      : ViewBaseDispatcher(delegate, browser_context) {}
 };
 
 }  // namespace

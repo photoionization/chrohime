@@ -11,9 +11,9 @@ namespace hime {
 
 namespace {
 
-class LabelImpl : public ViewOnPaintDispatcher<hime::Label, views::Label> {
+class LabelImpl : public ViewEventDispatcher<hime::Label, views::Label> {
  public:
-  explicit LabelImpl(hime::Label* delegate) : ViewOnPaintDispatcher(delegate) {}
+  explicit LabelImpl(hime::Label* delegate) : ViewBaseDispatcher(delegate) {}
 };
 
 }  // namespace
