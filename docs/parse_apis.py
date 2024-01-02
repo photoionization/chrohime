@@ -118,6 +118,7 @@ def get_type_info(converter, type_name, c_type):
   info = {
     'name': type_name,
     'type': converter.get_type_of_type(type_name),
+    'class': converter.get_cpp_class_name(type_name),
     'c': c_type,
   }
   if info['type'] == 'c-only type':

@@ -1,0 +1,11 @@
+name: gfx::Sizef
+type: geometry
+description: A float version of size.
+
+properties:
+  - name: width
+    type: float
+    defaultValue: 0.f
+  - name: height
+    type: float
+    defaultValue: 0.f

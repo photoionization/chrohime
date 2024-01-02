@@ -14,9 +14,6 @@ methods:
   - name: Close
     description: Close the window.
 
-  - name: Activate
-    description: Show and focus the window.
-
   - name: SetContentView
     description: Set the window's content view.
     args:
@@ -27,6 +24,104 @@ methods:
     description: Get the window's content view.
     const: true
     returnType: View
+
+  - name: Activate
+    description: Show and focus the window.
+
+  - name: Deactivate
+    description: |
+      Deactivate the window, making the next window in the Z order the active
+      window.
+
+  - name: IsActive
+    description: Return whether the window is the currently active window.
+    const: true
+    returnType: bool
+
+  - name: SetVisible
+    description: Set whether window is visible.
+    args:
+      - name: visible
+        type: bool
+
+  - name: IsVisible
+    description: Return whether the window is visible.
+    const: true
+    returnType: bool
+
+  - name: SetFullscreen
+    description: Enter/leave fullscreen state.
+    args:
+      - name: fullscreen
+        type: bool
+
+  - name: IsFullscreen
+    description: Return whether window is in fullscreen.
+    const: true
+    returnType: bool
+
+  - name: Maximize
+    description: Maximize the window.
+
+  - name: IsMaximized
+    description: Return whether window is maximized.
+    const: true
+    returnType: bool
+
+  - name: Minimize
+    description: Minimize the window.
+
+  - name: IsMinimized
+    description: Return whether window is minimized.
+    const: true
+    returnType: bool
+
+  - name: Restore
+    description: Put the window into the normal state.
+
+  - name: SetResizable
+    description: Set whether window can be resized.
+    args:
+      - name: resizable
+        type: bool
+
+  - name: IsResizable
+    description: Return whether window can be resized.
+    const: true
+    returnType: bool
+
+  - name: SetMaximizable
+    description: Set whether window can be maximized.
+    args:
+      - name: maximizable
+        type: bool
+
+  - name: IsMaximizable
+    description: Return whether window can be maximized.
+    const: true
+    returnType: bool
+
+  - name: SetMinimizable
+    description: Set whether window can be minimized.
+    args:
+      - name: minimizable
+        type: bool
+
+  - name: IsMinimizable
+    description: Return whether window can be minimized.
+    const: true
+    returnType: bool
+
+  - name: SetFullscreenable
+    description: Set whether window can enter fullscreen.
+    args:
+      - name: fullscreenable
+        type: bool
+
+  - name: IsFullscreenable
+    description: Return whether window can enter fullscreen.
+    const: true
+    returnType: bool
 
   - name: SetBounds
     description: Resize and/or place the window to the specified bounds.
@@ -67,9 +162,66 @@ methods:
     const: true
     returnType: const string ref
 
+  - name: SetOpacity
+    description: |
+      Set the opacity of the window.
+
+      This may allow windows behind the window in the Z-order to become visible,
+      depending on the capabilities of the underlying windowing system.
+    args:
+      - name: opacity
+        type: float
+
+  - name: SetAspectRatio
+    description: |
+      Set the aspect ratio of the window's client view, which will be maintained
+      during interactive resizing.
+
+      Note that for windows that have a client view that is framed by
+      custom-drawn borders / window frame / etc, the window size will be chosen
+      so that the aspect ratio of client view, not the entire window, will be
+      `aspect_ratio`.
+
+      Once set, some platforms ensure the content will only size to integer
+      multiples of `aspect_ratio`.
+    args:
+      - name: aspectRatio
+        type: gfx::Sizef
+
+  - name: FlashFrame
+    description: Flashes the frame of the window to draw attention to it.
+    platform: ['win']
+    args:
+      - name: flash
+        type: bool
+
 events:
   - name: onClose
     description: Emitted when window is closed.
     args:
       - name: window
         type: Window
+
+  - name: onVisibilityChange
+    description: Emitted when window's visibility has been changed.
+    args:
+      - name: window
+        type: Window
+      - name: visible
+        type: bool
+
+  - name: onActivationChange
+    description: Emitted when window is focused or blurred.
+    args:
+      - name: window
+        type: Window
+      - name: active
+        type: bool
+
+  - name: onBoundsChange
+    description: Emitted when window has been moved or resized.
+    args:
+      - name: window
+        type: Window
+      - name: newBounds
+        type: gfx::Rect

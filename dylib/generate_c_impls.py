@@ -15,8 +15,8 @@ def write_c_header_file(file, apis, public_header=False):
       if api['type']['type'] in [ 'refcounted', 'class' ]:
         if is_content_api(api):
           file.write('#if defined(CHROHIME_WITH_CONTENT)\n')
-        file.write(f'typedef {api["type"]["cpp"]}* {api["type"]["c"]};\n'
-                   f'typedef const {api["type"]["cpp"]}* {api["type"]["c"][:-1]}const_t;\n')
+        file.write(f'typedef {api["type"]["cpp"]} {api["type"]["c"]};\n'
+                   f'typedef const {api["type"]["cpp"]} {api["type"]["c"][:-1]}const_t;\n')
         if is_content_api(api):
           file.write('#endif\n')
     file.write('#else\n')
@@ -164,14 +164,14 @@ def write_class_impl(file, api, write_impl, public_header):
   for constructor in api['constructors']:
     if public_header:
       file.write(get_comment(constructor))
-    constructor_args = params_join(get_c_args(api, constructor))
-    constructor_call = f'new {api["type"]["cpp"]}({constructor_args})'
+    constructor_args = params_join(get_c_args(constructor))
+    constructor_call = f'new {api["type"]["class"]}({constructor_args})'
     if api['type']['type'] == 'refcounted':
       # The refcounted types require putting into scoped_refptr first.
       constructor_call = f'base::AdoptRef({constructor_call}).release()'
     write_function(file, constructor, write_impl,
                    f'{api["type"]["c"]} {constructor["c"]}',
-                   get_c_params(api, constructor),
+                   get_c_params(constructor),
                    f'return {constructor_call};')
   # Write class_destroy methods.
   if api['type']['type'] == 'class' and len(api['constructors']) > 0:
@@ -185,18 +185,18 @@ def write_class_impl(file, api, write_impl, public_header):
       file.write(get_comment(method))
     write_function(file, method, write_impl,
                    f'{method["returnType"]["c"]} {method["c"]}',
-                   get_c_params(api, method),
-                   f'return {api["type"]["cpp"]}::{get_function_call(api, method)};')
+                   get_c_params(method),
+                   f'return {api["type"]["class"]}::{get_function_call(method)};')
   # Write normal methods.
   for method in api['methods']:
     if public_header:
       file.write(get_comment(method))
     return_type = method['returnType']['c']
-    params = get_c_params(api, method)
+    params = get_c_params(method)
     if method['returnType']['name'] == 'string':
       raise ValueError('Returning string copy in APIs has not been implemented')
     if method['returnType']['name'].startswith('vector<'):
-      function_call = get_function_call(api, method, first_arg_is_this=True)
+      function_call = get_function_call(method, first_arg_is_this=True)
       write_function(file, method, write_impl,
                      f'{return_type} {method["c"]}',
                      params,
@@ -210,7 +210,7 @@ def write_class_impl(file, api, write_impl, public_header):
       write_function(file, method, write_impl,
                      f'{return_type} {method["c"]}',
                      params,
-                     get_method_impl(api, method))
+                     get_method_impl(method))
   # Write events.
   for event in api['events']:
     if public_header:
@@ -218,12 +218,12 @@ def write_class_impl(file, api, write_impl, public_header):
     event_callback_type = f'{event["c"]}_callback'
     if not write_impl:
       # Write definition of callback type.
-      event_parameters = get_c_params(api, event) + [ 'void* data' ]
+      event_parameters = get_c_params(event) + [ 'void* data' ]
       file.write(f'typedef {event["returnType"]["name"]} (*{event_callback_type})({params_join(event_parameters)});\n\n')
     callback_params = [
         f'{event_callback_type} callback',
-        f'scoped_refptr<DataHolder> holder' ] + get_c_params(api, event)
-    callback_args = get_c_args(api, event) + [ 'holder->data()' ]
+        f'scoped_refptr<DataHolder> holder' ] + get_cpp_params(event)
+    callback_args = get_cpp_args(event) + [ 'holder->data()' ]
     impl = (f'return {api["id"]}->{event["cpp"]}.Connect(base::BindRepeating(\n'
             f'    []({params_join(callback_params)}) {{\n'
             f'        return callback({params_join(callback_args)});\n'
@@ -271,11 +271,11 @@ def get_comment(data):
   comments = ['// ' + line if len(line) > 0 else '//' for line in lines]
   return '\n'.join(comments) + '\n'
 
-def get_function_call(api, func, first_arg_is_this=False):
+def get_function_call(func, first_arg_is_this=False):
   if first_arg_is_this:
     func = copy.copy(func)
     func['parameters'] = func['parameters'][1:]
-  call = f'{func["name"]}({params_join(get_c_args(api, func))})'
+  call = f'{func["name"]}({params_join(get_c_args(func))})'
   if first_arg_is_this:
     call = f'self->{call}'
   if func['returnType']['type'] in [ 'struct', 'geometry', 'enum', 'enum class' ]:
@@ -284,18 +284,36 @@ def get_function_call(api, func, first_arg_is_this=False):
     return f'{call}.c_str()'
   return call
 
-def get_method_impl(api, method):
-  function_call = get_function_call(api, method, first_arg_is_this=True)
+def get_method_impl(method):
+  function_call = get_function_call(method, first_arg_is_this=True)
   if method['returnType']['name'] != 'void':
     return f'return {function_call};'
   else:
     return f'{function_call};'
 
-def get_c_params(api, method):
+def get_cpp_params(method):
+  parameters = []
+  for arg in method['parameters']:
+    arg_type = arg['type']['cpp']
+    if arg['type']['type'] in [ 'geometry' ]:
+      arg_type = f'const {arg_type}&'
+    parameters.append(f'{arg_type} {arg["id"]}')
+  return parameters
+
+def get_c_params(method):
   parameters = []
   for arg in method['parameters']:
     parameters.append(f'{arg["type"]["c"]} {arg["id"]}')
   return parameters
+
+def get_cpp_arg(arg):
+  if arg['type']['type'] in [ 'struct', 'geometry', 'enum', 'enum class' ]:
+    return f'FromHime({arg["id"]})'
+  else:
+    return arg['id']
+
+def get_cpp_args(data):
+  return [ get_cpp_arg(arg) for arg in data['parameters'] ]
 
 def get_c_arg(arg, prefix=''):
   arg_name = f'{prefix}{arg["id"]}'
@@ -308,7 +326,7 @@ def get_c_arg(arg, prefix=''):
   else:
     return arg_name
 
-def get_c_args(api, data):
+def get_c_args(data):
   return [ get_c_arg(arg) for arg in data['parameters'] if arg['type']['type'] != 'c-only type']
 
 def get_platform_defines(data):

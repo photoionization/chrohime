@@ -15,6 +15,26 @@ class NameConverter:
   def get_c_type_prefix(self, data):
     return f'hime_{self.get_c_name(get_type(data))}'
 
+  def get_cpp_class_name(self, api):
+    api_name = get_type(api)
+    if api_name.startswith('const '):
+      return self.get_cpp_class_name(api_name[6:])
+    if api_name.endswith(' out'):
+      return self.get_cpp_class_name(api_name[:-4])
+    if api_name.startswith('gfx::'):
+      if api_name.endswith('f'):
+        return api_name[:-1] + 'F'
+      else:
+        return api_name
+    elif api_name in [ 'string', 'string ref' ]:
+      return 'std::u16string'
+    elif api_name in [ 'BlendMode', 'ClipOp', 'Color' ]:
+      return f'Sk{api_name}'
+    if self.get_type_of_type(api_name) == 'primitive':
+      return api_name
+    else:
+      return f'hime::{api_name}'
+
   def get_cpp_type_name(self, api):
     api_name = get_type(api)
     if api_name.startswith('const '):
@@ -33,15 +53,14 @@ class NameConverter:
     elif api_name in [ 'BlendMode', 'ClipOp', 'Color' ]:
       return f'Sk{api_name}'
     elif api_name.startswith('vector'):
-      api_name = api_name[7:-1]
-      cpp_type_name = self.get_cpp_type_name(api_name)
-      if self.get_type_of_type(api) in [ 'class', 'refcounted' ]:
-        cpp_type_name = f'{cpp_type_name}*'
-      return f'std::vector<{cpp_type_name}>'
-    elif self.get_type_of_type(api_name) == 'primitive':
+      return f'std::vector<{self.get_cpp_type_name(api_name[7:-1])}>'
+    meta_type = self.get_type_of_type(api_name)
+    if meta_type == 'primitive':
       return api_name
+    elif meta_type in [ 'class', 'refcounted' ]:
+      return f'hime::{api_name}*'
     else:
-      return 'hime::' + api_name
+      return f'hime::{api_name}'
 
   def get_c_type_name(self, data, const=False):
     type_name = get_type(data)

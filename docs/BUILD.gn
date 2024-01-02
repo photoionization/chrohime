@@ -10,6 +10,7 @@ docs_apis = [
   "api/rect.yaml",
   "api/rectf.yaml",
   "api/size.yaml",
+  "api/sizef.yaml",
   "api/vector2d.yaml",
   "api/vector2df.yaml",
   "api/blend_mode.yaml",
