@@ -32,22 +32,37 @@ class Painter;
 class CHROHIME_EXPORT View : public Object,
                              public views::ViewObserver {
  public:
+  enum class FocusBehavior {
+    kNever,
+    kAlways,
+    kAccessibleOnly,
+  };
+
   static View* FromViews(views::View* view);
 
   View();
 
   void SetVisible(bool visible);
   bool IsVisible() const;
+  bool IsDrawn() const;
   void SetEnabled(bool enabled);
   bool IsEnabled() const;
+  void Focus();
+  bool HasFocus() const;
+  void SetFocusBehavior(FocusBehavior behavior);
+  FocusBehavior GetFocusBehavior() const;
+
   void SetBounds(const gfx::Rect& bounds);
   gfx::Rect GetBounds() const;
+  gfx::Rect GetBoundsInScreen() const;
   void SetPreferredSize(absl::optional<gfx::Size> size);
   gfx::Size GetPreferredSize() const;
   void SetStyle(std::u16string_view name, std::u16string_view value);
   void SetStyleNumber(std::u16string_view name, float value);
   void Layout();
 
+  void SchedulePaint();
+  void SchedulePaintInRect(const gfx::Rect& dirty);
   void SetBackground(scoped_refptr<Background> background);
   void SetBorder(scoped_refptr<Border> border);
 
@@ -59,8 +74,13 @@ class CHROHIME_EXPORT View : public Object,
 
   void SetAccessibleName(const std::u16string& name);
   const std::u16string& GetAccessibleName() const;
-  void SetGroup(int group_id);
+
+  void SetId(int id);
+  int GetId() const;
+  View* GetViewById(int id);
+  void SetGroup(int group);
   int GetGroup() const;
+  std::vector<View*> GetViewsInGroup(int group);
 
   // TODO(zcbenz): Expose the method to C after finding a good C API to
   // represent the SizeBounds.

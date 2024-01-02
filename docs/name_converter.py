@@ -19,6 +19,8 @@ class NameConverter:
     api_name = get_type(api)
     if api_name.startswith('const '):
       return 'const ' + self.get_cpp_type_name(api_name[6:])
+    if api_name.endswith(' out'):
+      return self.get_cpp_type_name(api_name[:-4]) + '*'
     if api_name.startswith('gfx::'):
       if api_name.endswith('f'):
         return api_name[:-1] + 'F'
@@ -31,7 +33,11 @@ class NameConverter:
     elif api_name in [ 'BlendMode', 'ClipOp', 'Color' ]:
       return f'Sk{api_name}'
     elif api_name.startswith('vector'):
-      return f'std::vector<{self.get_cpp_type_name(api_name[7:-1])}>'
+      api_name = api_name[7:-1]
+      cpp_type_name = self.get_cpp_type_name(api_name)
+      if self.get_type_of_type(api) in [ 'class', 'refcounted' ]:
+        cpp_type_name = f'{cpp_type_name}*'
+      return f'std::vector<{cpp_type_name}>'
     elif self.get_type_of_type(api_name) == 'primitive':
       return api_name
     else:
@@ -41,6 +47,8 @@ class NameConverter:
     type_name = get_type(data)
     if type_name.startswith('const '):
       return self.get_c_type_name(type_name[6:], const=True)
+    if type_name.endswith(' out'):
+      return self.get_c_type_name(type_name[:-4]) + '*'
     if type_name in [ 'string', 'GURL' ]:
       # For string copy always pass const char*.
       return 'const char16_t*'
@@ -82,7 +90,8 @@ class NameConverter:
 
   def get_c_parameter_types(self, type_name):
     param_type = self.get_c_type_name(type_name)
-    if type_name.startswith('vector<'):
+    if type_name.startswith('vector<') or \
+       type_name.endswith(' out'):
       return [ param_type, 'size_t' ]
     elif self.get_type_of_type(type_name) == 'struct':
       return [ param_type + '*' ]
@@ -90,7 +99,7 @@ class NameConverter:
       return [ param_type ]
 
   def get_c_return_type(self, type_name):
-    if type_name == 'string':
+    if type_name == 'string' or type_name.startswith('vector<'):
       return 'size_t'
     else:
       return self.get_c_type_name(type_name)
@@ -106,8 +115,9 @@ class NameConverter:
 
   def get_type_of_type(self, type_name):
     type_name = strip_type_decorates(type_name)
-    if type_name in [ 'argument size', 'property size' ]:
-      return 'size parameter'
+    if type_name.endswith(' out') or \
+       type_name in [ 'argument size', 'property size' ]:
+      return 'c-only type'
     api = self.get_api_from_type_name(type_name)
     if api:
       return api['type']

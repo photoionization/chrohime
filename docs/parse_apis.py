@@ -53,12 +53,18 @@ def parse_apis(apis):
           func['parameters'] = parse_parameters(converter, f['args'])
           func['returnType'] = get_type_info(converter, f['returnType'],
                                              converter.get_c_return_type(f['returnType']))
+          if f['returnType'].startswith('vector<'):
+            func['parameters'] += parse_parameters(converter, [
+              {'name': 'out',
+               'type': f['returnType'][7:-1] + ' out',
+               'description': 'Output pointer.'}
+            ])
 
           funcs.append(func)
         api[func_type] = funcs
 
     else:
-      raise ValueError(f'Unexpected API type {api["metaType"]}')
+      raise ValueError(f'Unexpected API type {raw["type"]}')
 
     result.append(api)
 
@@ -113,9 +119,12 @@ def get_type_info(converter, type_name, c_type):
     'name': type_name,
     'type': converter.get_type_of_type(type_name),
     'c': c_type,
-    'cpp': converter.get_cpp_type_name(type_name),
   }
-  if info['type'] != 'primitive':
+  if info['type'] == 'c-only type':
+    info['cpp'] = c_type
+  else:
+    info['cpp'] = converter.get_cpp_type_name(type_name)
+  if info['type'] not in [ 'primitive', 'c-only type' ]:
     info['id'] = converter.get_c_name(type_name)
   return info
 

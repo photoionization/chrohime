@@ -91,6 +91,11 @@ bool View::IsVisible() const {
   return view_->GetVisible();
 }
 
+bool View::IsDrawn() const {
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, false);
+  return view_->IsDrawn();
+}
+
 void View::SetEnabled(bool enabled) {
   HIME_RETURN_ON_DESTROYED_VIEW(this);
   view_->SetEnabled(enabled);
@@ -101,6 +106,45 @@ bool View::IsEnabled() const {
   return view_->GetEnabled();
 }
 
+void View::Focus() {
+  HIME_RETURN_ON_DESTROYED_VIEW(this);
+  view_->RequestFocus();
+}
+
+bool View::HasFocus() const {
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, false);
+  return view_->HasFocus();
+}
+
+void View::SetFocusBehavior(FocusBehavior behavior) {
+  HIME_RETURN_ON_DESTROYED_VIEW(this);
+  views::View::FocusBehavior b;
+  switch (behavior) {
+    case FocusBehavior::kNever:
+      b = views::View::FocusBehavior::NEVER;
+      break;
+    case FocusBehavior::kAlways:
+      b = views::View::FocusBehavior::ALWAYS;
+      break;
+    case FocusBehavior::kAccessibleOnly:
+      b = views::View::FocusBehavior::ACCESSIBLE_ONLY;
+      break;
+  }
+  view_->SetFocusBehavior(b);
+}
+
+View::FocusBehavior View::GetFocusBehavior() const {
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, FocusBehavior::kNever);
+  switch (view_->GetFocusBehavior()) {
+    case views::View::FocusBehavior::NEVER:
+      return FocusBehavior::kNever;
+    case views::View::FocusBehavior::ALWAYS:
+      return FocusBehavior::kAlways;
+    case views::View::FocusBehavior::ACCESSIBLE_ONLY:
+      return FocusBehavior::kAccessibleOnly;
+  }
+}
+
 void View::SetBounds(const gfx::Rect& bounds) {
   HIME_RETURN_ON_DESTROYED_VIEW(this);
   view_->SetBoundsRect(bounds);
@@ -109,6 +153,11 @@ void View::SetBounds(const gfx::Rect& bounds) {
 gfx::Rect View::GetBounds() const {
   HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, gfx::Rect());
   return view_->bounds();
+}
+
+gfx::Rect View::GetBoundsInScreen() const {
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, gfx::Rect());
+  return view_->GetBoundsInScreen();
 }
 
 void View::SetPreferredSize(absl::optional<gfx::Size> size) {
@@ -140,6 +189,16 @@ void View::Layout() {
   while (!root->IsRootYogaNode() && root->parent_)
     root = root->parent_;
   root->view_->Layout();
+}
+
+void View::SchedulePaint() {
+  HIME_RETURN_ON_DESTROYED_VIEW(this);
+  view_->SchedulePaint();
+}
+
+void View::SchedulePaintInRect(const gfx::Rect& dirty) {
+  HIME_RETURN_ON_DESTROYED_VIEW(this);
+  view_->SchedulePaintInRect(dirty);
 }
 
 void View::SetBackground(scoped_refptr<Background> background) {
@@ -197,14 +256,39 @@ const std::u16string& View::GetAccessibleName() const {
   return view_->GetAccessibleName();
 }
 
-void View::SetGroup(int group_id) {
+void View::SetId(int id) {
   HIME_RETURN_ON_DESTROYED_VIEW(this);
-  view_->SetGroup(group_id);
+  view_->SetID(id);
+}
+
+int View::GetId() const {
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, 0);
+  return view_->GetID();
+}
+
+View* View::GetViewById(int id) {
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, nullptr);
+  return FromViews(view_->GetViewByID(id));
+}
+
+void View::SetGroup(int group) {
+  HIME_RETURN_ON_DESTROYED_VIEW(this);
+  view_->SetGroup(group);
 }
 
 int View::GetGroup() const {
-  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, 0);
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, -1);
   return view_->GetGroup();
+}
+
+std::vector<View*> View::GetViewsInGroup(int group) {
+  std::vector<View*> result;
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, {});
+  views::View::Views views;
+  view_->GetViewsInGroup(group, &views);
+  for (views::View* view : views)
+    result.push_back(FromViews(view));
+  return result;
 }
 
 gfx::Size View::GetPreferredSizeFor(const gfx::Size& size) const {

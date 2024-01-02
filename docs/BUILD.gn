@@ -59,6 +59,7 @@ docs_apis = [
   "api/textarea.yaml",
   "api/textfield_type.yaml",
   "api/textfield.yaml",
+  "api/view_focus_behavior.yaml",
   "api/view.yaml",
   "api/web_view.yaml",
   "api/window_options.yaml",

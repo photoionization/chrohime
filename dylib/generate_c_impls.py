@@ -195,10 +195,22 @@ def write_class_impl(file, api, write_impl, public_header):
     params = get_c_params(api, method)
     if method['returnType']['name'] == 'string':
       raise ValueError('Returning string copy in APIs has not been implemented')
-    write_function(file, method, write_impl,
-                   f'{return_type} {method["c"]}',
-                   params,
-                   get_method_impl(api, method))
+    if method['returnType']['name'].startswith('vector<'):
+      function_call = get_function_call(api, method, first_arg_is_this=True)
+      write_function(file, method, write_impl,
+                     f'{return_type} {method["c"]}',
+                     params,
+                     f'{method["returnType"]["cpp"]} result = {function_call};\n'
+                     f'if (!out)\n'
+                     f'  return result.size();\n'
+                     f'size_t n = std::min(result.size(), out_size);\n'
+                     f'std::copy_n(result.begin(), n, out);\n'
+                     f'return n;\n')
+    else:
+      write_function(file, method, write_impl,
+                     f'{return_type} {method["c"]}',
+                     params,
+                     get_method_impl(api, method))
   # Write events.
   for event in api['events']:
     if public_header:
@@ -297,7 +309,7 @@ def get_c_arg(arg, prefix=''):
     return arg_name
 
 def get_c_args(api, data):
-  return [ get_c_arg(arg) for arg in data['parameters'] if arg['type']['type'] != 'size parameter']
+  return [ get_c_arg(arg) for arg in data['parameters'] if arg['type']['type'] != 'c-only type']
 
 def get_platform_defines(data):
   defines = []

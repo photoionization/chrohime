@@ -20,8 +20,11 @@ mixin description(node)
 
 //- Display a type with possible goto link.
 mixin type(node)
-  if ![ 'primitive', 'size parameter' ].includes(node.type)
-    a.type(href=`${node.id}.html`) #{node[lang]}
+  if node.id
+    if lang == 'c' && node[lang] == 'size_t'
+      span.type #{node[lang]}
+    else
+      a.type(href=`${node.id}.html`) #{node[lang]}
   else
     span.type #{node[lang]}
 

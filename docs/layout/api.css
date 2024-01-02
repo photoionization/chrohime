@@ -87,6 +87,7 @@
 #index .column.guide ul li {
   width: calc(100% / 3);
   margin: 0;
+  padding-right: 10px;
 }
 
 #index .column.api {

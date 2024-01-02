@@ -19,6 +19,11 @@ methods:
     const: true
     returnType: bool
 
+  - name: IsDrawn
+    description: Return true if this view is drawn on screen.
+    const: true
+    returnType: bool
+
   - name: SetEnabled
     description: Set whether the view is enabled.
     args:
@@ -29,6 +34,25 @@ methods:
     description: Return whether the view is enabled.
     const: true
     returnType: bool
+
+  - name: Focus
+    description: Request keyboard focus.
+
+  - name: HasFocus
+    description: Return whether this view currently has the focus.
+    const: true
+    returnType: bool
+
+  - name: SetFocusBehavior
+    description: Set whether this view can receive keyboard focus.
+    args:
+      - name: behavior
+        type: View::FocusBehavior
+
+  - name: GetFocusBehavior
+    description: Return whether this view can receive keyboard focus.
+    const: true
+    returnType: View::FocusBehavior
 
   - name: SetBounds
     description: |
@@ -45,6 +69,11 @@ methods:
     const: true
     returnType: gfx::Rect
 
+  - name: GetBoundsInScreen
+    description: Return the bounds of the View in screen coordinate system.
+    const: true
+    returnType: gfx::Rect
+
   - name: SetPreferredSize
     description: Set or unset the size that this View will request during layout.
     args:
@@ -52,7 +81,11 @@ methods:
         type: optional<gfx::Size>
 
   - name: GetPreferredSize
-    description: Return the size the view would like to be under the current bounds.
+    description: |
+      Return the size the view would like to be under the current bounds.
+
+      If the View is never laid out before, assume it to be laid out in an
+      unbounded space.
     const: true
     returnType: gfx::Size
 
@@ -80,6 +113,15 @@ methods:
 
   - name: Layout
     description: Re-calculate the layout in view hierarchy.
+
+  - name: SchedulePaint
+    description: Mark all of the view's bounds as dirty (needing repaint).
+
+  - name: SchedulePaintInRect
+    description: Mark view's `bounds` as dirty.
+    args:
+      - name: bounds
+        type: gfx::Rect
 
   - name: SetBackground
     description: Set the `background` of the view.
@@ -154,6 +196,32 @@ methods:
     const: true
     returnType: const string ref
 
+  - name: SetId
+    description: |
+      Get the ID for this view.
+
+      ID should be unique within the subtree that you intend to search for it.
+      0 is the default ID for views.
+    args:
+      - name: id
+        type: int
+
+  - name: GetId
+    description: Get the ID of this view.
+    const: true
+    returnType: int
+
+  - name: GetViewById
+    description: |
+      Recursively descend the view tree starting at this view, and return
+      the first child that it encounters that has the given ID.
+
+      Return NULL if no matching child view is found.
+    args:
+      - name: id
+        type: int
+    returnType: View
+
   - name: SetGroup
     description: |
       Set the `group` id of this view.
@@ -166,8 +234,16 @@ methods:
         type: int
 
   - name: GetGroup
-    const: true
     description: Get the group id of this view.
+    const: true
+    returnType: int
+
+  - name: GetViewsInGroup
+    description: Get all the available views which belong to the `group`.
+    args:
+      - name: group
+        type: int
+    returnType: vector<View>
 
 events:
   - name: onDraw

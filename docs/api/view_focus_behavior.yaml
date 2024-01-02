@@ -1,0 +1,14 @@
+name: View::FocusBehavior
+type: enum class
+description: How the view receives keyboard focus.
+
+enums:
+  - name: Never
+    description: The view is never focusable.
+
+  - name: Always
+    description: |
+      The view is to be focusable both in regular and accessibility mode.
+
+  - name: AccessibleOnly
+    description: The view is focusable only during accessibility mode.
