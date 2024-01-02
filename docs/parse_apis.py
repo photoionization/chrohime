@@ -13,7 +13,7 @@ def parse_apis(apis):
   for raw in apis:
     type_name = raw['name']
     api = {
-      'name': converter.get_clean_name(type_name),
+      'name': converter.get_final_name(type_name),
       'type': get_type_info(converter, type_name,
                             converter.get_c_type_name(type_name)),
     }

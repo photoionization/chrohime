@@ -2,21 +2,14 @@ class NameConverter:
   def __init__(self, apis):
     self.apis = apis
 
-  def get_clean_name(self, data):
-    name = get_name(data)
+  def get_final_name(self, data):
+    name = strip_type_decorates(get_name(data))
     if name.startswith('gfx::'):
-      return name[5:]
-    if name.startswith('const '):
-      return name[6:]
-    elif name.startswith('vector<'):
-      return self.get_clean_name(name[7:-1])
-    elif name.startswith('optional<'):
-      return self.get_clean_name(name[9:-1])
-    else:
-      return name
+      name = name[5:]
+    return name
 
   def get_c_name(self, data):
-    return convert_to_snake_case(self.get_clean_name(data).replace('::', '')
+    return convert_to_snake_case(self.get_final_name(data).replace('::', '')
                                                           .replace(' ', '_'))
 
   def get_c_type_prefix(self, data):
@@ -112,12 +105,9 @@ class NameConverter:
     return str(value)
 
   def get_type_of_type(self, type_name):
+    type_name = strip_type_decorates(type_name)
     if type_name in [ 'argument size', 'property size' ]:
       return 'size parameter'
-    if type_name.startswith('vector<'):
-      type_name = type_name[7:-1]
-    elif type_name.startswith('optional<'):
-      type_name = type_name[9:-1]
     api = self.get_api_from_type_name(type_name)
     if api:
       return api['type']
@@ -142,6 +132,16 @@ def get_type(data):
     return data['type']['name']
   else:
     return data
+
+def strip_type_decorates(name):
+  if name.startswith('const '):
+    return strip_type_decorates(name[6:])
+  elif name.startswith('vector<'):
+    return strip_type_decorates(name[7:-1])
+  elif name.startswith('optional<'):
+    return strip_type_decorates(name[9:-1])
+  else:
+    return name
 
 def convert_to_snake_case(string):
   snake_case_string = ''
