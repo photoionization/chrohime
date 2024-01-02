@@ -25,6 +25,7 @@ methods:
 
   - name: GetContentView
     description: Get the window's content view.
+    const: true
     returnType: View
 
   - name: SetBounds
@@ -35,6 +36,7 @@ methods:
 
   - name: GetBounds
     description: Return the bounds of the window in screen coordinates.
+    const: true
     returnType: gfx::Rect
 
   - name: SetSize
@@ -45,6 +47,7 @@ methods:
 
   - name: GetSize
     description: Return the restored size for the window.
+    const: true
     returnType: gfx::Size
 
   - name: CenterTo
@@ -61,7 +64,8 @@ methods:
 
   - name: GetTitle
     description: Return window title.
-    returnType: string ref
+    const: true
+    returnType: const string ref
 
 events:
   - name: onClose

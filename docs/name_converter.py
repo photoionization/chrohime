@@ -6,6 +6,8 @@ class NameConverter:
     name = get_name(data)
     if name.startswith('gfx::'):
       return name[5:]
+    if name.startswith('const '):
+      return name[6:]
     elif name.startswith('vector<'):
       return self.get_clean_name(name[7:-1])
     elif name.startswith('optional<'):
@@ -22,6 +24,8 @@ class NameConverter:
 
   def get_cpp_type_name(self, api):
     api_name = get_type(api)
+    if api_name.startswith('const '):
+      return 'const ' + self.get_cpp_type_name(api_name[6:])
     if api_name.startswith('gfx::'):
       if api_name.endswith('f'):
         return api_name[:-1] + 'F'
@@ -30,7 +34,7 @@ class NameConverter:
     elif api_name == 'string':
       return 'std::u16string'
     elif api_name == 'string ref':
-      return 'const std::u16string&'
+      return 'std::u16string&'
     elif api_name in [ 'BlendMode', 'ClipOp', 'Color' ]:
       return f'Sk{api_name}'
     elif api_name.startswith('vector'):
@@ -40,12 +44,30 @@ class NameConverter:
     else:
       return 'hime::' + api_name
 
-  def get_c_type_name(self, data):
+  def get_c_type_name(self, data, const=False):
     type_name = get_type(data)
+    if type_name.startswith('const '):
+      return self.get_c_type_name(type_name[6:], const=True)
     if type_name in [ 'string', 'GURL' ]:
+      # For string copy always pass const char*.
       return 'const char16_t*'
+    if type_name == 'char**':
+      # Special case for Lifetime constructor.
+      if const:
+        return 'const char**'
+      else:
+        return 'char**'
+    if type_name == 'string ref':
+      if const:
+        return 'const char16_t*'
+      else:
+        return 'char16_t*'
     elif type_name[0].isupper() or type_name.startswith('gfx::'):
-      return f'{self.get_c_type_prefix(type_name)}_t'
+      prefix = self.get_c_type_prefix(type_name)
+      if const:
+        return f'{prefix}_const_t'
+      else:
+        return f'{prefix}_t'
     elif type_name.startswith('vector<'):
       return self.get_c_type_name(type_name[7:-1]) + '*'
     elif type_name.startswith('optional<'):
@@ -75,9 +97,7 @@ class NameConverter:
       return [ param_type ]
 
   def get_c_return_type(self, type_name):
-    if type_name == 'string ref':
-      return 'const char16_t*'
-    elif type_name == 'string':
+    if type_name == 'string':
       return 'size_t'
     else:
       return self.get_c_type_name(type_name)

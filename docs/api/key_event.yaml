@@ -11,7 +11,8 @@ methods:
       KeyboardEvent `key` values.
 
       See http://www.w3.org/TR/DOM-Level-3-Events-key/ for possible values.
-    returnType: string ref
+    const: true
+    returnType: const string ref
 
   - name: GetCode
     description: |
@@ -20,4 +21,5 @@ methods:
       on key layout.
 
       See http://www.w3.org/TR/DOM-Level-3-Events-code/ for possible values.
-    returnType: string ref
+    const: true
+    returnType: const string ref

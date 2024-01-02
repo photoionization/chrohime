@@ -66,35 +66,35 @@ class ViewOnMouseDispatcher : virtual public ViewBaseDispatcher<T, V> {
 
   // views::View:
   bool OnMousePressed(const ui::MouseEvent& event) override {
-    MouseEvent wrapper(&const_cast<ui::MouseEvent&>(event));
+    const MouseEvent wrapper(&const_cast<ui::MouseEvent&>(event));
     if (delegate()->on_mouse_down.Emit(delegate(), &wrapper))
       return true;
     return V::OnMousePressed(event);
   }
 
   void OnMouseReleased(const ui::MouseEvent& event) override {
-    MouseEvent wrapper(&const_cast<ui::MouseEvent&>(event));
+    const MouseEvent wrapper(&const_cast<ui::MouseEvent&>(event));
     if (delegate()->on_mouse_up.Emit(delegate(), &wrapper))
       return;
     V::OnMouseReleased(event);
   }
 
   void OnMouseMoved(const ui::MouseEvent& event) override {
-    MouseEvent wrapper(&const_cast<ui::MouseEvent&>(event));
+    const MouseEvent wrapper(&const_cast<ui::MouseEvent&>(event));
     if (delegate()->on_mouse_move.Emit(delegate(), &wrapper))
       return;
     V::OnMouseMoved(event);
   }
 
   void OnMouseEntered(const ui::MouseEvent& event) override {
-    MouseEvent wrapper(&const_cast<ui::MouseEvent&>(event));
+    const MouseEvent wrapper(&const_cast<ui::MouseEvent&>(event));
     if (delegate()->on_mouse_enter.Emit(delegate(), &wrapper))
       return;
     V::OnMouseEntered(event);
   }
 
   void OnMouseExited(const ui::MouseEvent& event) override {
-    MouseEvent wrapper(&const_cast<ui::MouseEvent&>(event));
+    const MouseEvent wrapper(&const_cast<ui::MouseEvent&>(event));
     if (delegate()->on_mouse_leave.Emit(delegate(), &wrapper))
       return;
     V::OnMouseExited(event);
@@ -110,14 +110,14 @@ class ViewOnKeyDispatcher : virtual public ViewBaseDispatcher<T, V> {
 
   // views::View:
   bool OnKeyPressed(const ui::KeyEvent& event) override {
-    KeyEvent wrapper(&const_cast<ui::KeyEvent&>(event));
+    const KeyEvent wrapper(&const_cast<ui::KeyEvent&>(event));
     if (delegate()->on_key_down.Emit(delegate(), &wrapper))
       return true;
     return V::OnKeyPressed(event);
   }
 
   bool OnKeyReleased(const ui::KeyEvent& event) override {
-    KeyEvent wrapper(&const_cast<ui::KeyEvent&>(event));
+    const KeyEvent wrapper(&const_cast<ui::KeyEvent&>(event));
     if (delegate()->on_key_up.Emit(delegate(), &wrapper))
       return true;
     return V::OnKeyReleased(event);

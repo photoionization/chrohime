@@ -27,4 +27,5 @@ methods:
 
   - name: GetModel
     description: Return the table's model.
+    const: true
     returnType: TableModel

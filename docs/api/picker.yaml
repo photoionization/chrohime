@@ -16,6 +16,7 @@ methods:
 
   - name: GetModel
     description: Return the picker's model.
+    const: true
     returnType: ComboboxModel
 
   - name: SelectItemAt
@@ -29,13 +30,15 @@ methods:
 
   - name: GetSelectedItem
     description: Return the text of selected item.
-    returnType: string ref
+    const: true
+    returnType: const string ref
 
   - name: GetSelectedItemIndex
     description: |
       Return the index of selected item.
 
       When nothing is selected, -1 will be returned.
+    const: true
     returnType: int
 
 events:

@@ -29,4 +29,5 @@ methods:
 
   - name: IsOn
     description: Return the button state.
+    const: true
     returnType: bool

@@ -16,7 +16,8 @@ methods:
 
   - name: GetText
     description: Return the text displayed.
-    returnType: string ref
+    const: true
+    returnType: const string ref
 
   - name: SetMultiLine
     description: Set if the label text can wrap on multiple lines.
@@ -29,6 +30,7 @@ methods:
       Get if the label text can wrap on multiple lines.
 
       Default is false.
+    const: true
     returnType: bool
 
   - name: SetSelectable
@@ -48,4 +50,5 @@ methods:
       Return if the label is selectable.
 
       Default is false.
+    const: true
     returnType: bool

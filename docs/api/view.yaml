@@ -16,6 +16,7 @@ methods:
 
   - name: IsVisible
     description: Return whether the view is visible.
+    const: true
     returnType: bool
 
   - name: SetEnabled
@@ -26,10 +27,12 @@ methods:
 
   - name: IsEnabled
     description: Return whether the view is enabled.
+    const: true
     returnType: bool
 
   - name: GetBounds
     description: Return the bounds of the view in its parent's coordinates.
+    const: true
     returnType: gfx::Rect
 
   - name: SetPreferredSize
@@ -40,6 +43,7 @@ methods:
 
   - name: GetPreferredSize
     description: Return the size the view would like to be under the current bounds.
+    const: true
     returnType: gfx::Size
 
   - name: SetStyle
@@ -110,10 +114,12 @@ methods:
 
   - name: ChildCount
     description: Return the count of children in this view.
+    const: true
     returnType: size_t
 
   - name: ChildAt
     description: Return the child View at `index`.
+    const: true
     args:
       - name: index
         type: size_t
@@ -135,7 +141,8 @@ methods:
 
   - name: GetAccessibleName
     description: Get the accessible name.
-    returnType: string ref
+    const: true
+    returnType: const string ref
 
   - name: SetGroup
     description: |
@@ -149,6 +156,7 @@ methods:
         type: int
 
   - name: GetGroup
+    const: true
     description: Get the group id of this view.
 
 events:
@@ -178,7 +186,7 @@ events:
       - name: view
         type: View
       - name: event
-        type: MouseEvent
+        type: const MouseEvent
     returnType: bool
 
   - name: onMouseUp
@@ -187,7 +195,7 @@ events:
       - name: view
         type: View
       - name: event
-        type: MouseEvent
+        type: const MouseEvent
     returnType: bool
 
   - name: onMouseMove
@@ -196,7 +204,7 @@ events:
       - name: view
         type: View
       - name: event
-        type: MouseEvent
+        type: const MouseEvent
     returnType: bool
 
   - name: onMouseEnter
@@ -205,7 +213,7 @@ events:
       - name: view
         type: View
       - name: event
-        type: MouseEvent
+        type: const MouseEvent
     returnType: bool
 
   - name: onMouseLeave
@@ -214,7 +222,7 @@ events:
       - name: view
         type: View
       - name: event
-        type: MouseEvent
+        type: const MouseEvent
     returnType: bool
 
   - name: onKeyDown
@@ -223,7 +231,7 @@ events:
       - name: view
         type: View
       - name: event
-        type: KeyEvent
+        type: const KeyEvent
     returnType: bool
 
   - name: onKeyUp
@@ -232,5 +240,5 @@ events:
       - name: view
         type: View
       - name: event
-        type: KeyEvent
+        type: const KeyEvent
     returnType: bool

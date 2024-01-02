@@ -9,8 +9,10 @@ methods:
       Get the click count.
 
       Can be 1, 2 or 3 for mousedown messages, 0 otherwise.
+    const: true
     returnType: int
 
   - name: GetMovement
     description: Get the movement since last event.
+    const: true
     returnType: gfx::Vector2df

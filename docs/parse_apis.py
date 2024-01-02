@@ -43,6 +43,8 @@ def parse_apis(apis):
         for f in raw[func_type]:
           func = {}
           copy_common_keys(converter, func, f)
+          if 'const' in f and f['const']:
+            func['const'] = True
           func['c'] = converter.get_c_type_prefix(api) + '_' + converter.get_c_name(f)
           if func_type == 'events':
             func['cpp'] = converter.get_c_name(f['name'])
@@ -124,14 +126,6 @@ def copy_common_keys(converter, dest, src):
   if 'id' not in dest:
     dest['id'] = converter.get_c_name(dest['name'])
 
-def get_c_params(api, method, include_this=False):
-  parameters = []
-  if include_this:
-    parameters.append(f'{api["type"]["c"]} self')
-  for arg in method['parameters']:
-    parameters.append(f'{arg["type"]["c"]} {arg["id"]}')
-  return ', '.join(parameters)
-
 def fill_default_values(path, data):
   if data['type'] in [ 'class', 'refcounted' ]:
     for key in ['class_methods', 'constructors', 'methods', 'events']:
@@ -143,7 +137,10 @@ def fill_default_values(path, data):
         else:
           item.setdefault('returnType', 'void')
         if key == 'methods':
-          item['args'].insert(0, {'name': 'self', 'type': data['name']})
+          self_type = data['name']
+          if item.get('const'):
+            self_type = f'const {self_type}'
+          item['args'].insert(0, {'name': 'self', 'type': self_type})
   return data
 
 def parse_files(files):

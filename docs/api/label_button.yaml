@@ -21,7 +21,8 @@ methods:
 
   - name: GetTitle
     description: Get the text shown on the button.
-    returnType: string ref
+    const: true
+    returnType: const string ref
 
   - name: MakeDefault
     description: |
@@ -32,4 +33,5 @@ methods:
 
   - name: IsDefault
     description: Return whether this button is the default button.
+    const: true
     returnType: bool

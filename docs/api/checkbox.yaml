@@ -16,6 +16,7 @@ methods:
 
   - name: IsChecked
     description: Return whether the checkbox is checked.
+    const: true
     returnType: bool
 
 events:

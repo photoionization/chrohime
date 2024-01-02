@@ -16,6 +16,7 @@ methods:
 
   - name: GetModel
     description: Return the combobox's model.
+    const: true
     returnType: ComboboxModel
 
   - name: SetText
@@ -26,7 +27,8 @@ methods:
 
   - name: GetText
     description: Get the text for the Combobox.
-    returnType: string ref
+    const: true
+    returnType: const string ref
 
   - name: SetPlaceholderText
     description: Set the `placeholder` text to display when empty.

@@ -81,13 +81,13 @@ class CHROHIME_EXPORT View : public Object,
   // Events.
   Signal<bool(View*, Painter*)> on_will_draw;
   Signal<void(View*, Painter*)> on_draw;
-  Signal<bool(View*, MouseEvent*)> on_mouse_down;
-  Signal<bool(View*, MouseEvent*)> on_mouse_up;
-  Signal<bool(View*, MouseEvent*)> on_mouse_move;
-  Signal<bool(View*, MouseEvent*)> on_mouse_enter;
-  Signal<bool(View*, MouseEvent*)> on_mouse_leave;
-  Signal<bool(View*, KeyEvent*)> on_key_down;
-  Signal<bool(View*, KeyEvent*)> on_key_up;
+  Signal<bool(View*, const MouseEvent*)> on_mouse_down;
+  Signal<bool(View*, const MouseEvent*)> on_mouse_up;
+  Signal<bool(View*, const MouseEvent*)> on_mouse_move;
+  Signal<bool(View*, const MouseEvent*)> on_mouse_enter;
+  Signal<bool(View*, const MouseEvent*)> on_mouse_leave;
+  Signal<bool(View*, const KeyEvent*)> on_key_down;
+  Signal<bool(View*, const KeyEvent*)> on_key_up;
 
  protected:
   View(std::unique_ptr<views::View> to_take, LayoutType layout_type);

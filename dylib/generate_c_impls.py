@@ -15,15 +15,17 @@ def write_c_header_file(file, apis, public_header=False):
       if api['type']['type'] in [ 'refcounted', 'class' ]:
         if is_content_api(api):
           file.write('#if defined(CHROHIME_WITH_CONTENT)\n')
-        file.write(f'typedef {api["type"]["cpp"]}* {api["type"]["c"]};\n')
+        file.write(f'typedef {api["type"]["cpp"]}* {api["type"]["c"]};\n'
+                   f'typedef const {api["type"]["cpp"]}* {api["type"]["c"][:-1]}const_t;\n')
         if is_content_api(api):
           file.write('#endif\n')
     file.write('#else\n')
-  # Write fake typedefs for library users.
+  # Write opque pointer typedefs for library users.
   file.write('// Declarations for opaque pointers.\n')
   for api in apis:
     if api['type']['type'] in [ 'refcounted', 'class' ]:
-      file.write(f'typedef struct priv_{api["type"]["c"]}* {api["type"]["c"]};\n')
+      file.write(f'typedef struct priv_{api["type"]["c"]}* {api["type"]["c"]};\n'
+                 f'typedef const struct priv_{api["type"]["c"]}* {api["type"]["c"][:-1]}const_t;\n')
   if not public_header:
     file.write('#endif\n')
   file.write('\n')
@@ -56,8 +58,8 @@ def write_c_impl_file(file, apis):
       write_converters(file, api)
   # Write a helper for converting c struct array to vectors.
   file.write('template<typename T, typename F>\n'
-             'std::vector<T> ToHimeVector(F* from, size_t from_size) {\n'
-             '  std::vector<T> result;\n'
+             'std::vector<std::remove_const_t<T>> ToHimeVector(F* from, size_t from_size) {\n'
+             '  std::vector<std::remove_const_t<T>> result;\n'
              '  result.reserve(from_size);\n'
              '  for (size_t i = 0; i < from_size; ++i)\n'
              '    result.push_back(ToHime(from + i));\n'
@@ -266,7 +268,7 @@ def get_function_call(api, func, first_arg_is_this=False):
     call = f'self->{call}'
   if func['returnType']['type'] in [ 'struct', 'geometry', 'enum', 'enum class' ]:
     call = f'FromHime({call})'
-  if func['returnType']['name'] == 'string ref':
+  if func['returnType']['name'].endswith('string ref'):
     return f'{call}.c_str()'
   return call
 

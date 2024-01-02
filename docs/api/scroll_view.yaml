@@ -26,4 +26,5 @@ methods:
 
   - name: GetContentView
     description: Get the content view.
+    const: true
     returnType: View

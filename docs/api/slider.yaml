@@ -20,6 +20,7 @@ methods:
 
   - name: GetValue
     description: Return slider's value in interval [0, 1].
+    const: true
     returnType: float
 
 events:

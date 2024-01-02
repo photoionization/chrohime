@@ -6,11 +6,13 @@ description: The model driving the `Combobox` and `Picker`.
 methods:
   - name: GetItemCount
     description: Return the number of items.
+    const: true
     returnType: size_t
 
   - name: GetItemText
     description: Return the text of item at `index`.
+    const: true
     args:
       - name: index
         type: size_t
-    returnType: string ref
+    returnType: const string ref

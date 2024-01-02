@@ -26,7 +26,8 @@ methods:
 
       Call sites should take care to not reveal the text for a password
       textfield.
-    returnType: string ref
+    const: true
+    returnType: const string ref
 
   - name: SetPlaceholderText
     description: Set the `placeholder` text to display when empty.
@@ -42,6 +43,7 @@ methods:
 
   - name: IsReadonly
     description: Get whether the textfield is read-only.
+    const: true
     returnType: bool
 
   - name: SetInvalid
@@ -52,4 +54,5 @@ methods:
 
   - name: IsInvalid
     description: Get whether to indicate the textfield has invalid content.
+    const: true
     returnType: bool

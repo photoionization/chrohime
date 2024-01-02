@@ -28,6 +28,7 @@ methods:
 
   - name: PageCount
     description: Return the count of pages in this view.
+    const: true
     returnType: size_t
 
   - name: PageAt
@@ -45,8 +46,10 @@ methods:
 
   - name: GetSelectedPageIndex
     description: Return the index of selected page.
+    const: true
     returnType: size_t
 
   - name: GetSelectedPage
     description: Return the view of selected page.
+    const: true
     returnType: View

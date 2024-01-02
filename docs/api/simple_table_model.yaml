@@ -16,7 +16,7 @@ methods:
     description: Append a new row.
     args:
       - name: row
-        type: vector<string>
+        type: vector<const string>
 
   - name: RemoveRowAt
     description: Remove the row at `index`.

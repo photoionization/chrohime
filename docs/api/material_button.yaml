@@ -16,4 +16,5 @@ methods:
 
   - name: GetStyle
     description: Get the material style of the button.
+    const: true
     returnType: MaterialButton::Style

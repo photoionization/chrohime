@@ -5,10 +5,12 @@ description: Generic input event type.
 methods:
   - name: GetFlags
     description: Return bit fields of `Event::Flag`s.
+    const: true
     returnType: int
 
   - name: GetType
     description: Return the event type.
+    const: true
     returnType: Event::Type
 
   - name: IsCancelable
@@ -19,6 +21,7 @@ methods:
       the containing abstraction layer may perform can be prevented by calling
       `SetHandled()`. `SetHandled()` or `StopPropagation()` must not be called
       for events that are not cancelable.
+    const: true
     returnType: bool
 
   - name: SetHandled
@@ -34,6 +37,7 @@ methods:
 
   - name: IsHandled
     description: Return whether the event has been handled.
+    const: true
     returnType: bool
 
   - name: StopPropagation
@@ -48,6 +52,7 @@ methods:
 
   - name: IsConsumed
     description: Return whether StopPropagation has been called.
+    const: true
     returnType: bool
 
   - name: SetSkipped
