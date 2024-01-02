@@ -56,12 +56,12 @@ void Combobox::SetPlaceholderText(const std::u16string& text) {
   GetView()->SetPlaceholderText(text);
 }
 
-views::EditableCombobox* Combobox::GetView() const {
-  return static_cast<views::EditableCombobox*>(view());
-}
-
 void Combobox::OnChange() {
   on_change.Emit(this);
+}
+
+views::EditableCombobox* Combobox::GetView() const {
+  return static_cast<views::EditableCombobox*>(view());
 }
 
 }  // namespace hime

@@ -10,7 +10,7 @@
 
 namespace hime {
 
-RootView::RootView(Window* window) : window_(window) {
+RootView::RootView() {
   set_owned_by_client();
 #if !BUILDFLAG(IS_MAC)
   SetBackground(views::CreateSolidBackground(SK_ColorWHITE));
@@ -19,10 +19,16 @@ RootView::RootView(Window* window) : window_(window) {
 
 RootView::~RootView() = default;
 
+void RootView::SetContentView(std::unique_ptr<views::View> view) {
+  if (content_view_)
+    RemoveChildView(content_view_);
+  content_view_ = view.get();
+  AddChildView(std::move(view));
+}
+
 void RootView::Layout() {
-  if (!window_->GetContentView())
-    return;
-  window_->GetContentView()->view()->SetBoundsRect(gfx::Rect(size()));
+  if (content_view_)
+    content_view_->SetBoundsRect(gfx::Rect(size()));
 }
 
 }  // namespace hime

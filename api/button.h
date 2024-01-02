@@ -15,8 +15,6 @@ namespace hime {
 
 class CHROHIME_EXPORT Button : public View {
  public:
-  views::Button* GetView() const;
-
   // Events.
   Signal<void(Button*)> on_click;
 
@@ -26,6 +24,7 @@ class CHROHIME_EXPORT Button : public View {
 
  private:
   void OnClick();
+  views::Button* GetView() const;
 };
 
 }  // namespace hime

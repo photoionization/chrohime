@@ -18,8 +18,6 @@ class CHROHIME_EXPORT Slider : public View,
   void SetValue(float value);
   float GetValue() const;
 
-  views::Slider* GetView() const;
-
   // Events.
   Signal<void(Slider*, float new_value, float old_value)> on_change;
 
@@ -31,6 +29,9 @@ class CHROHIME_EXPORT Slider : public View,
                           float value,
                           float old_value,
                           views::SliderChangeReason reason) override;
+
+ private:
+  views::Slider* GetView() const;
 };
 
 }  // namespace hime

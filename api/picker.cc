@@ -66,12 +66,12 @@ int Picker::GetSelectedItemIndex() const {
     return -1;
 }
 
-views::Combobox* Picker::GetView() const {
-  return static_cast<views::Combobox*>(view());
-}
-
 void Picker::OnChange() {
   on_change.Emit(this);
+}
+
+views::Combobox* Picker::GetView() const {
+  return static_cast<views::Combobox*>(view());
 }
 
 }  // namespace hime

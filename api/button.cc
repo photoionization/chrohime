@@ -17,12 +17,12 @@ Button::Button(std::unique_ptr<views::Button> to_take)
 
 Button::~Button() = default;
 
-views::Button* Button::GetView() const {
-  return static_cast<views::Button*>(view());
-}
-
 void Button::OnClick() {
   on_click.Emit(this);
+}
+
+views::Button* Button::GetView() const {
+  return static_cast<views::Button*>(view());
 }
 
 }  // namespace hime

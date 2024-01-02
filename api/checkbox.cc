@@ -41,12 +41,12 @@ bool Checkbox::IsChecked() const {
   return GetView()->GetChecked();
 }
 
-views::Checkbox* Checkbox::GetView() const {
-  return static_cast<views::Checkbox*>(view());
-}
-
 void Checkbox::OnChange() {
   on_change.Emit(this);
+}
+
+views::Checkbox* Checkbox::GetView() const {
+  return static_cast<views::Checkbox*>(view());
 }
 
 }  // namespace hime

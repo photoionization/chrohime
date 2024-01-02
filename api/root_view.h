@@ -9,21 +9,21 @@
 
 namespace hime {
 
-class Window;
-
 // The views::Widget does not allow changing content view dynamically, so we
 // use the RootView as the widget's real content view, and implement the content
 // view set by |Window::SetContentView| as a child view of RootView.
 class RootView : public views::View {
  public:
-  explicit RootView(Window* window);
+  RootView();
   ~RootView() override;
+
+  void SetContentView(std::unique_ptr<views::View> view);
 
   // views::View:
   void Layout() override;
 
  private:
-  raw_ptr<Window> window_;
+  raw_ptr<views::View> content_view_ = nullptr;
 };
 
 }  // namespace hime

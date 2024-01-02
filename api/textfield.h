@@ -34,11 +34,12 @@ class CHROHIME_EXPORT Textfield : public View {
   void SetInvalid(bool invalid);
   bool IsInvalid() const;
 
-  views::Textfield* GetView() const;
-
  protected:
   explicit Textfield(std::unique_ptr<views::Textfield> to_take);
   ~Textfield() override;
+
+ private:
+  views::Textfield* GetView() const;
 };
 
 }  // namespace hime

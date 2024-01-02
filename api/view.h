@@ -40,6 +40,7 @@ class CHROHIME_EXPORT View : public Object,
   bool IsVisible() const;
   void SetEnabled(bool enabled);
   bool IsEnabled() const;
+  void SetBounds(const gfx::Rect& bounds);
   gfx::Rect GetBounds() const;
   void SetPreferredSize(absl::optional<gfx::Size> size);
   gfx::Size GetPreferredSize() const;
@@ -61,6 +62,10 @@ class CHROHIME_EXPORT View : public Object,
   void SetGroup(int group_id);
   int GetGroup() const;
 
+  // TODO(zcbenz): Expose the method to C after finding a good C API to
+  // represent the SizeBounds.
+  gfx::Size GetPreferredSizeFor(const gfx::Size& size) const;
+
   // Internal: Return whether this is the root node when calculating layout.
   bool IsRootYogaNode() const;
 
@@ -72,11 +77,8 @@ class CHROHIME_EXPORT View : public Object,
   LayoutType layout_type() const { return layout_type_; }
   YGNodeRef yoga_node() const { return yoga_node_; }
 
-  // Internal: Get the underlying view.
-  // Note that the returned pointer might be null, and caller must check before
-  // using to avoid crashes.
-  // TODO(zcbenz): Make this a protected member, do no use it in new code.
-  views::View* view() const { return view_.get(); }
+  // Internal: Return whether the underlying view has been destroyed.
+  bool is_destroyed() const { return !view(); }
 
   // Events.
   Signal<bool(View*, Painter*)> on_will_draw;
@@ -103,6 +105,11 @@ class CHROHIME_EXPORT View : public Object,
                                views::View* starting_view) override;
   void OnViewAddedToWidget(views::View* observed_view) override;
 
+  // Internal: Get the underlying view.
+  // Note that the returned pointer might be null, and caller must check before
+  // using to avoid crashes.
+  views::View* view() const { return view_.get(); }
+
  private:
   LayoutType layout_type_;
   YGConfigRef yoga_config_;
@@ -126,12 +133,12 @@ class CHROHIME_EXPORT View : public Object,
 
 // Helper for guarding against destroyed views.
 #define HIME_RETURN_ON_DESTROYED_VIEW(obj) \
-  if (!obj || !obj->view()) { \
+  if (!obj || obj->is_destroyed()) { \
     NOTREACHED() << "View has been destroyed."; \
     return; \
   }
 #define HIME_RETURN_VALUE_ON_DESTROYED_VIEW(obj, value) \
-  if (!obj || !obj->view()) { \
+  if (!obj || obj->is_destroyed()) { \
     NOTREACHED() << "View has been destroyed."; \
     return value; \
   }

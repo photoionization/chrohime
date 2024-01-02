@@ -17,8 +17,6 @@ class CHROHIME_EXPORT Link : public Label {
  public:
   Link();
 
-  views::Link* GetView() const;
-
   // Events.
   Signal<void(Link*)> on_click;
 
@@ -30,6 +28,7 @@ class CHROHIME_EXPORT Link : public Label {
 
  private:
   void OnClick();
+  views::Link* GetView() const;
 };
 
 }  // namespace hime

@@ -22,9 +22,8 @@ YGSize MeasureSlider(YGNodeConstRef node,
                      float width, YGMeasureMode mode,
                      float height, YGMeasureMode height_mode) {
   auto* view = static_cast<View*>(YGNodeGetContext(node));
-  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(view, YGSize(0, 0));
   // Slider has a fixed height and flexible width.
-  gfx::Size size = view->view()->GetPreferredSize();
+  gfx::Size size = view->GetPreferredSize();
   if (mode == YGMeasureModeExactly)
     width = size.width();
   return {width, static_cast<float>(size.height())};
@@ -49,10 +48,6 @@ float Slider::GetValue() const {
   return GetView()->GetValue();
 }
 
-views::Slider* Slider::GetView() const {
-  return static_cast<views::Slider*>(view());
-}
-
 void Slider::SliderValueChanged(views::Slider* sender,
                                 float value,
                                 float old_value,
@@ -60,6 +55,10 @@ void Slider::SliderValueChanged(views::Slider* sender,
   if (reason == views::SliderChangeReason::kByApi)
     return;
   on_change.Emit(this, value, old_value);
+}
+
+views::Slider* Slider::GetView() const {
+  return static_cast<views::Slider*>(view());
 }
 
 }  // namespace hime

@@ -26,8 +26,6 @@ class CHROHIME_EXPORT Combobox : public View {
   const std::u16string& GetText() const;
   void SetPlaceholderText(const std::u16string& text);
 
-  views::EditableCombobox* GetView() const;
-
   // Events.
   Signal<void(Combobox*)> on_change;
 
@@ -36,6 +34,8 @@ class CHROHIME_EXPORT Combobox : public View {
 
  private:
   void OnChange();
+
+  views::EditableCombobox* GetView() const;
 
   scoped_refptr<ComboboxModel> model_;
 };

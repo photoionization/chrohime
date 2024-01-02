@@ -29,12 +29,12 @@ class CHROHIME_EXPORT TabView : public View {
   size_t GetSelectedPageIndex() const;
   View* GetSelectedPage() const;
 
-  views::TabbedPane* GetView() const;
-
  protected:
   ~TabView() override;
 
  private:
+  views::TabbedPane* GetView() const;
+
   std::vector<scoped_refptr<View>> pages_;
 };
 

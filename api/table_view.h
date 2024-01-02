@@ -26,10 +26,11 @@ class CHROHIME_EXPORT TableView : public View {
   void SetModel(scoped_refptr<TableModel> model);
   TableModel* GetModel() const;
 
-  views::TableView* GetView() const;
-
  protected:
   ~TableView() override;
+
+ private:
+  views::TableView* GetView() const;
 
   scoped_refptr<TableModel> model_;
 };

@@ -26,8 +26,6 @@ class CHROHIME_EXPORT Picker : public View {
   const std::u16string& GetSelectedItem() const;
   int GetSelectedItemIndex() const;
 
-  views::Combobox* GetView() const;
-
   // Events.
   Signal<void(Picker*)> on_change;
 
@@ -36,6 +34,7 @@ class CHROHIME_EXPORT Picker : public View {
 
  private:
   void OnChange();
+  views::Combobox* GetView() const;
 
   // Cache the result so we can return const string reference in APIs.
   mutable std::u16string cached_result_;

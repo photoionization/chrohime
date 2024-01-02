@@ -43,8 +43,8 @@ YGSize MeasureView(YGNodeConstRef node,
                    float width, YGMeasureMode mode,
                    float height, YGMeasureMode height_mode) {
   auto* view = static_cast<View*>(YGNodeGetContext(node));
-  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(view, YGSize(0, 0));
-  gfx::Size size = view->view()->GetPreferredSize({width, height});
+  gfx::Size size = view->GetPreferredSizeFor({static_cast<int>(width),
+                                              static_cast<int>(height)});
   return {static_cast<float>(size.width()), static_cast<float>(size.height())};
 }
 
@@ -99,6 +99,11 @@ void View::SetEnabled(bool enabled) {
 bool View::IsEnabled() const {
   HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, false);
   return view_->GetEnabled();
+}
+
+void View::SetBounds(const gfx::Rect& bounds) {
+  HIME_RETURN_ON_DESTROYED_VIEW(this);
+  view_->SetBoundsRect(bounds);
 }
 
 gfx::Rect View::GetBounds() const {
@@ -200,6 +205,11 @@ void View::SetGroup(int group_id) {
 int View::GetGroup() const {
   HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, 0);
   return view_->GetGroup();
+}
+
+gfx::Size View::GetPreferredSizeFor(const gfx::Size& size) const {
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, gfx::Size());
+  return view_->GetPreferredSize(views::SizeBounds(size));
 }
 
 bool View::IsRootYogaNode() const {

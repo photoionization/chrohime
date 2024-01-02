@@ -30,13 +30,23 @@ methods:
     const: true
     returnType: bool
 
+  - name: SetBounds
+    description: |
+      Change the bounds of view directly.
+
+      This method should only be used when using custom layout engines, normal
+      users should use `SetStyle` instead.
+    args:
+      - name: bounds
+        type: gfx::Rect
+
   - name: GetBounds
     description: Return the bounds of the view in its parent's coordinates.
     const: true
     returnType: gfx::Rect
 
   - name: SetPreferredSize
-    description: Sets or unsets the size that this View will request during layout.
+    description: Set or unset the size that this View will request during layout.
     args:
       - name: size
         type: optional<gfx::Size>

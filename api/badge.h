@@ -22,10 +22,11 @@ class CHROHIME_EXPORT Badge : public View {
   // https://chromium-review.googlesource.com/c/chromium/src/+/4226253
   // const std::u16string& GetText() const;
 
-  views::Badge* GetView() const;
-
  protected:
   ~Badge() override;
+
+ private:
+  views::Badge* GetView() const;
 };
 
 }  // namespace hime

@@ -70,7 +70,7 @@ class WindowDelegate : public views::WidgetDelegate {
 };
 
 Window::Window(const Options& options)
-    : root_view_(new RootView(this)),
+    : root_view_(new RootView),
       delegate_(new WindowDelegate(this)),
       widget_(new views::Widget) {
   views::Widget::InitParams params;
@@ -94,10 +94,8 @@ void Window::Activate() {
 }
 
 void Window::SetContentView(scoped_refptr<View> view) {
-  if (content_view_)
-    root_view_->RemoveChildView(content_view_->view());
   content_view_ = std::move(view);
-  root_view_->AddChildView(content_view_->TransferOwnership());
+  root_view_->SetContentView(content_view_->TransferOwnership());
   root_view_->Layout();
 }
 

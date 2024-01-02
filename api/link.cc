@@ -25,10 +25,6 @@ Link::Link() : Label(std::make_unique<LinkImpl>(this)) {
 
 Link::~Link() = default;
 
-views::Link* Link::GetView() const {
-  return static_cast<views::Link*>(view());
-}
-
 void Link::OnViewPreferredSizeChanged(views::View* observed_view) {
   Label::OnViewPreferredSizeChanged(observed_view);
   // Link has a fixed maximum width.
@@ -39,6 +35,10 @@ void Link::OnViewPreferredSizeChanged(views::View* observed_view) {
 
 void Link::OnClick() {
   on_click.Emit(this);
+}
+
+views::Link* Link::GetView() const {
+  return static_cast<views::Link*>(view());
 }
 
 }  // namespace hime

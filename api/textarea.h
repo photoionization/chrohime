@@ -17,10 +17,11 @@ class CHROHIME_EXPORT Textarea : public Textfield {
  public:
   Textarea();
 
-  views::Textarea* GetView() const;
-
  protected:
   ~Textarea() override;
+
+ private:
+  views::Textarea* GetView() const;
 };
 
 }  // namespace hime

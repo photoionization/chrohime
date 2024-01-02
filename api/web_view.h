@@ -23,8 +23,6 @@ class CHROHIME_EXPORT WebView : public View,
 
   void LoadInitialUrl(const GURL& url);
 
-  views::WebView* GetView() const;
-
  protected:
   ~WebView() override;
 
@@ -34,6 +32,8 @@ class CHROHIME_EXPORT WebView : public View,
       const content::NativeWebKeyboardEvent& event) override;
 
  private:
+  views::WebView* GetView() const;
+
   views::UnhandledKeyboardEventHandler unhandled_keyboard_event_handler_;
 };
 

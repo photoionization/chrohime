@@ -35,15 +35,15 @@ void WebView::LoadInitialUrl(const GURL& url) {
   GetView()->LoadInitialURL(url);
 }
 
-views::WebView* WebView::GetView() const {
-  return static_cast<views::WebView*>(view());
-}
-
 bool WebView::HandleKeyboardEvent(
     content::WebContents* source,
     const content::NativeWebKeyboardEvent& event) {
   return unhandled_keyboard_event_handler_.HandleKeyboardEvent(
       event, GetView()->GetFocusManager());
+}
+
+views::WebView* WebView::GetView() const {
+  return static_cast<views::WebView*>(view());
 }
 
 }  // namespace hime

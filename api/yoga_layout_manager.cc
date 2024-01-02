@@ -30,9 +30,9 @@ void YogaLayoutManager::Layout(views::View* view) {
     View* child = host_->ChildAt(i);
     if (child->IsVisible()) {
       YGNodeRef node = child->yoga_node();
-      child->view()->SetBounds(
-          YGNodeLayoutGetLeft(node), YGNodeLayoutGetTop(node),
-          YGNodeLayoutGetWidth(node), YGNodeLayoutGetHeight(node));
+      child->SetBounds(
+          gfx::Rect(YGNodeLayoutGetLeft(node), YGNodeLayoutGetTop(node),
+                    YGNodeLayoutGetWidth(node), YGNodeLayoutGetHeight(node)));
     }
   }
 }
