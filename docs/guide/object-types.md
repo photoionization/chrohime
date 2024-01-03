@@ -1,5 +1,5 @@
 ---
-priority: 10
+priority: 20
 description: Walkthrough of object lifetime management.
 ---
 

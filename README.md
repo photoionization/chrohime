@@ -3,7 +3,7 @@
 Chrohime is a C library based on Chromium's `ui/views` library, for building
 native cross-platform GUI on desktop.
 
-You can Learn more about the tech by reading
+You can learn more about the tech by reading
 [technical visions](https://chrohime.com/docs/latest/c/guide/technical-visions.html).
 
 Goals:

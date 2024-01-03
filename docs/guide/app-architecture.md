@@ -1,5 +1,5 @@
 ---
-priority: 11
+priority: 19
 description: The basic skeleton of an app, and concepts of state and lifetime.
 ---
 

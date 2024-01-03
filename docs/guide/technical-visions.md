@@ -1,12 +1,12 @@
 ---
-priority: 12
+priority: 18
 description: Why Chrohime was created and what it can be used for.
 ---
 
 # Technical visions
 
 The `ui/views` library is Chromium's internal UI toolkit for creating the
-non-web parts of GUI, e.g. addressbar, tabs, menus. While being a specialzied
+non-web parts of GUI, e.g. address bar, tabs, menus. While being a specialzied
 UI toolkit for browser GUI initially, it has evolved into a library for general
 GUI, partly thanks to the needs of Chrome OS.
 
@@ -23,47 +23,47 @@ C APIs based on the `ui/views` library.
 
 ## Why another GUI library
 
-A large part of desktop apps are now essentially web pages running on custom
-Chromuim browsers, via frameworks like Electron and CEF, for them having
-the ability to create native UI would be a great addition.
+A large part of desktop apps (including some of the most popular ones) are now
+essentially web pages running on custom Chromuim browsers, via frameworks like Electron and CEF.
 
-Chrohime is designed to be integrated into those apps. (Note: none of the
-following things have been implemented at the time of writing, though you can
-trust me that there is no technical difficulties.)
+Chrohime is designed to be easily integrated into those Chromium-based apps,
+which can then make use of native UI to implement performance sensitive
+components, or achieve features impossible with web-only techs.
 
-For Electron, it is possible to build Chrohime as part of Electron and expose
-its C APIs to native Node.js modules, which can then be used to create
-JavaScript APIs that allow Electron apps to create native UI. And it is possible
-to integrate the WebContentsView created by Electron into the view hierarchy of
-Chrohime, so Electron apps can create mixed UI with web pages and native UI like
-how the Chrome browser itself is implemented.
+For Electron apps, Chrohime can be built as a component of Electron and have its
+APIs exposed to native Node.js modules, which allows Electron apps to create
+native UI. Interoperability with Electron's UI components `WebContentsView` and
+`BrowserWindow` is also possible with a few glueing code.
 
-For CEF, with a few bridging code it is possible to put the browser view created
-by CEF into the view hierarchy managed by Chrohime, so you can let different
-libraries do what they are good at: manage the browser engine with CEF, and
-create UI with Chrohime.
+For CEF apps, with a few bridging code it is possible to put the browser view
+created by CEF into the view hierarchy managed by Chrohime, so developers can
+let different libraries do what they are good at: manage the browser engine with
+CEF, and create UI with Chrohime.
+
+(Note: above integrations have not been implemented yet at the time of writing,
+as the current focus is to ship an independent library first.)
 
 ### An addition, not a killer
 
-As you can see, Chrohime is more about being a nice addition to existing apps,
-rather than being a xxx-killer. If you are totally happy with Electron, you can
-surely just ignore this library, but if you run into something hard to achieve
-with web techs, Chrohime will be there to help.
+Chrohime is more about being a nice addition to existing apps, rather than being
+a xxx-killer. It does not try to replace any existing UI toolkit, instead it
+means to be a complement when developers run into limitations of web techs or
+want to do some extreme performance optimizations.
 
 ## Why C API
 
-Chrohime provides C APIs instead of C++ APIs mostly because C++ ABI is too hard
-to get right.
+Chrohime is designed to be integrated into scripting languages, and C APIs make
+language bindings easier to write, especially for langauges not implemeneted in
+C/C++.
 
-To link with a C++ shared library, developers have to be sure that the
-executable uses the same C++ standard library with the same flags, which is a
-big problem for Chromium-based projects because Chromium uses a version of
-libc++ newer than most systems provide. Additionally, Chromium links with libc++
-statically, so it is difficult to understand what will happen when passing C++
-objects through DLL boundries.
+Another reason is C++ ABI is too hard to get right.
 
-On the other hand, it is much easier integrating a C library for scripting
-languages, especially for those not written in C/C++.
+To link with a C++ shared library that uses STL in its APIs, developers have to
+make sure that the executable uses the same C++ standard library with the same
+flags, which is a big problem for Chromium-based projects because Chromium uses
+a version of libc++ newer than most systems provide. Additionally, Chromium
+links with libc++ statically, so it is difficult to understand what will happen
+when passing C++ objects through DLL boundries.
 
 ## Use cases outside Chromium-based apps
 
@@ -77,9 +77,9 @@ is too large, way higher than many mainstream GUI libraries. So I wouldn't
 recommend using this library if you aim to write apps that take minimal disk
 spaces.
 
-But in the meanwhile this is a C library thats aims to be friendly with language
-bindings, so binary size is not a priority since the binary is supposed to be
-shared as modules.
+But in the meanwhile this is a C library thats aims to be used a shared module,
+so binary size is currently not a priority. In future we will try to provide
+flags to disable certain components to reduce binary size.
 
 ### React Native on desktop
 
