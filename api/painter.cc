@@ -5,8 +5,11 @@
 #include "chrohime/api/painter.h"
 
 #include "chrohime/api/path.h"
+#include "chrohime/api/skia_image.h"
 #include "ui/gfx/canvas.h"
 #include "ui/gfx/geometry/skia_conversions.h"
+#include "ui/gfx/image/image_skia_rep.h"
+#include "ui/gfx/skia_paint_util.h"
 
 namespace hime {
 
@@ -82,6 +85,62 @@ void Painter::DrawRoundRect(const gfx::RectF& rect, float radius,
 
 void Painter::DrawPath(const scoped_refptr<Path>& path, const Paint& paint) {
   canvas_->DrawPath(path->sk_path(), PaintToFlags(paint));
+}
+
+void Painter::DrawImageAt(const scoped_refptr<SkiaImage>& image,
+                          const gfx::PointF& point,
+                          const Paint& paint) {
+  const gfx::ImageSkiaRep& image_rep = image->image_skia().GetRepresentation(
+      canvas_->image_scale());
+  if (image_rep.is_null())
+    return;
+
+  auto* sk_canvas = canvas_->sk_canvas();
+  float bitmap_scale = image_rep.scale();
+  Save();
+  sk_canvas->scale(1.f / bitmap_scale, 1.f / bitmap_scale);
+  sk_canvas->translate(point.x() * bitmap_scale, point.y() * bitmap_scale);
+  sk_canvas->saveLayer(PaintToFlags(paint));
+  sk_canvas->drawPicture(image_rep.GetPaintRecord());
+  sk_canvas->restore();
+  Restore();
+}
+
+void Painter::DrawImage(const scoped_refptr<SkiaImage>& image,
+                        const gfx::RectF& src,
+                        const gfx::RectF& dest,
+                        const Paint& paint) {
+  if (src.IsEmpty())
+    return;
+  SkRect clip;
+  SkRect dest_rect = gfx::RectFToSkRect(dest);
+  if (canvas_->sk_canvas()->getLocalClipBounds(&clip) &&
+      clip.intersects(dest_rect)) {
+    return;
+  }
+
+  const gfx::ImageSkiaRep& image_rep = image->image_skia().GetRepresentation(
+      canvas_->image_scale());
+  if (image_rep.is_null())
+    return;
+
+  // Make a bitmap shader that contains the bitmap we want to draw. This is
+  // basically what SkCanvas.drawBitmap does internally, but it gives us
+  // more control over quality and will use the mipmap in the source image if
+  // it has one, whereas drawBitmap won't.
+  SkMatrix shader_scale;
+  shader_scale.setScale(dest.width() / src.width(),
+                        dest.height() / src.height());
+  shader_scale.preTranslate(-src.x(), -src.y());
+  shader_scale.postTranslate(dest.x(), dest.y());
+
+  cc::PaintFlags flags(PaintToFlags(paint));
+  flags.setShader(gfx::CreateImageRepShaderForScale(
+      image_rep, SkTileMode::kRepeat, SkTileMode::kRepeat, shader_scale,
+      image_rep.scale()));
+
+  // The rect will be filled by the bitmap.
+  canvas_->sk_canvas()->drawRect(dest_rect, flags);
 }
 
 }  // namespace hime

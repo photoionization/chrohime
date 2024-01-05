@@ -26,6 +26,8 @@ class NameConverter:
         return api_name[:-1] + 'F'
       else:
         return api_name
+    elif api_name == 'buffer':
+      return 'hime::Buffer'
     elif api_name in [ 'string', 'string ref' ]:
       return 'std::u16string'
     elif api_name in [ 'BlendMode', 'ClipOp', 'Color' ]:
@@ -50,6 +52,8 @@ class NameConverter:
       return 'std::u16string'
     elif api_name == 'string ref':
       return 'std::u16string&'
+    elif api_name == 'buffer':
+      return 'hime::Buffer'
     elif api_name in [ 'BlendMode', 'ClipOp', 'Color' ]:
       return f'Sk{api_name}'
     elif api_name.startswith('vector'):
@@ -71,6 +75,11 @@ class NameConverter:
     if type_name in [ 'string', 'GURL' ]:
       # For string copy always pass const char*.
       return 'const char16_t*'
+    if type_name == 'buffer':
+      if const:
+        return 'const unsigned char*'
+      else:
+        return 'unsigned char*'
     if type_name == 'char**':
       # Special case for Lifetime constructor.
       if const:
@@ -109,7 +118,10 @@ class NameConverter:
 
   def get_c_parameter_types(self, type_name):
     param_type = self.get_c_type_name(type_name)
-    if type_name.startswith('vector<') or \
+    if type_name.startswith('const '):
+      type_name = type_name[6:]
+    if type_name == 'buffer' or \
+       type_name.startswith('vector<') or \
        type_name.endswith(' out'):
       return [ param_type, 'size_t' ]
     elif self.get_type_of_type(type_name) == 'struct':
@@ -118,7 +130,7 @@ class NameConverter:
       return [ param_type ]
 
   def get_c_return_type(self, type_name):
-    if type_name == 'string' or type_name.startswith('vector<'):
+    if type_name in [ 'string', 'buffer' ] or type_name.startswith('vector<'):
       return 'size_t'
     else:
       return self.get_c_type_name(type_name)

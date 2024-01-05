@@ -110,3 +110,36 @@ methods:
         type: Path
       - name: paint
         type: Paint
+
+  - name: DrawImageAt
+    description: |
+      Draw the `image` with the origin at the specified `location`, using the
+      specified `paint` parameters.
+
+      The upper left corner of the bitmap is rendered at the specified location.
+    args:
+      - name: image
+        type: SkiaImage
+      - name: location
+        type: gfx::Pointf
+      - name: paint
+        type: Paint
+
+  - name: DrawImage
+    description: |
+      Draw a portion of an image in the specified location.
+
+      The `src` corresponds to the region of the bitmap to draw in the region
+      defined by the `dest` coordinates.
+
+      If the width or height of the source differs from that of the destination,
+      the image will be scaled. When scaling down, a mipmap will be generated.
+    args:
+      - name: image
+        type: SkiaImage
+      - name: src
+        type: gfx::Rectf
+      - name: dest
+        type: gfx::Rectf
+      - name: paint
+        type: Paint

@@ -278,7 +278,9 @@ def get_function_call(func, first_arg_is_this=False):
   call = f'{func["name"]}({params_join(get_c_args(func))})'
   if first_arg_is_this:
     call = f'self->{call}'
-  if func['returnType']['type'] in [ 'struct', 'geometry', 'enum', 'enum class' ]:
+  if func['returnType']['cpp'].startswith('scoped_refptr<'):
+    call = f'{call}.release()'
+  elif func['returnType']['type'] in [ 'struct', 'geometry', 'enum', 'enum class' ]:
     call = f'FromHime({call})'
   if func['returnType']['name'].endswith('string ref'):
     return f'{call}.c_str()'
@@ -319,6 +321,8 @@ def get_c_arg(arg, prefix=''):
   arg_name = f'{prefix}{arg["id"]}'
   if arg['type']['name'].startswith('vector<'):
     return f'ToHimeVector<{arg["type"]["cpp"][12:-1]}>({arg_name}, {arg_name}_size)'
+  elif arg['type']['name'] == 'const buffer':
+    return f'{arg["type"]["class"]}::Wrap({arg_name}, {arg_name}_size)'
   elif arg['type']['type'] in [ 'struct', 'geometry', 'enum', 'enum class' ]:
     return f'ToHime({arg_name})'
   elif arg['type']['name'] in [ 'GURL' ]:

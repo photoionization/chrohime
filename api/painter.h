@@ -23,6 +23,7 @@ class Vector2dF;
 namespace hime {
 
 class Path;
+class SkiaImage;
 
 // This struct maps to cc::PaintFlags, but we use Paint as name to match the
 // naming style of skia.
@@ -69,6 +70,13 @@ class CHROHIME_EXPORT Painter {
   void DrawOval(const gfx::RectF& rect, const Paint& paint);
   void DrawRoundRect(const gfx::RectF& rect, float radius, const Paint& paint);
   void DrawPath(const scoped_refptr<Path>& path, const Paint& paint);
+  void DrawImageAt(const scoped_refptr<SkiaImage>& image,
+                   const gfx::PointF& point,
+                   const Paint& paint);
+  void DrawImage(const scoped_refptr<SkiaImage>& image,
+                 const gfx::RectF& src,
+                 const gfx::RectF& dest,
+                 const Paint& paint);
 
  private:
   raw_ptr<gfx::Canvas> canvas_;

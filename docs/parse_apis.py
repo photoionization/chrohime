@@ -53,6 +53,8 @@ def parse_apis(apis):
           func['parameters'] = parse_parameters(converter, f['args'])
           func['returnType'] = get_type_info(converter, f['returnType'],
                                              converter.get_c_return_type(f['returnType']))
+          if func_type == 'class_methods' and func['returnType']['type'] == 'refcounted':
+            func['returnType']['cpp'] = f'scoped_refptr<func["returnType"]["class"]>'
           if f['returnType'].startswith('vector<'):
             func['parameters'] += parse_parameters(converter, [
               {'name': 'out',

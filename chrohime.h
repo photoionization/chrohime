@@ -11,7 +11,9 @@
 
 #include "chrohime/api/background.h"
 #include "chrohime/api/badge.h"
+#include "chrohime/api/bitmap.h"
 #include "chrohime/api/border.h"
+#include "chrohime/api/buffer.h"
 #include "chrohime/api/combobox.h"
 #include "chrohime/api/event.h"
 #include "chrohime/api/link.h"
@@ -25,6 +27,7 @@
 #include "chrohime/api/scroll_view.h"
 #include "chrohime/api/simple_combobox_model.h"
 #include "chrohime/api/simple_table_model.h"
+#include "chrohime/api/skia_image.h"
 #include "chrohime/api/slider.h"
 #include "chrohime/api/state.h"
 #include "chrohime/api/tab_view.h"

@@ -24,6 +24,7 @@ docs_apis = [
   # Normal APIs.
   "api/background.yaml",
   "api/badge.yaml",
+  "api/bitmap.yaml",
   "api/border.yaml",
   "api/button.yaml",
   "api/checkbox.yaml",
@@ -51,6 +52,7 @@ docs_apis = [
   "api/scroll_view.yaml",
   "api/simple_combobox_model.yaml",
   "api/simple_table_model.yaml",
+  "api/skia_image.yaml",
   "api/slider.yaml",
   "api/tab_view.yaml",
   "api/table_model.yaml",

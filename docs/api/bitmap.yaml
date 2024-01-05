@@ -1,0 +1,50 @@
+name: Bitmap
+type: refcounted
+inherit: Object
+description: |
+  A ref-counted wrapper of SkBitmap.
+
+  SkBitmap describes a two-dimensional raster pixel array. SkBitmap is built on
+  SkImageInfo, containing integer width and height, SkColorType and SkAlphaType
+  describing the pixel format, and SkColorSpace describing the range of colors.
+  SkBitmap points to SkPixelRef, which describes the physical array of pixels.
+  SkImageInfo bounds may be located anywhere fully inside SkPixelRef bounds.
+
+class_methods:
+  - name: CreateFromJpeg
+    description: |
+      Decode the JPEG data contained in `input` of length `input_size`.
+
+      NULL is returned if decoding fails.
+    args:
+      - name: input
+        type: const buffer
+    returnType: Bitmap
+
+  - name: CreateFromPng
+    description: |
+      Decode the JPEG data contained in `input` of length `input_size`.
+
+      NULL is returned if decoding fails.
+    args:
+      - name: input
+        type: const buffer
+    returnType: Bitmap
+
+constructors:
+  - name: CreateEmpty
+    description: Create an empty bitmap.
+
+methods:
+  - name: GetSize
+    description: Return the pixel counts of row and column.
+    const: true
+    returnType: gfx::Size
+
+  - name: GetColor
+    description: Return the pixel at `position` as unpremultiplied color.
+    args:
+      - name: position
+        type: gfx::Point
+    const: true
+    returnType: Color

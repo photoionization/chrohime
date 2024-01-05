@@ -1,0 +1,59 @@
+name: SkiaImage
+type: refcounted
+inherit: Object
+description: |
+  Container for the same image at different densities, similar to NSImage.
+
+  Image height and width are in DIP (Density Indepent Pixel) coordinates.
+  SkiaImage should be used whenever possible instead of Bitmap.
+
+  NOTE: This class should *not* be used to store multiple logical sizes of an
+  image (e.g., small, medium and large versions of an icon); use an ImageFamily
+  for that. An SkiaImage represents an image of a single logical size, with
+  potentially many different densities for high-DPI displays.
+
+constructors:
+  - name: CreateEmpty
+    description: Create an empty image.
+
+  - name: CreateFromBitmap
+    description: |
+      Create an image from the passed in `bitmap`, which is designed for display
+      at the device scale factor given in `scale`.
+
+      The DIP width and height will be based on that scale factor.
+    args:
+      - name: bitmap
+        type: Bitmap
+      - name: scale
+        type: float
+
+methods:
+  - name: GetSize
+    description: Get size of image in DIP coordinate system.
+    const: true
+    returnType: gfx::Size
+
+  - name: AddBitmapRepresentation
+    description: Add the `bitmap` to the image reps contained by this object.
+    args:
+      - name: bitmap
+        type: Bitmap
+      - name: scale
+        type: float
+
+  - name: RemoveRepresentation
+    description: Remove the image rep of |scale| if present.
+    args:
+      - name: scale
+        type: float
+
+  - name: HasRepresentation
+    description: |
+      Return true if the object owns an image rep whose density matches `scale`
+      exactly.
+    args:
+      - name: scale
+        type: float
+    const: true
+    returnType: bool
