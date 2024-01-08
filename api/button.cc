@@ -8,6 +8,11 @@
 
 namespace hime {
 
+static_assert(static_cast<int>(Button::State::kNormal) ==
+                  static_cast<int>(views::Button::STATE_NORMAL));
+static_assert(static_cast<int>(Button::State::kDisabled) ==
+                  static_cast<int>(views::Button::STATE_DISABLED));
+
 Button::Button(std::unique_ptr<views::Button> to_take)
     : View(std::move(to_take), LayoutType::kLeaf) {
   GetView()->SetCallback(
@@ -16,6 +21,10 @@ Button::Button(std::unique_ptr<views::Button> to_take)
 }
 
 Button::~Button() = default;
+
+Button::State Button::GetState() const {
+  return static_cast<Button::State>(GetView()->GetState());
+}
 
 void Button::OnClick() {
   on_click.Emit(this);

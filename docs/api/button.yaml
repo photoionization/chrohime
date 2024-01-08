@@ -3,6 +3,12 @@ type: refcounted
 inherit: View
 description: Base class for button types.
 
+methods:
+  - name: GetState
+    description: Get the current display state of the button.
+    const: true
+    returnType: Button::State
+
 events:
   - name: onClick
     description: Emitted when button is clicked.

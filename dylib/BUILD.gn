@@ -74,26 +74,38 @@ config("chrohime_with_content_dylib_config") {
 
 # Generate a public header to be shipped.
 action("chrohime_public_c_header") {
-  deps = [ "//chrohime/docs:chrohime_apis_json" ]
-  inputs = [ "$root_out_dir/chrohime_apis.json" ]
+  apis_json = "$root_out_dir/chrohime_apis.json"
+  inputs = [
+    apis_json,
+    "chrohime_c_impl.inc",
+  ]
   outputs = [ "$root_out_dir/chrohime.h" ]
+
   script = "generate_c_impls.py"
-  args = [ "--public-header", "--apis-json" ] +
-         rebase_path(inputs, root_build_dir) +
+  args = [ "--public-header",
+           "--apis-json", rebase_path(apis_json, root_build_dir) ] +
          [ "--output-dir", rebase_path(root_out_dir, root_build_dir)]
+
+  deps = [ "//chrohime/docs:chrohime_apis_json" ]
 }
 
 # Generate implementations of C APIs.
 action("chrohime_generate_c_impls") {
-  deps = [ "//chrohime/docs:chrohime_apis_json" ]
-  inputs = [ "$root_out_dir/chrohime_apis_barebone.json" ]
+  apis_barebone_json = "$root_out_dir/chrohime_apis_barebone.json"
+  inputs = [
+    apis_barebone_json,
+    "chrohime_c_impl.inc",
+  ]
   outputs = [
     "$target_gen_dir/generated_impls.cc",
     "$target_gen_dir/generated_impls.h",
   ]
+
   script = "generate_c_impls.py"
-  args = [ "--apis-json" ] + rebase_path(inputs, root_build_dir) +
-         [ "--output-dir", rebase_path(target_gen_dir, root_build_dir)]
+  args = [ "--apis-json", rebase_path(apis_barebone_json, root_build_dir) ] +
+         [ "--output-dir", rebase_path(target_gen_dir, root_build_dir) ]
+
+  deps = [ "//chrohime/docs:chrohime_apis_json" ]
 }
 
 # Generate zip archives of shared libraries and example code.

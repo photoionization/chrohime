@@ -25,6 +25,13 @@ typedef uint16_t char16_t;
 #endif
 #endif  // !defined(WIN32)
 
+// Native char type for file paths.
+#if defined(WIN32)
+typedef const wchar_t* hime_file_path_t;
+#else
+typedef const char* hime_file_path_t;
+#endif
+
 // Color type.
 typedef uint32_t hime_color_t;
 

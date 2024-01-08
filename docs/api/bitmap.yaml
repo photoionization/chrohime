@@ -10,6 +10,10 @@ description: |
   SkBitmap points to SkPixelRef, which describes the physical array of pixels.
   SkImageInfo bounds may be located anywhere fully inside SkPixelRef bounds.
 
+constructors:
+  - name: CreateEmpty
+    description: Create an empty bitmap.
+
 class_methods:
   - name: CreateFromJpeg
     description: |
@@ -31,11 +35,14 @@ class_methods:
         type: const buffer
     returnType: Bitmap
 
-constructors:
-  - name: CreateEmpty
-    description: Create an empty bitmap.
-
 methods:
+  - name: IsEmpty
+    description: |
+      Return true if either width or height is zero, or the bitmap contains no
+      pixels.
+    const: true
+    returnType: bool
+
   - name: GetSize
     description: Return the pixel counts of row and column.
     const: true

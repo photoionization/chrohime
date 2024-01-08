@@ -25,6 +25,7 @@ class CHROHIME_EXPORT Bitmap : public Object {
   Bitmap();
   explicit Bitmap(SkBitmap bitmap);
 
+  bool IsEmpty() const;
   gfx::Size GetSize() const;
   SkColor GetColor(const gfx::Point& point) const;
 

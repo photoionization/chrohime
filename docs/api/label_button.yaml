@@ -35,3 +35,17 @@ methods:
     description: Return whether this button is the default button.
     const: true
     returnType: bool
+
+  - name: SetImage
+    description: Set the `image` shown in the button.
+    args:
+      - name: image
+        type: Image
+
+  - name: SetImageForState
+    description: Set the `image` shown in the button for the specified `state`.
+    args:
+      - name: image
+        type: Image
+      - name: state
+        type: Button::State

@@ -15,6 +15,15 @@ namespace hime {
 
 class CHROHIME_EXPORT Button : public View {
  public:
+  enum class State : int {
+    kNormal = 0,
+    kHovered,
+    kPressed,
+    kDisabled,
+  };
+
+  State GetState() const;
+
   // Events.
   Signal<void(Button*)> on_click;
 

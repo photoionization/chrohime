@@ -1,0 +1,9 @@
+name: Button::State
+type: enum class
+description: Button states for various button sub-types.
+
+enums:
+  - name: Normal
+  - name: Hovered
+  - name: Pressed
+  - name: Disabled

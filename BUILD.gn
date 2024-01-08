@@ -30,6 +30,8 @@ component("chrohime_base") {
     "api/color_id.h",
     "api/event.cc",
     "api/event.h",
+    "api/image.cc",
+    "api/image.h",
     "api/label.cc",
     "api/label.h",
     "api/label_button.cc",

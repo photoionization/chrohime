@@ -4,6 +4,7 @@
 
 #include "chrohime/api/label_button.h"
 
+#include "chrohime/api/image.h"
 #include "chrohime/api/view_event_dispatcher.h"
 #include "ui/views/controls/button/label_button.h"
 
@@ -36,6 +37,18 @@ void LabelButton::SetTitle(const std::u16string& title) {
 const std::u16string& LabelButton::GetTitle() const {
   HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, base::EmptyString16());
   return GetView()->GetText();
+}
+
+void LabelButton::SetImage(const scoped_refptr<Image>& image) {
+  HIME_RETURN_ON_DESTROYED_VIEW(this);
+  GetView()->SetImageModel(views::Button::STATE_NORMAL, image->image_model());
+}
+
+void LabelButton::SetImageForState(const scoped_refptr<Image>& image,
+                                   Button::State state) {
+  HIME_RETURN_ON_DESTROYED_VIEW(this);
+  GetView()->SetImageModel(static_cast<views::Button::ButtonState>(state),
+                           image->image_model());
 }
 
 void LabelButton::MakeDefault(bool is_default) {

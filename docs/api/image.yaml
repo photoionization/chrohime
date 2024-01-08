@@ -1,0 +1,37 @@
+name: Image
+type: refcounted
+inherit: Object
+description: Encapsulate one of several image representations.
+
+constructors:
+  - name: CreateEmpty
+    description: Create an empty image.
+
+  - name: CreateFromSkiaImage
+    description: Create an image that wraps the passed `skia_image`.
+    args:
+      - name: skiaImage
+        type: SkiaImage
+
+class_methods:
+  - name: CreateFromFilePath
+    description: |
+      Create a Image by reading from the file located at `path`.
+
+      This function will try to read the image with best representation, and
+      NULL will returned if the image can not be recognized.
+    args:
+      - name: path
+        type: base::FilePath
+    returnType: Image
+
+methods:
+  - name: IsEmpty
+    description: Return true if the image stores no representations.
+    const: true
+    returnType: bool
+
+  - name: GetSize
+    description: Get size of image in DIP coordinate system.
+    const: true
+    returnType: gfx::Size

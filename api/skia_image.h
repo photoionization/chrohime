@@ -8,15 +8,23 @@
 #include "chrohime/api/object.h"
 #include "ui/gfx/image/image_skia.h"
 
+namespace base {
+class FilePath;
+}
+
 namespace hime {
 
 class Bitmap;
 
 class CHROHIME_EXPORT SkiaImage : public Object {
  public:
+  static scoped_refptr<SkiaImage> CreateFromFilePath(
+      const base::FilePath& path);
+
   SkiaImage();
   SkiaImage(const scoped_refptr<Bitmap>& bitmap, float scale);
 
+  bool IsEmpty() const;
   gfx::Size GetSize() const;
 
   void AddBitmapRepresentation(const scoped_refptr<Bitmap>& bitmap,

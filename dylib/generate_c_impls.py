@@ -325,7 +325,7 @@ def get_c_arg(arg, prefix=''):
     return f'{arg["type"]["class"]}::Wrap({arg_name}, {arg_name}_size)'
   elif arg['type']['type'] in [ 'struct', 'geometry', 'enum', 'enum class' ]:
     return f'ToHime({arg_name})'
-  elif arg['type']['name'] in [ 'GURL' ]:
+  elif arg['type']['name'] in [ 'base::FilePath', 'GURL' ]:
     return f'{arg["type"]["cpp"]}({arg_name})'
   else:
     return arg_name

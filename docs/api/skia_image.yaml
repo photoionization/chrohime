@@ -28,7 +28,24 @@ constructors:
       - name: scale
         type: float
 
+class_methods:
+  - name: CreateFromFilePath
+    description: |
+      Create a SkiaImage by reading from the file located at `path`.
+
+      This function will try to decode the image with supported formats, and
+      NULL will returned if decoding fails.
+    args:
+      - name: path
+        type: base::FilePath
+    returnType: SkiaImage
+
 methods:
+  - name: IsEmpty
+    description: Return true if the image stores no representations.
+    const: true
+    returnType: bool
+
   - name: GetSize
     description: Get size of image in DIP coordinate system.
     const: true

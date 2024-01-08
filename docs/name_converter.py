@@ -6,6 +6,8 @@ class NameConverter:
     name = strip_type_decorates(get_name(data))
     if name.startswith('gfx::'):
       name = name[5:]
+    elif name.startswith('base::'):
+      name = name[6:]
     return name
 
   def get_c_name(self, data):
@@ -26,6 +28,8 @@ class NameConverter:
         return api_name[:-1] + 'F'
       else:
         return api_name
+    if api_name.startswith('base::'):
+      return api_name
     elif api_name == 'buffer':
       return 'hime::Buffer'
     elif api_name in [ 'string', 'string ref' ]:
@@ -52,6 +56,8 @@ class NameConverter:
       return 'std::u16string'
     elif api_name == 'string ref':
       return 'std::u16string&'
+    if api_name.startswith('base::'):
+      return api_name
     elif api_name == 'buffer':
       return 'hime::Buffer'
     elif api_name in [ 'BlendMode', 'ClipOp', 'Color' ]:
@@ -91,7 +97,9 @@ class NameConverter:
         return 'const char16_t*'
       else:
         return 'char16_t*'
-    elif type_name[0].isupper() or type_name.startswith('gfx::'):
+    elif type_name[0].isupper() or \
+         type_name.startswith('gfx::') or \
+         type_name.startswith('base::'):
       prefix = self.get_c_type_prefix(type_name)
       if const:
         return f'{prefix}_const_t'

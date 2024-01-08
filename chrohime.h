@@ -16,6 +16,7 @@
 #include "chrohime/api/buffer.h"
 #include "chrohime/api/combobox.h"
 #include "chrohime/api/event.h"
+#include "chrohime/api/image.h"
 #include "chrohime/api/link.h"
 #include "chrohime/api/lifetime.h"
 #include "chrohime/api/material_button.h"

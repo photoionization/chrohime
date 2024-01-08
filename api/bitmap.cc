@@ -38,6 +38,10 @@ Bitmap::Bitmap(SkBitmap bitmap) : bitmap_(std::move(bitmap)) {}
 
 Bitmap::~Bitmap() = default;
 
+bool Bitmap::IsEmpty() const {
+  return bitmap_.drawsNothing();
+}
+
 gfx::Size Bitmap::GetSize() const {
   return gfx::Size(bitmap_.width(), bitmap_.height());
 }
