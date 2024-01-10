@@ -45,6 +45,13 @@ jobs:
           XCODE_APP=$(find /Applications -maxdepth 1 -type d -name "Xcode_15.*" -print -quit)
           echo 'Using' $XCODE_APP
           sudo xcode-select --switch $XCODE_APP
+          echo "XCODE_APP=$XCODE_APP" >> "$GITHUB_ENV"
+
+      - name: Free Disk Spaces
+        if: runner.os == 'macOS' && matrix.targetCpu == 'arm64'
+        run: |
+          UNUSED_XCODE_APPS=$(find /Applications -maxdepth 1 -type d -name "Xcode*" -print | grep -v $XCODE_APP)
+          sudo rm -rf $UNUSED_XCODE_APPS
 
       - name: Install Linux Dependencies
         if: runner.os == 'Linux'
