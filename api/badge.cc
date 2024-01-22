@@ -29,6 +29,11 @@ void Badge::SetText(const std::u16string& text) {
   GetView()->SetText(text);
 }
 
+const std::u16string& Badge::GetText() const {
+  HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, base::EmptyString16());
+  return GetView()->GetText();
+}
+
 views::Badge* Badge::GetView() const {
   return static_cast<views::Badge*>(view());
 }

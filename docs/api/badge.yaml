@@ -13,3 +13,8 @@ methods:
     args:
       - name: text
         type: string
+
+  - name: GetText
+    description: Get the text displayed on badge.
+    const: true
+    returnType: const string ref

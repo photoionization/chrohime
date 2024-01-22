@@ -18,9 +18,7 @@ class CHROHIME_EXPORT Badge : public View {
   Badge();
 
   void SetText(const std::u16string& text);
-  // TODO(zcbenz): Add GetText() API once after following CL is merged.
-  // https://chromium-review.googlesource.com/c/chromium/src/+/4226253
-  // const std::u16string& GetText() const;
+  const std::u16string& GetText() const;
 
  protected:
   ~Badge() override;
