@@ -20,10 +20,10 @@ class CHROHIME_EXPORT ChrohimeContentMainDelegate
   ~ChrohimeContentMainDelegate() override;
 
   // content::ContentMainDelegate:
-  absl::optional<int> BasicStartupComplete() override;
+  std::optional<int> BasicStartupComplete() override;
   void PreSandboxStartup() override;
 #if BUILDFLAG(IS_MAC)
-  absl::optional<int> PreBrowserMain() override;
+  std::optional<int> PreBrowserMain() override;
 #endif
   content::ContentClient* CreateContentClient() override;
   content::ContentBrowserClient* CreateContentBrowserClient() override;

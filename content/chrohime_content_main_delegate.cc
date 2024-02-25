@@ -17,12 +17,12 @@ ChrohimeContentMainDelegate::ChrohimeContentMainDelegate(
 
 ChrohimeContentMainDelegate::~ChrohimeContentMainDelegate() = default;
 
-absl::optional<int> ChrohimeContentMainDelegate::BasicStartupComplete() {
+std::optional<int> ChrohimeContentMainDelegate::BasicStartupComplete() {
   logging::LoggingSettings settings;
   settings.logging_dest = logging::LOG_TO_SYSTEM_DEBUG_LOG |
                           logging::LOG_TO_STDERR;
   logging::InitLogging(settings);
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 void ChrohimeContentMainDelegate::PreSandboxStartup() {

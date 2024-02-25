@@ -81,7 +81,6 @@ void Window::Close() {
 void Window::SetContentView(scoped_refptr<View> view) {
   content_view_ = std::move(view);
   root_view_->SetContentView(content_view_->TransferOwnership());
-  root_view_->Layout();
 }
 
 View* Window::GetContentView() const {

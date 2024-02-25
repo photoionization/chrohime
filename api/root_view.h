@@ -19,9 +19,6 @@ class RootView : public views::View {
 
   void SetContentView(std::unique_ptr<views::View> view);
 
-  // views::View:
-  void Layout() override;
-
  private:
   raw_ptr<views::View> content_view_ = nullptr;
 };

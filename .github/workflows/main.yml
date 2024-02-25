@@ -26,6 +26,13 @@ jobs:
           - config: ${{ startsWith(github.ref, 'refs/tags/') && 'Component' || 'Release' }}
 
     steps:
+      - name: Mount workspace to /mnt
+        if: runner.os == 'Linux'
+        run: |
+          sudo mkdir /mnt/work
+          sudo mount --bind /mnt/work ${{ github.workspace }}
+          sudo chown runner:runner ${{ github.workspace }}
+
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -63,17 +70,14 @@ jobs:
       - name: Bootstrap
         run: python3 scripts/bootstrap.py --target-cpu ${{ matrix.targetCpu }}
 
-      - name: Setup GOMA
-        shell: bash
+      - name: Setup Reclient
         env:
-          SECRET_FILE_CONTENT: ${{ secrets.GOMA_OAUTH2_CONFIG }}
-        run: |
-          printf "$SECRET_FILE_CONTENT" > ~/.goma_oauth2_config
-          node third_party/build_chromium/goma.js
+          ELECTRON_RBE_JWT: ${{ secrets.RBE_SECRET }}
+        run: node third_party/build_chromium/reclient.js login
 
       - name: GN Gen
         shell: bash
-        run: python3 scripts/gn_gen.py --goma --config ${{ matrix.config }} --target-cpu ${{ matrix.targetCpu }} --arg 'chrohime_version="${{ github.ref_name }}"'
+        run: python3 scripts/gn_gen.py --reclient --config ${{ matrix.config }} --target-cpu ${{ matrix.targetCpu }} --arg 'chrohime_version="${{ github.ref_name }}"'
 
       - name: Component Build
         if: matrix.config == 'Component'

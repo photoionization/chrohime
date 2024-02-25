@@ -55,7 +55,7 @@ class CHROHIME_EXPORT View : public Object,
   void SetBounds(const gfx::Rect& bounds);
   gfx::Rect GetBounds() const;
   gfx::Rect GetBoundsInScreen() const;
-  void SetPreferredSize(absl::optional<gfx::Size> size);
+  void SetPreferredSize(std::optional<gfx::Size> size);
   gfx::Size GetPreferredSize() const;
   void SetStyle(std::u16string_view name, std::u16string_view value);
   void SetStyleNumber(std::u16string_view name, float value);

@@ -8,12 +8,12 @@
 
 namespace hime {
 
-absl::optional<int> ChrohimeContentMainDelegate::PreBrowserMain() {
-  absl::optional<int> code = content::ContentMainDelegate::PreBrowserMain();
+std::optional<int> ChrohimeContentMainDelegate::PreBrowserMain() {
+  std::optional<int> code = content::ContentMainDelegate::PreBrowserMain();
   if (code.has_value())
     return code;
   delegate_->OnPreBrowserMain();
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 }  // namespace hime

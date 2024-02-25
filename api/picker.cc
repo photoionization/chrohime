@@ -44,14 +44,14 @@ ComboboxModel* Picker::GetModel() const {
 void Picker::SelectItemAt(int index) {
   HIME_RETURN_ON_DESTROYED_VIEW(this);
   if (index < 0)
-    GetView()->SetSelectedRow(absl::optional<size_t>());
+    GetView()->SetSelectedRow(std::optional<size_t>());
   else
     GetView()->SetSelectedRow(static_cast<size_t>(index));
 }
 
 const std::u16string& Picker::GetSelectedItem() const {
   HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, base::EmptyString16());
-  absl::optional<size_t> result = GetView()->GetSelectedRow();
+  std::optional<size_t> result = GetView()->GetSelectedRow();
   if (!result.has_value())
     return base::EmptyString16();
   return cached_result_ = GetView()->GetTextForRow(result.value());
@@ -59,7 +59,7 @@ const std::u16string& Picker::GetSelectedItem() const {
 
 int Picker::GetSelectedItemIndex() const {
   HIME_RETURN_VALUE_ON_DESTROYED_VIEW(this, 0);
-  absl::optional<size_t> result = GetView()->GetSelectedRow();
+  std::optional<size_t> result = GetView()->GetSelectedRow();
   if (result.has_value())
     return static_cast<int>(result.value());
   else

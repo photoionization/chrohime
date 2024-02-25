@@ -160,7 +160,7 @@ gfx::Rect View::GetBoundsInScreen() const {
   return view_->GetBoundsInScreen();
 }
 
-void View::SetPreferredSize(absl::optional<gfx::Size> size) {
+void View::SetPreferredSize(std::optional<gfx::Size> size) {
   HIME_RETURN_ON_DESTROYED_VIEW(this);
   view_->SetPreferredSize(std::move(size));
 }
@@ -188,7 +188,7 @@ void View::Layout() {
   View* root = parent_;
   while (!root->IsRootYogaNode() && root->parent_)
     root = root->parent_;
-  root->view_->Layout();
+  root->view_->DeprecatedLayoutImmediately();
 }
 
 void View::SchedulePaint() {
